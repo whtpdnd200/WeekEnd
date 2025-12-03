@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  application:
+    name: WeekEnd
+  config:
+    import: security-variable.yml
+  thymeleaf:
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/week_end?serverTimezone=Asia/Seoul
+    username: root
+    password: ${mysql.password}
