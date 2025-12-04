@@ -6,7 +6,6 @@ import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 public class UserService {

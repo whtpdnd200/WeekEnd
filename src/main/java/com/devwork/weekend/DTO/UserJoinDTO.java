@@ -15,5 +15,4 @@ public class UserJoinDTO {
     private String name;
     private String email;
 
-
 }
