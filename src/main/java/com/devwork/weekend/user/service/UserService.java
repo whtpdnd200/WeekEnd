@@ -1,5 +1,6 @@
 package com.devwork.weekend.user.service;
 
+import com.devwork.weekend.DTO.UserJoinDTO;
 import com.devwork.weekend.common.MD5HashingEncoder;
 import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
@@ -15,10 +16,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public boolean create(User user) {
+    public boolean create(UserJoinDTO dto) {
 
-        String encodedPassword = MD5HashingEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        String encodedPassword = MD5HashingEncoder.encode(dto.getPassword());
+        User user = User.builder()
+                .memberId(dto.getMemberId())
+                .password(encodedPassword)
+                .name(dto.getName())
+                .email(dto.getEmail())
+                .build();
         return userRepository.save(user) != null;
     }
 

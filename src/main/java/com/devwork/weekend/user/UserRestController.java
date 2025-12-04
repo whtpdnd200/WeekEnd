@@ -1,8 +1,7 @@
 package com.devwork.weekend.user;
 
-import com.devwork.weekend.user.domain.User;
+import com.devwork.weekend.DTO.UserJoinDTO;
 import com.devwork.weekend.user.service.UserService;
-import jakarta.websocket.Session;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -19,11 +18,11 @@ public class UserRestController {
     }
 
     @PostMapping("/join-process")
-    public Map<String, String> join(@ModelAttribute User user) {
+    public Map<String, String> join(@ModelAttribute UserJoinDTO dto) {
 
         Map<String, String> resultMap = new HashMap<>();
 
-        if(userService.create(user)) {
+        if(userService.create(dto)) {
             resultMap.put("result", "success");
             return resultMap;
         }
