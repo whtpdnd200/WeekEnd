@@ -21,6 +21,8 @@
                 </div>
                 <input type="password" class="form-control mt-1 mb-3" placeholder="비밀번호" id="passwordInput">
                 <input type="password" class="form-control my-3" placeholder="비밀번호 확인" id="passwordConfirmInput">
+                <div id="passwordUnChecked" class="text-danger small d-none">비밀번호가 일치하지 않습니다!</div>
+                <div id="passwordChecked" class="text-success small d-none">비밀번호가 일치 합니다</div>
                 <input type="text" class="form-control my-3" placeholder="이름" id="nameInput">
                 <input type="text" class="form-control my-3" placeholder="이메일" id="emailInput">
                 <button type="button" class="btn btn-info btn-block my-3" id="joinBtn">회원가입</button>
@@ -35,6 +37,18 @@
     <script>
 
         var isDuplicate = true;
+
+        $("#passwordConfirmInput").on("input", function() {
+            let password = $("#passwordInput").val();
+            let passwordConfirm = $("#passwordConfirmInput").val();
+            if(password != passwordConfirm) {
+                $("#passwordUnChecked").removeClass("d-none");
+                $("#passwordChecked").addClass("d-none");
+            } else {
+                $("#passwordUnChecked").addClass("d-none");
+                $("#passwordChecked").removeClass("d-none");
+            }
+        });
 
         $("#duplicateBtn").on("click", function() {
             let id = $("#idInput").val();
