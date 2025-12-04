@@ -14,4 +14,9 @@ public class UserController {
 
         return "/weekend/user/join";
     }
+
+    @GetMapping("/login")
+    public String login() {
+        return "/weekend/user/login";
+    }
 }

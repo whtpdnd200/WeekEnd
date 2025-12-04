@@ -2,6 +2,7 @@ package com.devwork.weekend.user;
 
 import com.devwork.weekend.user.domain.User;
 import com.devwork.weekend.user.service.UserService;
+import jakarta.websocket.Session;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -36,6 +37,18 @@ public class UserRestController {
         Map<String, Boolean> resultMap = new HashMap<>();
 
         resultMap.put("isDuplicate", userService.isDuplicateId(id));
+        return resultMap;
+    }
+
+    @PostMapping("/login-process")
+    public Map<String, String> userLogin(@RequestParam String memberId, @RequestParam String password) {
+
+        Map<String, String> resultMap = new HashMap<>();
+        if(userService.userLogin(memberId, password)) {
+            resultMap.put("result", "success");
+            return resultMap;
+        }
+        resultMap.put("result", "fail");
         return resultMap;
     }
 }

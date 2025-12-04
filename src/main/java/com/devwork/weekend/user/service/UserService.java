@@ -1,7 +1,7 @@
 package com.devwork.weekend.user.service;
 
 import com.devwork.weekend.common.MD5HashingEncoder;
-import com.devwork.weekend.user.UserRepository;
+import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +25,11 @@ public class UserService {
     public boolean isDuplicateId(String id) {
 
         return !userRepository.findByMemberId(id).isEmpty();
+    }
+
+    public boolean userLogin(String memberId, String password) {
+
+        String encodedPassword = MD5HashingEncoder.encode(password);
+        return userRepository.findByMemberIdAndPassword(memberId, encodedPassword) != null;
     }
 }
