@@ -6,6 +6,8 @@ import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -17,6 +19,10 @@ public class UserService {
     }
 
     public boolean create(UserJoinDTO dto) {
+
+        if(isDuplicateId(dto.getMemberId())) {
+            return false;
+        }
 
         String encodedPassword = MD5HashingEncoder.encode(dto.getPassword());
         User user = User.builder()
@@ -30,12 +36,12 @@ public class UserService {
 
     public boolean isDuplicateId(String id) {
 
-        return !userRepository.findByMemberId(id).isEmpty();
+        return userRepository.findByMemberId(id).isPresent();
     }
 
     public boolean userLogin(String memberId, String password) {
 
         String encodedPassword = MD5HashingEncoder.encode(password);
-        return userRepository.findByMemberIdAndPassword(memberId, encodedPassword) != null;
+        return userRepository.findByMemberIdAndPassword(memberId, encodedPassword).isPresent();
     }
 }

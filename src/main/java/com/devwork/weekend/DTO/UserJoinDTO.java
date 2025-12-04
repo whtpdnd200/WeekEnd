@@ -14,9 +14,6 @@ public class UserJoinDTO {
     private String password;
     private String name;
     private String email;
-    private String profileImage;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
 
 }
