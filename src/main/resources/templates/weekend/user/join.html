@@ -19,6 +19,8 @@
                     <input type="text" class="form-control my-3 col-8" placeholder="아이디" id="idInput">
                     <button id="duplicateBtn" type="button" class="btn btn-secondary ml-3">중복확인</button>
                 </div>
+                <div id="idDuplicate" class="text-danger small d-none">중복된 아이디 입니다!</div>
+                <div id="idNotDuplicate" class="text-success small d-none">사용 할 수 있는 아이디 입니다</div>
                 <input type="password" class="form-control mt-1 mb-3" placeholder="비밀번호" id="passwordInput">
                 <input type="password" class="form-control my-3" placeholder="비밀번호 확인" id="passwordConfirmInput">
                 <div id="passwordUnChecked" class="text-danger small d-none">비밀번호가 일치하지 않습니다!</div>
@@ -38,6 +40,13 @@
 
         var isDuplicate = true;
 
+        var isDuplicateChecked = false;
+
+        $("#idInput").on("input", function() {
+            isDuplicateChecked = false;
+        });
+
+
         $("#passwordConfirmInput").on("input", function() {
             let password = $("#passwordInput").val();
             let passwordConfirm = $("#passwordConfirmInput").val();
@@ -52,7 +61,7 @@
 
         $("#duplicateBtn").on("click", function() {
             let id = $("#idInput").val();
-
+            isDuplicateChecked = true;
             if(id == "") {
                 alert("아이디를 입력하세요");
                 $("#idInput").focus();
@@ -69,15 +78,15 @@
             $.ajax({
                 type:"get"
                 , url:"/user/duplicate-check"
-                , data:{"id":id}
+                , data:{"memberId":id}
                 , success:function(response) {
                     if(response.isDuplicate) {
-                        alert("중복 된 아이디 입니다 다시 입력 해주세요!");
-                        $("#idInput").val("");
-                        $("#idInput").focus();
+                        $("#idDuplicate").removeClass("d-none");
+                        $("#idNotDuplicate").addClass("d-none");
                     } else {
                         isDuplicate = false;
-                        alert("사용 가능한 아이디 입니다");
+                        $("#idDuplicate").addClass("d-none");
+                        $("#idNotDuplicate").removeClass("d-none");
                     }
                 }
                 , error:function() {
@@ -131,10 +140,20 @@
                 return;
             }
 
-            if(isDuplicate) {
-                alert("아이디 중복검사를 진행 해주세요!");
+            if(!isDuplicateChecked) {
+                alert("아이디 중복 검사를 진행 해주세요!");
                 return;
             }
+
+            if(isDuplicate) {
+                alert("아이디가 중복 되었습니다! 다시 입력해주세요!");
+                isDuplicateChecked = false;
+                $("#idInput").focus();
+                return;
+            }
+
+
+
             $.ajax({
                 type:"post"
                 , url:"/user/join-process"

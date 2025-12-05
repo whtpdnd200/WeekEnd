@@ -34,10 +34,10 @@ public class UserRestController {
     }
 
     @GetMapping("/duplicate-check")
-    public Map<String, Boolean> isDuplicate(String id) {
+    public Map<String, Boolean> isDuplicate(String memberId) {
         Map<String, Boolean> resultMap = new HashMap<>();
 
-        resultMap.put("isDuplicate", userService.isDuplicateId(id));
+        resultMap.put("isDuplicate", userService.isDuplicateId(memberId));
         return resultMap;
     }
 

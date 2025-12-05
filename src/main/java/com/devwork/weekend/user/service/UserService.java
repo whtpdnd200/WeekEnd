@@ -1,7 +1,7 @@
 package com.devwork.weekend.user.service;
 
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
-import com.devwork.weekend.common.MD5HashingEncoder;
+import com.devwork.weekend.common.SHA256HashingEncoder;
 import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class UserService {
             return false;
         }
 
-        String encodedPassword = MD5HashingEncoder.encode(dto.getPassword());
+        String encodedPassword = SHA256HashingEncoder.encode(dto.getPassword());
         User user = User.builder()
                 .memberId(dto.getMemberId())
                 .password(encodedPassword)
@@ -35,14 +35,14 @@ public class UserService {
         return userRepository.save(user) != null;
     }
 
-    public boolean isDuplicateId(String id) {
+    public boolean isDuplicateId(String memberId) {
 
-        return userRepository.findByMemberId(id).isPresent();
+        return userRepository.existsByMemberId(memberId);
     }
 
     public User userLogin(String memberId, String password) {
 
-        String encodedPassword = MD5HashingEncoder.encode(password);
+        String encodedPassword = SHA256HashingEncoder.encode(password);
         Optional<User> optionalUser = userRepository.findByMemberIdAndPassword(memberId, encodedPassword);
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
