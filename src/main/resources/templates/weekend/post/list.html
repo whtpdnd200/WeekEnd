@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{weekend/layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <title>타임라인</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/post/list/style.css">
+</head>
+    <section layout:fragment="contents">
+        <div class="post-list my-1">
+            <div class="post m-2">
+                <div class="pl-5 my-1">회원 이름</div>
+                <div class="d-flex justify-content-center my-1">
+                    <img width="450px" height="300px" src="https://cdn.pixabay.com/photo/2023/12/19/21/52/trees-8458466_1280.jpg">
+                </div>
+                <div class="d-flex justify-content-center my-3">
+                    <div class="w-75 d-flex justify-content-between">
+                        <div>
+                            <img width="36px" height="36px" src="/iconImage/like.png" alt="좋아요 아이콘">
+                            132
+                        </div>
+                        <div>
+                            <img width="36px" height="36px" src="/iconImage/comment.png">
+                            32
+                        </div>
+                        <div >
+                            <img width="36px" height="36px" src="/iconImage/edit.png">
+                        </div>
+                        <div>
+                            <img width="36px" height="36px" src="/iconImage/delete.png">
+                        </div>
+                    </div>
+                </div>
+                <div class="comments-top3 m-3 p-3">
+                    <div class="comment d-flex my-1">
+                        <div>
+                            <img width="24px" height="24px" src="/iconImage/userCircle.png">
+                        </div>
+                        <div class="mx-2">유저 이름</div>
+                        <div class="ml-5">
+                            댓글 내용
+                        </div>
+                    </div>
+                    <div class="comment d-flex my-3">
+                        <div>
+                            <img width="24px" height="24px" src="/iconImage/userCircle.png">
+                        </div>
+                        <div class="mx-2">유저 이름</div>
+                        <div class="ml-5">
+                            댓글 내용
+                        </div>
+                    </div>
+                    <div class="comment d-flex my-3">
+                        <div>
+                            <img width="24px" height="24px" src="/iconImage/userCircle.png">
+                        </div>
+                        <div class="mx-2">유저 이름</div>
+                        <div class="ml-5">
+                            댓글 내용
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer layout:fragment="footer" class="d-flex align-items-center justify-content-center">
+        <div class="w-75 d-flex justify-content-between align-items-center">
+            <div>
+                <img src="/iconImage/postAdd.png">
+            </div>
+            <div>
+                <img src="/iconImage/serch.png">
+            </div>
+            <div>
+                <img src="/iconImage/likeBlackFull.png">
+            </div>
+            <div>
+                <img src="/iconImage/person.png">
+            </div>
+        </div>
+    </footer>
+    <script layout:fragment="script">
+
+    </script>
+</html>
