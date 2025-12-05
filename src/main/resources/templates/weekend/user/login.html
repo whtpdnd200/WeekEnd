@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{weekend/layouts/default}">
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
@@ -8,11 +11,8 @@
     <link rel="stylesheet" href="/css/user/login/style.css">
 </head>
 <body>
-<div id="wrap" class="">
-    <header class="d-flex justify-content-center align-items-center border">
-        <h1>WeekEnd</h1>
-    </header>
-    <section class="contents d-flex justify-content-center">
+
+    <section layout:fragment="contents" class="contents d-flex justify-content-center">
         <div class="user-box my-1 p-5">
             <h1 class="text-center">로그인</h1>
             <input type="text" placeholder="아이디" id="idInput" class="form-control my-3">
@@ -24,10 +24,8 @@
             </div>
         </div>
     </section>
-</div>
 
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script>
+<script layout:fragment="script">
     $("#loginBtn").on("click", function() {
         let id = $("#idInput").val();
         let password = $("#passwordInput").val();

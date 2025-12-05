@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{weekend/layouts/default}">
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
@@ -8,11 +11,7 @@
     <link rel="stylesheet" href="/css/user/join/style.css">
 </head>
 <body>
-    <div id="wrap" class="">
-        <header class="d-flex justify-content-center align-items-center border">
-            <h1>WeekEnd</h1>
-        </header>
-        <section class="contents d-flex justify-content-center">
+        <section layout:fragment="contents" class="contents d-flex justify-content-center">
             <div class="user-box my-1 p-5">
                 <h1 class="text-center">회원 가입</h1>
                 <div class="d-flex align-items-center">
@@ -33,10 +32,8 @@
                 </div>
             </div>
         </section>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script>
+    <script layout:fragment="script">
 
         var isDuplicate = true;
 

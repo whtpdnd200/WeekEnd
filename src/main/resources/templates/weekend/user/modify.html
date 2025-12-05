@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{weekend/layouts/default}">
 <head>
     <meta charset="UTF-8">
     <title>회원정보 수정</title>
@@ -8,11 +11,8 @@
     <link rel="stylesheet" href="/css/user/modify/style.css">
 </head>
 <body>
-    <div id="wrap" class="">
-        <header class="d-flex justify-content-center align-items-center border">
-            <h1>WeekEnd</h1>
-        </header>
-        <section class="contents d-flex justify-content-center">
+
+        <section layout:fragment="contents" class="contents d-flex justify-content-center">
             <div class="user-box my-1 p-5">
                 <h1 class="text-center">회원정보 수정</h1>
                 <input type="password" class="form-control my-3" placeholder="비밀번호" id="passwordInput">
@@ -25,10 +25,8 @@
                 <button id="modifyBtn" class="btn btn-block btn-secondary my-3" type="button">정보 수정</button>
             </div>
         </section>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script>
+    <script layout:fragment="script">
 
 
         $("#passwordConfirmInput").on("input", function() {

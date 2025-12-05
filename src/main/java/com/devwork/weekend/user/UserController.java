@@ -12,17 +12,17 @@ public class UserController {
     @GetMapping("/join")
     public String join() {
 
-        return "/weekend/user/join";
+        return "weekend/user/join";
     }
 
     @GetMapping("/login")
     public String login() {
-        return "/weekend/user/login";
+        return "weekend/user/login";
     }
 
     @GetMapping("/modify")
     public String modify() {
 
-        return "/weekend/user/modify";
+        return "weekend/user/modify";
     }
 }
