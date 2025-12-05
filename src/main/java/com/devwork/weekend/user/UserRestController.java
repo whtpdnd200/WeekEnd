@@ -1,6 +1,8 @@
 package com.devwork.weekend.user;
 
+import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
+import com.devwork.weekend.user.domain.User;
 import com.devwork.weekend.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +20,11 @@ public class UserRestController {
     }
 
     @PostMapping("/join-process")
-    public Map<String, String> join(@ModelAttribute UserJoinDTO dto) {
+    public Map<String, String> join(@ModelAttribute UserJoinDTO userJoinDTO) {
 
         Map<String, String> resultMap = new HashMap<>();
 
-        if(userService.create(dto)) {
+        if(userService.create(userJoinDTO)) {
             resultMap.put("result", "success");
             return resultMap;
         }
@@ -43,7 +45,13 @@ public class UserRestController {
     public Map<String, String> userLogin(@RequestParam String memberId, @RequestParam String password) {
 
         Map<String, String> resultMap = new HashMap<>();
-        if(userService.userLogin(memberId, password)) {
+        User user = userService.userLogin(memberId, password);
+        if(user != null) {
+            LoginUserDTO loginUserDTO = new LoginUserDTO(user.getId()
+                    , user.getMemberId()
+                    , user.getName()
+                    , user.getEmail()
+                    , user.getProfileImage());
             resultMap.put("result", "success");
             return resultMap;
         }

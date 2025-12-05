@@ -6,6 +6,8 @@ import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 public class UserService {
@@ -38,9 +40,14 @@ public class UserService {
         return userRepository.findByMemberId(id).isPresent();
     }
 
-    public boolean userLogin(String memberId, String password) {
+    public User userLogin(String memberId, String password) {
 
         String encodedPassword = MD5HashingEncoder.encode(password);
-        return userRepository.findByMemberIdAndPassword(memberId, encodedPassword).isPresent();
+        Optional<User> optionalUser = userRepository.findByMemberIdAndPassword(memberId, encodedPassword);
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            return user;
+        }
+        return null;
     }
 }

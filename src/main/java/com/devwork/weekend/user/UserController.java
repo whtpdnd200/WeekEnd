@@ -19,4 +19,10 @@ public class UserController {
     public String login() {
         return "/weekend/user/login";
     }
+
+    @GetMapping("/modify")
+    public String modify() {
+
+        return "/weekend/user/modify";
+    }
 }
