@@ -1,6 +1,6 @@
 package com.devwork.weekend.user;
 
-import com.devwork.weekend.DTO.UserJoinDTO;
+import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 

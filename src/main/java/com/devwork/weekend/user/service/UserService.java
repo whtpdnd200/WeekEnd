@@ -1,6 +1,6 @@
 package com.devwork.weekend.user.service;
 
-import com.devwork.weekend.DTO.UserJoinDTO;
+import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.common.MD5HashingEncoder;
 import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;

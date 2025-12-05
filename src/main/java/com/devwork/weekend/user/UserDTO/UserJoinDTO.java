@@ -1,15 +1,12 @@
-package com.devwork.weekend.DTO;
+package com.devwork.weekend.user.UserDTO;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
-import java.time.LocalDateTime;
-
+@AllArgsConstructor
 @Getter
-@Setter
 public class UserJoinDTO {
 
-    private long id;
     private String memberId;
     private String password;
     private String name;
