@@ -15,11 +15,12 @@
         <section layout:fragment="contents" class="contents d-flex justify-content-center">
             <div class="user-box my-1 p-5">
                 <h1 class="text-center">회원정보 수정</h1>
+                <input id="userId" type="hidden" th:value="${session.userInfo.getId()}">
                 <input type="password" class="form-control my-3" placeholder="비밀번호" id="passwordInput">
                 <input type="password" class="form-control my-3" placeholder="비밀번호 확인" id="passwordConfirmInput">
                 <div id="passwordUnChecked" class="text-danger small d-none">비밀번호가 일치하지 않습니다!</div>
                 <div id="passwordChecked" class="text-success small d-none">비밀번호가 일치 합니다</div>
-                <input type="file" class="my-3">
+                <input type="file" class="my-3" id="imageInput">
                 <input th:value="${session.userInfo.getName()}"  type="text" class="form-control my-3" placeholder="이름" id="nameInput">
                 <input th:value="${session.userInfo.getEmail()}" type="text" class="form-control my-3" placeholder="이메일" id="emailInput">
                 <button id="modifyBtn" class="btn btn-block btn-secondary my-3" type="button">정보 수정</button>
@@ -28,7 +29,62 @@
 
     <script layout:fragment="script">
 
+        $("#modifyBtn").on("click", function (){
 
+            let id = $("#userId").val();
+            let password = $("#passwordInput").val();
+            let passwordConfirm = $("#passwordConfirmInput").val();
+            let name = $("#nameInput").val();
+            let email = $("#emailInput").val();
+            let profileImage = $("#imageInput").val();
+
+
+            if(password == "") {
+                alert("비밀번호를 입력하세요");
+                $("#passwordInput").focus();
+                return;
+            }
+
+            if(password != passwordConfirm) {
+                alert("비밀번호가 일치하지 않습니다");
+                $("#passwordConfirmInput").focus();
+                return;
+            }
+
+            if(name == "") {
+                alert("이름을 입력하세요");
+                $("#nameInput").focus();
+                return;
+            }
+            if(email == "") {
+                alert("이메일을 입력하세요");
+                $("#emailInput").focus();
+                return;
+            }
+
+            $.ajax({
+                type:"PUT"
+                , contentType:"application/json"
+                , url:"/user/modify-process"
+                , data:JSON.stringify({
+                    "id" : id
+                    , "password" : password
+                    , "email" : email
+                    , "name" : name
+                    , "profileImage":profileImage
+                })
+                , success:function(response) {
+                    if(response.result == "success") {
+                        location.reload();
+                    } else {
+                        alert("회원 정보 수정 실패!");
+                    }
+                }
+                , error:function() {
+                    alert("회원 정보 수정 에러!");
+                }
+            });
+        });
 
         $("#passwordConfirmInput").on("input", function() {
             let password = $("#passwordInput").val();

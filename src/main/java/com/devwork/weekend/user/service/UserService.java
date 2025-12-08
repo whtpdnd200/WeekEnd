@@ -1,5 +1,6 @@
 package com.devwork.weekend.user.service;
 
+import com.devwork.weekend.user.UserDTO.ModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.common.SHA256HashingEncoder;
 import com.devwork.weekend.user.repository.UserRepository;
@@ -19,7 +20,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public boolean create(UserJoinDTO dto) {
+    public boolean createUser(UserJoinDTO dto) {
 
         if(isDuplicateId(dto.getMemberId())) {
 
@@ -36,6 +37,25 @@ public class UserService {
                 .build();
 
         return userRepository.save(user) != null;
+    }
+
+    public User updateUser(ModifyDTO modifyDTO) {
+
+        Optional<User> optionalUser = userRepository.findById(modifyDTO.getId());
+        User user = null;
+        if(optionalUser.isPresent()) {
+            user = optionalUser.get();
+            String encodedPassword = SHA256HashingEncoder.encode(modifyDTO.getPassword());
+            user = user.toBuilder()
+                    .password(encodedPassword)
+                    .email(modifyDTO.getEmail())
+                    .name(modifyDTO.getName())
+                    .profileImage(modifyDTO.getProfileImage())
+                    .build();
+            user = userRepository.save(user);
+        }
+
+        return user;
     }
 
     public boolean isDuplicateId(String memberId) {

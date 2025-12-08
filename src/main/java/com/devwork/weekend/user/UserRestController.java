@@ -1,6 +1,7 @@
 package com.devwork.weekend.user;
 
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
+import com.devwork.weekend.user.UserDTO.ModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.user.domain.User;
 import com.devwork.weekend.user.service.UserService;
@@ -26,7 +27,7 @@ public class UserRestController {
 
         Map<String, String> resultMap = new HashMap<>();
 
-        if(userService.create(userJoinDTO)) {
+        if(userService.createUser(userJoinDTO)) {
             resultMap.put("result", "success");
             return resultMap;
         }
@@ -70,6 +71,30 @@ public class UserRestController {
 
         resultMap.put("result", "fail");
 
+        return resultMap;
+    }
+
+    @PutMapping("/modify-process")
+    public Map<String, String> modify(@RequestBody ModifyDTO modifyDTO
+                                      , HttpServletRequest request) {
+
+        Map<String, String> resultMap = new HashMap<>();
+        User user = userService.updateUser(modifyDTO);
+        if(user != null) {
+
+            resultMap.put("result", "success");
+
+            LoginUserDTO loginUserDTO = new LoginUserDTO(user.getId()
+                    , user.getMemberId()
+                    , user.getName()
+                    , user.getEmail()
+                    , user.getProfileImage());
+            HttpSession session = request.getSession();
+            session.setAttribute("userInfo", loginUserDTO);
+            return resultMap;
+        }
+
+        resultMap.put("result", "fail");
         return resultMap;
     }
 }
