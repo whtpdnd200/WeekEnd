@@ -55,7 +55,6 @@
             , data:{"memberId":id, "password":password}
             , success:function(response) {
                 if(response.result == "success") {
-                    alert("로그인 완료");
                     location.href = "/post/list";
                 } else {
                     alert("아이디 혹은 비밀번호 오류입니다!");

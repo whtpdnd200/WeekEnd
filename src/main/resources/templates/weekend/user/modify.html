@@ -20,13 +20,14 @@
                 <div id="passwordUnChecked" class="text-danger small d-none">비밀번호가 일치하지 않습니다!</div>
                 <div id="passwordChecked" class="text-success small d-none">비밀번호가 일치 합니다</div>
                 <input type="file" class="my-3">
-                <input type="text" class="form-control my-3" placeholder="이름" id="nameInput">
-                <input type="text" class="form-control my-3" placeholder="이메일" id="emailInput">
+                <input th:value="${session.userInfo.getName()}"  type="text" class="form-control my-3" placeholder="이름" id="nameInput">
+                <input th:value="${session.userInfo.getEmail()}" type="text" class="form-control my-3" placeholder="이메일" id="emailInput">
                 <button id="modifyBtn" class="btn btn-block btn-secondary my-3" type="button">정보 수정</button>
             </div>
         </section>
 
     <script layout:fragment="script">
+
 
 
         $("#passwordConfirmInput").on("input", function() {
@@ -40,10 +41,6 @@
                 $("#passwordChecked").removeClass("d-none");
             }
         });
-
-
-
-
     </script>
 </body>
 </html>
