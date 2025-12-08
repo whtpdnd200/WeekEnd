@@ -20,20 +20,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public boolean createUser(UserJoinDTO dto) {
+    public boolean createUser(UserJoinDTO userJoinDTO) {
 
-        if(isDuplicateId(dto.getMemberId())) {
+        if(isDuplicateId(userJoinDTO.getMemberId())) {
 
             return false;
         }
 
-        String encodedPassword = SHA256HashingEncoder.encode(dto.getPassword());
+        String encodedPassword = SHA256HashingEncoder.encode(userJoinDTO.getPassword());
 
         User user = User.builder()
-                .memberId(dto.getMemberId())
+                .memberId(userJoinDTO.getMemberId())
                 .password(encodedPassword)
-                .name(dto.getName())
-                .email(dto.getEmail())
+                .name(userJoinDTO.getName())
+                .email(userJoinDTO.getEmail())
                 .build();
 
         return userRepository.save(user) != null;
