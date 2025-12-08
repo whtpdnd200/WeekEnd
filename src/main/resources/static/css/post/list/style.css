@@ -1,0 +1,32 @@
+#wrap {
+    width: 600px;
+
+    margin: 0 auto;
+}
+
+header {
+    height: 100px;
+    background-color: #F4F4F4;
+}
+
+section {
+
+}
+
+section > .post-list {
+}
+
+.post-list > .post {
+    border: solid 1px lightgray;
+}
+
+.comments-top3 {
+    border: solid 1px lightgray;
+    height: 150px;
+}
+
+footer {
+    height: 70px;
+    border: solid 1px lightgray;
+    background-color: #F4F4F4;
+}

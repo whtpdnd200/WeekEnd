@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{weekend/layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/user/login/style.css">
+</head>
+<body>
+
+    <section layout:fragment="contents" class="contents d-flex justify-content-center">
+        <div class="user-box my-1 p-5">
+            <h1 class="text-center">로그인</h1>
+            <input type="text" placeholder="아이디" id="idInput" class="form-control my-3">
+            <input type="password" placeholder="비밀번호" id="passwordInput" class="form-control my-3">
+            <button type="button" id="loginBtn" class="btn btn-info btn-block my-3">로그인</button>
+            <div class="d-flex justify-content-between">
+                <div><a href="/user/join">회원가입</a></div>
+                <div><a href="#">아이디/비밀번호 찾기</a></div>
+            </div>
+        </div>
+    </section>
+
+<script layout:fragment="script">
+    $("#loginBtn").on("click", function() {
+        let id = $("#idInput").val();
+        let password = $("#passwordInput").val();
+
+        if(id == "") {
+            alert("아이디를 입력하세요");
+            $("#idInput").focus();
+            return;
+        }
+
+        if(id.includes("-") || id.includes("`") || id.includes("'")) {
+            alert("특수문자는 사용 할 수없습니다!");
+            $("#idInput").val("");
+            $("#idInput").focus();
+            return;
+        }
+
+        if(password == "") {
+            alert("비밀번호를 입력하세요");
+            $("#passwordInput").focus();
+            return;
+        }
+
+        $.ajax({
+            type:"post"
+            , url:"/user/login-process"
+            , data:{"memberId":id, "password":password}
+            , success:function(response) {
+                if(response.result == "success") {
+                    location.href = "/post/list";
+                } else {
+                    alert("아이디 혹은 비밀번호 오류입니다!");
+
+                }
+            }
+            ,error:function() {
+                alert("로그인 에러!");
+            }
+        });
+    });
+</script>
+</body>
+</html>

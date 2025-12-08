@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{weekend/layouts/default}">
 <head>
     <meta charset="UTF-8">
     <title>회원가입</title>
@@ -8,17 +11,15 @@
     <link rel="stylesheet" href="/css/user/join/style.css">
 </head>
 <body>
-    <div id="wrap" class="">
-        <header class="d-flex justify-content-center align-items-center border">
-            <h1>WeekEnd</h1>
-        </header>
-        <section class="contents d-flex justify-content-center">
+        <section layout:fragment="contents" class="contents d-flex justify-content-center">
             <div class="user-box my-1 p-5">
                 <h1 class="text-center">회원 가입</h1>
                 <div class="d-flex align-items-center">
                     <input type="text" class="form-control my-3 col-8" placeholder="아이디" id="idInput">
                     <button id="duplicateBtn" type="button" class="btn btn-secondary ml-3">중복확인</button>
                 </div>
+                <div id="idDuplicate" class="text-danger small d-none">중복된 아이디 입니다!</div>
+                <div id="idNotDuplicate" class="text-success small d-none">사용 할 수 있는 아이디 입니다</div>
                 <input type="password" class="form-control mt-1 mb-3" placeholder="비밀번호" id="passwordInput">
                 <input type="password" class="form-control my-3" placeholder="비밀번호 확인" id="passwordConfirmInput">
                 <div id="passwordUnChecked" class="text-danger small d-none">비밀번호가 일치하지 않습니다!</div>
@@ -27,16 +28,24 @@
                 <input type="text" class="form-control my-3" placeholder="이메일" id="emailInput">
                 <button type="button" class="btn btn-info btn-block my-3" id="joinBtn">회원가입</button>
                 <div class="d-flex justify-content-center">
-                    <a href="#" class="text-center">로그인</a>
+                    <a href="/user/login" class="text-center">로그인</a>
                 </div>
             </div>
         </section>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script>
+    <script layout:fragment="script">
 
         var isDuplicate = true;
+
+        var isDuplicateChecked = false;
+
+        $("#idInput").on("input", function() {
+            isDuplicate = true;
+            isDuplicateChecked = false;
+            $("#idDuplicate").addClass("d-none");
+            $("#idNotDuplicate").addClass("d-none");
+        });
+
 
         $("#passwordConfirmInput").on("input", function() {
             let password = $("#passwordInput").val();
@@ -52,7 +61,6 @@
 
         $("#duplicateBtn").on("click", function() {
             let id = $("#idInput").val();
-
             if(id == "") {
                 alert("아이디를 입력하세요");
                 $("#idInput").focus();
@@ -69,15 +77,16 @@
             $.ajax({
                 type:"get"
                 , url:"/user/duplicate-check"
-                , data:{"id":id}
+                , data:{"memberId":id}
                 , success:function(response) {
+                    isDuplicateChecked = true;
+                    isDuplicate = response.isDuplicate;
                     if(response.isDuplicate) {
-                        alert("중복 된 아이디 입니다 다시 입력 해주세요!");
-                        $("#idInput").val("");
-                        $("#idInput").focus();
+                        $("#idDuplicate").removeClass("d-none");
+                        $("#idNotDuplicate").addClass("d-none");
                     } else {
-                        isDuplicate = false;
-                        alert("사용 가능한 아이디 입니다");
+                        $("#idDuplicate").addClass("d-none");
+                        $("#idNotDuplicate").removeClass("d-none");
                     }
                 }
                 , error:function() {
@@ -108,6 +117,17 @@
                 return;
             }
 
+            if(!isDuplicateChecked) {
+                alert("아이디 중복 검사를 진행 해주세요!");
+                return;
+            }
+
+            if(isDuplicate) {
+                alert("아이디가 중복 되었습니다! 다시 입력해주세요!");
+                $("#idInput").focus();
+                return;
+            }
+
             if(password == "") {
                 alert("비밀번호를 입력하세요");
                 $("#passwordInput").focus();
@@ -131,10 +151,6 @@
                 return;
             }
 
-            if(isDuplicate) {
-                alert("아이디 중복검사를 진행 해주세요!");
-                return;
-            }
             $.ajax({
                 type:"post"
                 , url:"/user/join-process"

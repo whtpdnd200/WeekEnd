@@ -2,6 +2,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+    open-in-view: false
   application:
     name: WeekEnd
   config:

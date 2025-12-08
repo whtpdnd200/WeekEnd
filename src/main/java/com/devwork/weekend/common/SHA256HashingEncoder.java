@@ -3,12 +3,12 @@ package com.devwork.weekend.common;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MD5HashingEncoder {
+public class SHA256HashingEncoder {
 
     public static String encode(String message) {
         try {
             // getInstance로 생생되는 객체는 싱글톤 객체
-            MessageDigest messageDigest = MessageDigest.getInstance("md5");
+            MessageDigest messageDigest = MessageDigest.getInstance("sha256");
 
             byte[] bytes = message.getBytes();
 
