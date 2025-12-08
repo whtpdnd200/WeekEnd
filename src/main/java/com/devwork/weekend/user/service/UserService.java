@@ -22,16 +22,19 @@ public class UserService {
     public boolean create(UserJoinDTO dto) {
 
         if(isDuplicateId(dto.getMemberId())) {
+
             return false;
         }
 
         String encodedPassword = SHA256HashingEncoder.encode(dto.getPassword());
+
         User user = User.builder()
                 .memberId(dto.getMemberId())
                 .password(encodedPassword)
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .build();
+
         return userRepository.save(user) != null;
     }
 
@@ -43,11 +46,14 @@ public class UserService {
     public User userLogin(String memberId, String password) {
 
         String encodedPassword = SHA256HashingEncoder.encode(password);
+
         Optional<User> optionalUser = userRepository.findByMemberIdAndPassword(memberId, encodedPassword);
+
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
             return user;
         }
+
         return null;
     }
 }
