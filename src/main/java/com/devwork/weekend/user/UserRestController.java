@@ -5,7 +5,6 @@ import com.devwork.weekend.user.UserDTO.ModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.user.domain.User;
 import com.devwork.weekend.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,7 +48,7 @@ public class UserRestController {
     @PostMapping("/login-process")
     public Map<String, String> userLogin(@RequestParam String memberId
                                         , @RequestParam String password
-                                        , HttpServletRequest request) {
+                                        , HttpSession session) {
 
         Map<String, String> resultMap = new HashMap<>();
 
@@ -64,7 +63,6 @@ public class UserRestController {
                     , user.getProfileImage());
 
             resultMap.put("result", "success");
-            HttpSession session = request.getSession();
             session.setAttribute("userInfo", loginUserDTO);
             return resultMap;
         }
@@ -76,20 +74,21 @@ public class UserRestController {
 
     @PutMapping("/modify-process")
     public Map<String, String> modify(@RequestBody ModifyDTO modifyDTO
-                                      , HttpServletRequest request) {
+                                      , HttpSession session) {
 
         Map<String, String> resultMap = new HashMap<>();
-        User user = userService.updateUser(modifyDTO);
+        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("userInfo");
+        long id = loginUserDTO.getId();
+        User user = userService.updateUser(modifyDTO, id);
         if(user != null) {
 
             resultMap.put("result", "success");
 
-            LoginUserDTO loginUserDTO = new LoginUserDTO(user.getId()
+            loginUserDTO = new LoginUserDTO(user.getId()
                     , user.getMemberId()
                     , user.getName()
                     , user.getEmail()
                     , user.getProfileImage());
-            HttpSession session = request.getSession();
             session.setAttribute("userInfo", loginUserDTO);
             return resultMap;
         }

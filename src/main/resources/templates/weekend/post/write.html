@@ -31,8 +31,8 @@
 
             $.ajax({
                 type:"post"
-                , url:"post/write-process"
-                , data:{"contents" : contents, "image" : image}
+                , url:"/post/write-process"
+                , data:{"contents" : contents, "imagePath" : image}
                 ,success:function(response) {
                     if(response.result == "success") {
                         location.href = "/post/list";

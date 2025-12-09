@@ -1,15 +1,14 @@
 package com.devwork.weekend.post;
 
+import com.devwork.weekend.post.postDTO.PostListDTO;
 import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,11 +24,13 @@ public class PostRestController {
 
     @PostMapping("/write-process")
     public Map<String, String> write(@ModelAttribute WriteDTO writeDTO
-                                        , HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        
+                                    , HttpSession session) {
+
         Map<String, String> resultMap = new HashMap<>();
-        if(postService.createPost(writeDTO)) {
+
+        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("userInfo");
+        long id = loginUserDTO.getId();
+        if(postService.createPost(writeDTO, id)) {
             resultMap.put("result", "success");
             return resultMap;
         }
@@ -37,5 +38,11 @@ public class PostRestController {
         resultMap.put("result", "fail");
 
         return resultMap;
+    }
+
+    @GetMapping("/list-process")
+    public List<PostListDTO> getPostList() {
+
+        return postService.getPostList();
     }
 }

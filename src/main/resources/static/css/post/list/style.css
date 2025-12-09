@@ -30,15 +30,16 @@ section > .post-list {
 }
 
 .modal-content {
-    height: 420px;
+    height: 650px;
+    max-height: 700px;
 }
 
 .modal-dialog {
     max-width: 587px;
 }
 
-.modal-dialog-scrollable {
-    max-height: 350px;
+.modal-body {
+    max-height: 650px;
 }
 
 footer {

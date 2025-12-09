@@ -39,9 +39,9 @@ public class UserService {
         return userRepository.save(user) != null;
     }
 
-    public User updateUser(ModifyDTO modifyDTO) {
+    public User updateUser(ModifyDTO modifyDTO, long id) {
 
-        Optional<User> optionalUser = userRepository.findById(modifyDTO.getId());
+        Optional<User> optionalUser = userRepository.findById(id);
         User user = null;
         if(optionalUser.isPresent()) {
             user = optionalUser.get();
