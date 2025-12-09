@@ -52,15 +52,9 @@ public class UserRestController {
 
         Map<String, String> resultMap = new HashMap<>();
 
-        User user = userService.userLogin(memberId, password);
+        LoginUserDTO loginUserDTO = userService.userLogin(memberId, password);
 
-        if(user != null) {
-
-            LoginUserDTO loginUserDTO = new LoginUserDTO(user.getId()
-                    , user.getMemberId()
-                    , user.getName()
-                    , user.getEmail()
-                    , user.getProfileImage());
+        if(loginUserDTO != null) {
 
             resultMap.put("result", "success");
             session.setAttribute("userInfo", loginUserDTO);

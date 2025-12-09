@@ -11,9 +11,8 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Query(value = "SELECT p.id, p.user_id, u.name, p.contents, p.image_path, p.created_at, p.created_at\n" +
-            "FROM `post` AS p\n" +
-            "JOIN `user` AS u\n" +
-            "ON p.user_id = u.id", nativeQuery = true)
-    public List<PostListDTO> findAllPost();
+    @Query(value = "SELECT p FROM Post p\n " +
+            "JOIN FETCH p.user\n " +
+            "ORDER BY p.createdAt DESC")
+    public List<Post> findAllPost();
 }

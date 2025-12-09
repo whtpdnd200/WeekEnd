@@ -1,11 +1,14 @@
 package com.devwork.weekend.user.domain;
 
+import com.devwork.weekend.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor // 매개 변수 없는 기본 생성자 어노테이션
 @AllArgsConstructor // 모든 멤버 변수를 채우고 생성하는 생성자 어노테이션
@@ -29,5 +32,8 @@ public class User {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user")
+    private List<Post> posts = new ArrayList<>();
 
 }

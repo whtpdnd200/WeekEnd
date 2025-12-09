@@ -1,5 +1,6 @@
 package com.devwork.weekend.post;
 
+import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.post.postDTO.PostListDTO;
 import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.service.PostService;
@@ -23,7 +24,7 @@ public class PostRestController {
     }
 
     @PostMapping("/write-process")
-    public Map<String, String> write(@ModelAttribute WriteDTO writeDTO
+    public Map<String, String> writePost(@ModelAttribute WriteDTO writeDTO
                                     , HttpSession session) {
 
         Map<String, String> resultMap = new HashMap<>();

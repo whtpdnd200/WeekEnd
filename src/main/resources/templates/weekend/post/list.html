@@ -18,8 +18,11 @@
         <div class="post-list my-1">
             <div th:each="post : ${postList}" class="post m-2">
                 <div th:text="${post.name}" class="pl-5 my-1">회원 이름</div>
-                <div class="d-flex justify-content-center my-1">
+                <div th:if="${post.imagePath != ''}" class="d-flex justify-content-center my-1">
                     <img width="450px" height="300px" src="https://cdn.pixabay.com/photo/2023/12/19/21/52/trees-8458466_1280.jpg">
+                </div>
+                <div class="my-3 pl-5">
+                    <span th:text="${post.contents}"></span>
                 </div>
                 <div class="d-flex justify-content-center my-3">
                     <div class="w-75 d-flex justify-content-between">
@@ -31,10 +34,10 @@
                             <a data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
                             32
                         </div>
-                        <div >
+                        <div th:if="${post.userId == session.userInfo.getId()}">
                             <i class="bi bi-pencil fs-5"></i>
                         </div>
-                        <div>
+                        <div th:if="${post.userId == session.userInfo.getId()}">
                             <i class="bi bi-trash"></i>
                         </div>
                     </div>

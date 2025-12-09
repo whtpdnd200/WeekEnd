@@ -26,11 +26,11 @@ section > .post-list {
 }
 
 .modal {
-    top: 170px;
+    top: 100px;
 }
 
 .modal-content {
-    height: 650px;
+    height: 550px;
     max-height: 700px;
 }
 
@@ -39,7 +39,7 @@ section > .post-list {
 }
 
 .modal-body {
-    max-height: 650px;
+    max-height: 550px;
 }
 
 footer {

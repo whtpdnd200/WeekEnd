@@ -16,8 +16,9 @@ public class PostController {
     }
 
     @GetMapping("/list")
-    public String list() {
+    public String list(Model model) {
 
+        model.addAttribute("postList", postRestController.getPostList());
         return "weekend/post/list";
     }
 

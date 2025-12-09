@@ -1,5 +1,6 @@
 package com.devwork.weekend.user.service;
 
+import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import com.devwork.weekend.user.UserDTO.ModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.common.SHA256HashingEncoder;
@@ -63,15 +64,22 @@ public class UserService {
         return userRepository.existsByMemberId(memberId);
     }
 
-    public User userLogin(String memberId, String password) {
+    public LoginUserDTO userLogin(String memberId, String password) {
 
         String encodedPassword = SHA256HashingEncoder.encode(password);
 
         Optional<User> optionalUser = userRepository.findByMemberIdAndPassword(memberId, encodedPassword);
-
+        LoginUserDTO loginUserDTO = null;
         if(optionalUser.isPresent()) {
+
             User user = optionalUser.get();
-            return user;
+            loginUserDTO = new LoginUserDTO(user.getId()
+                    , user.getMemberId()
+                    , user.getName()
+                    , user.getEmail()
+                    , user.getProfileImage());
+
+            return loginUserDTO;
         }
 
         return null;
