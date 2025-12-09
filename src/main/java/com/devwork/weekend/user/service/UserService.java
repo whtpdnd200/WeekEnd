@@ -40,10 +40,11 @@ public class UserService {
         return userRepository.save(user) != null;
     }
 
-    public User updateUser(UserModifyDTO modifyDTO, long id) {
+    public LoginUserDTO updateUser(UserModifyDTO modifyDTO, long id) {
 
         Optional<User> optionalUser = userRepository.findById(id);
         User user = null;
+        LoginUserDTO loginUserDTO = null;
         if(optionalUser.isPresent()) {
             user = optionalUser.get();
             String encodedPassword = SHA256HashingEncoder.encode(modifyDTO.getPassword());
@@ -54,9 +55,17 @@ public class UserService {
                     .profileImage(modifyDTO.getProfileImage())
                     .build();
             user = userRepository.save(user);
-        }
 
-        return user;
+        }
+        if(user != null) {
+
+            loginUserDTO = new LoginUserDTO(user.getId()
+                    , user.getMemberId()
+                    , user.getName()
+                    , user.getEmail()
+                    , user.getProfileImage());
+        }
+        return loginUserDTO;
     }
 
     public boolean isDuplicateId(String memberId) {

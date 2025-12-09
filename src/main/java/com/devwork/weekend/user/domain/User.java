@@ -1,5 +1,6 @@
 package com.devwork.weekend.user.domain;
 
+import com.devwork.weekend.comment.domain.Comment;
 import com.devwork.weekend.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,5 +36,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> commentList = new ArrayList<>();
 
 }

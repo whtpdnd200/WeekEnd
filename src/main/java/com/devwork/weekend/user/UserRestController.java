@@ -71,19 +71,14 @@ public class UserRestController {
                                       , HttpSession session) {
 
         Map<String, String> resultMap = new HashMap<>();
-        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("userInfo");
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
         long id = loginUserDTO.getId();
-        User user = userService.updateUser(modifyDTO, id);
+        LoginUserDTO user = userService.updateUser(modifyDTO, id);
         if(user != null) {
 
             resultMap.put("result", "success");
 
-            loginUserDTO = new LoginUserDTO(user.getId()
-                    , user.getMemberId()
-                    , user.getName()
-                    , user.getEmail()
-                    , user.getProfileImage());
-            session.setAttribute("userInfo", loginUserDTO);
+            session.setAttribute("userInfo", user);
             return resultMap;
         }
 

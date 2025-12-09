@@ -1,6 +1,6 @@
-package com.devwork.weekend.post.domain;
+package com.devwork.weekend.comment.domain;
 
-import com.devwork.weekend.comment.domain.Comment;
+import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,34 +11,32 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Builder(toBuilder = true)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "`comment`")
 @Entity
-@Table(name = "`post`")
-public class Post {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String contents;
-    private String imagePath;
+    private String comment;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "post")
-    private List<Comment> commentList = new ArrayList<>();
 }

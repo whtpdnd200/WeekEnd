@@ -38,7 +38,7 @@
                                     <div class="ml-2">132</div>
                                 </div>
                                 <div class="d-flex align-items-center">
-                                    <a data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
+                                    <a th:data-id="${post.id}" class="commentList" data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
                                     <div class="ml-2">32</div>
                                 </div>
                             </div>
@@ -89,6 +89,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">댓글</h5>
+                        <input type="hidden" value="" id="postId">
                         <button id="closeBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -124,7 +125,7 @@
                     </div>
                     <div class="d-flex p-3 align-items-end">
                         <input type="text" class="form-control col-9" id="commentInput">
-                        <button type="button" class="btn btn-info col-3 ml-2">입력</button>
+                        <button id="commentBtn" type="button" class="btn btn-info col-3 ml-2">입력</button>
                     </div>
                 </div>
             </div>
@@ -151,7 +152,33 @@
 
         var myModal = new bootstrap.Modal($("#myModal"));
 
+        $("#commentBtn").on("click", function() {
+            let id = $("#postId").val();
+            let comment = $("#commentInput").val();
 
+            if(comment == "") {
+                alert("댓글을 입력 해주세요!");
+                $("#commentInput").focus();
+                return;
+            }
+
+            $.ajax({
+                type:"post"
+                , url:"/post/comment/write-process"
+                , data:{"postId" : id, "comment" : comment}
+                , success:function(response) {
+                    if(response.result == "success") {
+                        location.reload();
+                    } else {
+                        alert("댓글 작성 실패!");
+                    }
+                }
+                , error:function() {
+                    alert("댓글 작성 에러!");
+                }
+            });
+
+        });
 
         $(".postRemove").on("click", function() {
             let id = $(this).data("id");
@@ -177,7 +204,9 @@
             myModal.hide();
         });
 
-        $("#commentList").on("click", function() {
+        $(".commentList").on("click", function() {
+            let id = $(this).data("id");
+            $("#postId").val(id);
             myModal.show();
         });
     </script>
