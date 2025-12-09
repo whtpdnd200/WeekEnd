@@ -25,6 +25,22 @@ section > .post-list {
     height: 150px;
 }
 
+.modal {
+    top: 170px;
+}
+
+.modal-content {
+    height: 420px;
+}
+
+.modal-dialog {
+    max-width: 587px;
+}
+
+.modal-dialog-scrollable {
+    max-height: 350px;
+}
+
 footer {
     height: 70px;
     border: solid 1px lightgray;

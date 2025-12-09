@@ -13,4 +13,10 @@ public class PostController {
 
         return "weekend/post/list";
     }
+
+    @GetMapping("/write")
+    public String write() {
+
+        return "weekend/post/write";
+    }
 }

@@ -1,0 +1,23 @@
+#wrap {
+    width: 600px;
+
+    margin: 0 auto;
+}
+
+header {
+    height: 100px;
+    background-color: #F4F4F4;
+}
+
+section {
+
+}
+
+#contentsInput {
+    resize: none;
+}
+footer {
+    height: 70px;
+    border: solid 1px lightgray;
+    background-color: #F4F4F4;
+}

@@ -24,7 +24,7 @@
                 <div class="d-flex justify-content-center my-3">
                     <div class="w-75 d-flex justify-content-between">
                         <div>
-                            <img width="24px" height="24px" src="/iconImage/like.png" alt="좋아요 아이콘">
+                            <img width="28px" height="24px" src="/iconImage/like.png" alt="좋아요 아이콘">
                             132
                         </div>
                         <div>
@@ -75,7 +75,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">댓글</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button id="closeBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -108,9 +108,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                    <div class="d-flex p-3">
+                        <input type="text" class="form-control col-9" id="commentInput">
+                        <button type="button" class="btn btn-info col-3 ml-2">입력</button>
                     </div>
                 </div>
             </div>
@@ -119,23 +119,27 @@
     <footer layout:fragment="footer" class="d-flex align-items-center justify-content-center">
         <div class="w-75 d-flex justify-content-between align-items-center">
             <div>
-                <a href="#"><img src="/iconImage/postAdd.png"></a>
+                <a href="/post/write"><img width="32px" height="32px" src="/iconImage/postAdd.png"></a>
             </div>
             <div>
-                <a href="#"><img src="/iconImage/search.png"></a>
+                <a href="#"><img width="32px" height="32px" src="/iconImage/search.png"></a>
             </div>
             <div>
-                <a href="#"><img src="/iconImage/likeBlackFull.png"></a>
+                <a href="#"><img width="36px" height="32px" src="/iconImage/likeBlackFull.png"></a>
             </div>
             <div>
-                <a href="#"><img src="/iconImage/person.png"></a>
+                <a href="#"><img width="32px" height="32px" src="/iconImage/person.png"></a>
             </div>
         </div>
     </footer>
     <script layout:fragment="modalScript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script layout:fragment="script">
 
-        var myModal = new bootstrap.Modal(document.getElementById('myModal'));
+        var myModal = new bootstrap.Modal($("#myModal"));
+
+        $("#closeBtn").on("click", function() {
+            myModal.hide();
+        });
 
         $("#commentList").on("click", function() {
             myModal.show();
