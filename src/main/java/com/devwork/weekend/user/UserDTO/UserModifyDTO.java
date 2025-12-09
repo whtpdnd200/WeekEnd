@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ModifyDTO {
+public class UserModifyDTO {
 
     private long id;
     private String name;

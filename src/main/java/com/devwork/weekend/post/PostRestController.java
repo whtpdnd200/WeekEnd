@@ -2,6 +2,7 @@ package com.devwork.weekend.post;
 
 import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.post.postDTO.PostListDTO;
+import com.devwork.weekend.post.postDTO.PostModifyDTO;
 import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
@@ -45,5 +46,32 @@ public class PostRestController {
     public List<PostListDTO> getPostList() {
 
         return postService.getPostList();
+    }
+
+    @DeleteMapping("/remove-process")
+    public Map<String, String> removePost(@RequestParam long postId) {
+        Map<String, String> resultMap = new HashMap<>();
+
+        if(postService.deletePost(postId)) {
+            resultMap.put("result", "success");
+            return resultMap;
+        }
+
+        resultMap.put("result", "fail");
+        return resultMap;
+    }
+
+    @PutMapping("/modify-process")
+    public Map<String, String> modifyPost(@RequestBody PostModifyDTO postModifyDTO) {
+
+        Map<String, String> resultMap = new HashMap<>();
+
+        if(postService.updatePost(postModifyDTO)) {
+            resultMap.put("result", "success");
+            return resultMap;
+        }
+
+        resultMap.put("result", "fail");
+        return resultMap;
     }
 }

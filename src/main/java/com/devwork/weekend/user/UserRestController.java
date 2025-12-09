@@ -1,7 +1,7 @@
 package com.devwork.weekend.user;
 
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
-import com.devwork.weekend.user.UserDTO.ModifyDTO;
+import com.devwork.weekend.user.UserDTO.UserModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.user.domain.User;
 import com.devwork.weekend.user.service.UserService;
@@ -67,7 +67,7 @@ public class UserRestController {
     }
 
     @PutMapping("/modify-process")
-    public Map<String, String> modify(@RequestBody ModifyDTO modifyDTO
+    public Map<String, String> modify(@RequestBody UserModifyDTO modifyDTO
                                       , HttpSession session) {
 
         Map<String, String> resultMap = new HashMap<>();

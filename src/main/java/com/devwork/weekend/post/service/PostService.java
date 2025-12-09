@@ -1,11 +1,12 @@
 package com.devwork.weekend.post.service;
 
 import com.devwork.weekend.post.domain.Post;
+import com.devwork.weekend.post.postDTO.PostDTO;
 import com.devwork.weekend.post.postDTO.PostListDTO;
+import com.devwork.weekend.post.postDTO.PostModifyDTO;
 import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.repository.PostRepository;
 import com.devwork.weekend.user.domain.User;
-import com.devwork.weekend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,22 +17,17 @@ import java.util.Optional;
 public class PostService {
 
     private PostRepository postRepository;
-    private UserRepository userRepository;
 
-    public PostService(PostRepository postRepository
-                      , UserRepository userRepository) {
+    public PostService(PostRepository postRepository) {
 
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
     }
 
     public boolean createPost(WriteDTO writeDTO, long id) {
 
-        Optional<User> optionalUser = userRepository.findById(id);
-        User user = null;
-        if(optionalUser.isPresent()) {
-            user = optionalUser.get();
-        }
+        User user = User.builder()
+                        .id(id)
+                        .build();
 
         Post post = Post.builder()
                     .user(user)
@@ -58,5 +54,50 @@ public class PostService {
             postList.add(postListDTO);
         }
         return postList;
+    }
+
+    public boolean updatePost(PostModifyDTO postModifyDTO) {
+
+        Optional<Post> optionalPost = postRepository.findById(postModifyDTO.getId());
+
+        Post post = null;
+        if(optionalPost.isPresent()) {
+            post = optionalPost.get();
+
+            post = post.toBuilder()
+                    .contents(postModifyDTO.getContents())
+                    .imagePath(postModifyDTO.getImagePath())
+                    .build();
+
+            post = postRepository.save(post);
+        }
+        return post != null;
+    }
+
+    public boolean deletePost(long id) {
+
+        Optional<Post> optionalPost = postRepository.findById(id);
+        if(optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            postRepository.delete(post);
+            return true;
+        }
+
+        return false;
+    }
+
+    public PostDTO getPost(long id) {
+
+        Optional<Post> optionalPost = postRepository.findById(id);
+        PostDTO postDTO = new PostDTO();
+
+        if(optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+            postDTO.setId(post.getId());
+            postDTO.setUserId(post.getUser().getId());
+            postDTO.setContents(post.getContents());
+            postDTO.setImagePath(post.getImagePath());
+        }
+        return postDTO;
     }
 }

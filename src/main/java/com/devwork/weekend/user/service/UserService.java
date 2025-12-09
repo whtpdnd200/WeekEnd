@@ -1,7 +1,7 @@
 package com.devwork.weekend.user.service;
 
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
-import com.devwork.weekend.user.UserDTO.ModifyDTO;
+import com.devwork.weekend.user.UserDTO.UserModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.common.SHA256HashingEncoder;
 import com.devwork.weekend.user.repository.UserRepository;
@@ -40,7 +40,7 @@ public class UserService {
         return userRepository.save(user) != null;
     }
 
-    public User updateUser(ModifyDTO modifyDTO, long id) {
+    public User updateUser(UserModifyDTO modifyDTO, long id) {
 
         Optional<User> optionalUser = userRepository.findById(id);
         User user = null;

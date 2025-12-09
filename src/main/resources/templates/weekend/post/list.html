@@ -19,32 +19,36 @@
             <div th:each="post : ${postList}" class="post m-2">
                 <div class="post-info">
                     <div class="d-flex pl-3 align-items-center">
-                        <div th:if="${post.profileImage == ''}"><i class="bi bi-person-circle"></i></div>
-                        <div th:unless="${post.profileImage == ''}"><img src=""></div>
+                        <div th:if="${post.profileImage == '' || post.profileImage == null}"><i class="bi bi-person-circle"></i></div>
+                        <div th:unless="${post.profileImage == '' || post.profileImage == null}"><img src=""></div>
                         <div th:text="${post.name}" class="pl-1 my-1">회원 이름</div>
                     </div>
 
                     <div th:if="${post.imagePath != ''}" class="d-flex justify-content-center my-1">
-                        <img width="450px" height="300px" src="https://cdn.pixabay.com/photo/2023/12/19/21/52/trees-8458466_1280.jpg">
+                        <img class="postImage" width="450px" height="300px" src="https://cdn.pixabay.com/photo/2023/12/19/21/52/trees-8458466_1280.jpg">
                     </div>
                     <div class="my-3 pl-5">
-                        <div th:text="${post.contents}" class=""></div>
+                        <div th:text="${post.contents}" class="postContents"></div>
                     </div>
                     <div class="d-flex justify-content-center my-3">
                         <div class="w-75 d-flex justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <i class="bi bi-heart text-danger"></i>
-                                <div class="ml-2">132</div>
+                            <div class="d-flex justify-content-between w-50 mr-5">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-heart text-danger"></i>
+                                    <div class="ml-2">132</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <a data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
+                                    <div class="ml-2">32</div>
+                                </div>
                             </div>
-                            <div class="d-flex align-items-center">
-                                <a data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
-                                <div class="ml-2">32</div>
-                            </div>
-                            <div th:if="${post.userId == session.userInfo.getId()}">
-                                <i class="bi bi-pencil fs-5"></i>
-                            </div>
-                            <div th:if="${post.userId == session.userInfo.getId()}">
-                                <i class="bi bi-trash"></i>
+                            <div class="d-flex justify-content-between w-50 ml-5">
+                                <div th:if="${post.userId == session.userInfo.getId()}">
+                                    <a th:href="@{/post/modify(postId=${post.id})}" class="text-dark"><i class="bi bi-pencil fs-5 postModify"></i></a>
+                                </div>
+                                <div th:if="${post.userId == session.userInfo.getId()}">
+                                    <i th:data-id="${post.id}" class="bi bi-trash postRemove"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -146,6 +150,28 @@
     <script layout:fragment="script">
 
         var myModal = new bootstrap.Modal($("#myModal"));
+
+
+
+        $(".postRemove").on("click", function() {
+            let id = $(this).data("id");
+
+            $.ajax({
+                type:"delete"
+                , url:"/post/remove-process"
+                , data:{"postId" : id}
+                , success:function(response) {
+                    if(response.result == "success") {
+                        location.reload();
+                    } else {
+                        alert("게시글 삭제 실패!");
+                    }
+                }
+                , error:function() {
+                    alert("게시글 삭제 에러!");
+                }
+            });
+        });
 
         $("#closeBtn").on("click", function() {
             myModal.hide();

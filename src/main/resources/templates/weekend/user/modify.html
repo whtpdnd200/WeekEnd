@@ -15,7 +15,6 @@
         <section layout:fragment="contents" class="contents d-flex justify-content-center">
             <div class="user-box my-1 p-5">
                 <h1 class="text-center">회원정보 수정</h1>
-                <input id="userId" type="hidden" th:value="${session.userInfo.getId()}">
                 <input type="password" class="form-control my-3" placeholder="비밀번호" id="passwordInput">
                 <input type="password" class="form-control my-3" placeholder="비밀번호 확인" id="passwordConfirmInput">
                 <div id="passwordUnChecked" class="text-danger small d-none">비밀번호가 일치하지 않습니다!</div>
@@ -31,7 +30,6 @@
 
         $("#modifyBtn").on("click", function (){
 
-            let id = $("#userId").val();
             let password = $("#passwordInput").val();
             let passwordConfirm = $("#passwordConfirmInput").val();
             let name = $("#nameInput").val();
@@ -67,8 +65,7 @@
                 , contentType:"application/json"
                 , url:"/user/modify-process"
                 , data:JSON.stringify({
-                    "id" : id
-                    , "password" : password
+                    "password" : password
                     , "email" : email
                     , "name" : name
                     , "profileImage":profileImage
