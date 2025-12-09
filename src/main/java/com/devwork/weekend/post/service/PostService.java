@@ -50,6 +50,7 @@ public class PostService {
             PostListDTO postListDTO = new PostListDTO(post.getId()
                                                     , post.getUser().getId()
                                                     , post.getUser().getName()
+                                                    , post.getUser().getProfileImage()
                                                     , post.getContents()
                                                     , post.getImagePath()
                                                     , post.getCreatedAt()

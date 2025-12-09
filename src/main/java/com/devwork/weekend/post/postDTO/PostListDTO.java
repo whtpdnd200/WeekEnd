@@ -13,6 +13,7 @@ public class PostListDTO {
     private long id;
     private long userId;
     private String name;
+    private String profileImage;
     private String contents;
     private String imagePath;
     private LocalDateTime createdAt;

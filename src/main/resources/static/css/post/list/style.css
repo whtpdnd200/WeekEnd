@@ -20,9 +20,13 @@ section > .post-list {
     border: solid 1px lightgray;
 }
 
+.post-info {
+    border-bottom: solid 1px lightgray;
+}
+
 .comments-top3 {
     border: solid 1px lightgray;
-    height: 150px;
+
 }
 
 .modal {
