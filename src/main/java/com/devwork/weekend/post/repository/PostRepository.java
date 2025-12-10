@@ -12,9 +12,12 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Query(value = "SELECT p FROM Post p\n " +
-            "JOIN FETCH p.user\n " +
-            "ORDER BY p.createdAt DESC")
+    @Query(""" 
+            SELECT p FROM Post p
+            JOIN FETCH p.user
+            LEFT JOIN FETCH p.commentList
+            ORDER BY p.createdAt DESC 
+            """)
     public List<Post> findAllPost();
 
 }

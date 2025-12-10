@@ -1,5 +1,7 @@
 package com.devwork.weekend.post.service;
 
+import com.devwork.weekend.comment.commentDTO.CommentListDTO;
+import com.devwork.weekend.comment.domain.Comment;
 import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.post.postDTO.PostDTO;
 import com.devwork.weekend.post.postDTO.PostListDTO;
@@ -42,13 +44,25 @@ public class PostService {
 
         List<Post> posts = postRepository.findAllPost();
         List<PostListDTO> postList = new ArrayList<>();
+
         for(Post post : posts) {
+            List<CommentListDTO> comments = new ArrayList<>();
+            for(Comment comment : post.getCommentList()) {
+
+                CommentListDTO commentListDTO = new CommentListDTO();
+                commentListDTO.setId(comment.getId());
+                commentListDTO.setPostId(comment.getPost().getId());
+                commentListDTO.setUserId(comment.getUser().getId());
+                commentListDTO.setComment(comment.getComment());
+                comments.add(commentListDTO);
+            }
             PostListDTO postListDTO = new PostListDTO(post.getId()
                                                     , post.getUser().getId()
                                                     , post.getUser().getName()
                                                     , post.getUser().getProfileImage()
                                                     , post.getContents()
                                                     , post.getImagePath()
+                                                    , comments
                                                     , post.getCreatedAt()
                                                     , post.getUpdatedAt());
             postList.add(postListDTO);

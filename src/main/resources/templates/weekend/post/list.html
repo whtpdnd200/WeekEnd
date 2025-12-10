@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a th:data-id="${post.id}" class="commentList" data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
-                                    <div class="ml-2">32</div>
+                                    <div th:text="${post.getComments().size()}" class="ml-2">32</div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between w-50 ml-5">
@@ -55,24 +55,6 @@
                 </div>
                 <div class="comments-top3 m-3 p-3">
                     <div class="comment d-flex my-1 align-items-center">
-                        <div>
-                            <i class="bi bi-person-circle"></i>
-                        </div>
-                        <div class="mx-2">유저 이름</div>
-                        <div class="ml-5">
-                            댓글 내용
-                        </div>
-                    </div>
-                    <div class="comment d-flex my-3 align-items-center">
-                        <div>
-                            <i class="bi bi-person-circle"></i>
-                        </div>
-                        <div class="mx-2">유저 이름</div>
-                        <div class="ml-5">
-                            댓글 내용
-                        </div>
-                    </div>
-                    <div class="comment d-flex my-3 align-items-center">
                         <div>
                             <i class="bi bi-person-circle"></i>
                         </div>
