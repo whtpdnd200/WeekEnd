@@ -80,30 +80,12 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="comment d-flex my-3">
-                            <div>
+                        <div class="modalComment d-flex my-3 align-items-center">
+                            <div class="userProfileImage">
                                 <i class="bi bi-person-circle"></i>
                             </div>
-                            <div class="mx-2">유저 이름</div>
-                            <div class="ml-5">
-                                댓글 내용
-                            </div>
-                        </div>
-                        <div class="comment d-flex my-3 align-items-center">
-                            <div>
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                            <div class="mx-2">유저 이름</div>
-                            <div class="ml-5">
-                                댓글 내용
-                            </div>
-                        </div>
-                        <div class="comment d-flex my-3">
-                            <div>
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                            <div class="mx-2">유저 이름</div>
-                            <div class="ml-5">
+                            <div class="mx-2 userName">유저 이름</div>
+                            <div class="ml-5 userComment">
                                 댓글 내용
                             </div>
                         </div>
@@ -192,6 +174,21 @@
         $(".commentList").on("click", function() {
             let id = $(this).data("id");
             $("#postId").val(id);
+            $.ajax({
+                type:"get"
+                , url:"/post/comment/comment-process"
+                , data:{"postId":id}
+                , success:function(response) {
+                    if(response.result == "success") {
+
+                    } else {
+                        alert("댓글 불러오기 실패!");
+                    }
+                }
+                , error:function() {
+                    alert("댓글 불러오기 에러!");
+                }
+            });
             myModal.show();
         });
     </script>

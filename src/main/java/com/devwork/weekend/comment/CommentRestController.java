@@ -1,15 +1,16 @@
 package com.devwork.weekend.comment;
 
+import com.devwork.weekend.comment.commentDTO.CommentListDTO;
 import com.devwork.weekend.comment.commentDTO.WriteCommentDTO;
 import com.devwork.weekend.comment.service.CommentService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.Getter;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,6 +34,20 @@ public class CommentRestController {
         if(commentService.createComment(writeCommentDTO, id)) {
             resultMap.put("result", "success");
             return resultMap;
+        }
+        resultMap.put("result", "fail");
+        return resultMap;
+    }
+
+    @GetMapping("/comment-process")
+    public Map<String, Object> getCommentList(@RequestParam long postId) {
+
+        Map<String, Object> resultMap = new HashMap<>();
+        List<CommentListDTO> commentList = commentService.getComments(postId);
+        if(commentList != null) {
+            resultMap.put("result", "success");
+            resultMap.put("commentList", commentList);
+            return  resultMap;
         }
         resultMap.put("result", "fail");
         return resultMap;
