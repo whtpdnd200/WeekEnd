@@ -1,6 +1,7 @@
 package com.devwork.weekend.comment.repository;
 
 import com.devwork.weekend.comment.domain.Comment;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,7 +17,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         JOIN FETCH c.user
         JOIN FETCH c.post
         WHERE c.post.id = :postId
-        ORDER BY c.createdAt
+        ORDER BY c.createdAt DESC
         """)
     public List<Comment> findByPostId(@Param("postId") long postId);
 }

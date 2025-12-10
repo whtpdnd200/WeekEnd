@@ -80,15 +80,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="modalComment d-flex my-3 align-items-center">
-                            <div class="userProfileImage">
-                                <i class="bi bi-person-circle"></i>
-                            </div>
-                            <div class="mx-2 userName">유저 이름</div>
-                            <div class="ml-5 userComment">
-                                댓글 내용
-                            </div>
-                        </div>
+
                     </div>
                     <div class="d-flex p-3 align-items-end">
                         <input type="text" class="form-control col-9" id="commentInput">
@@ -173,6 +165,7 @@
 
         $(".commentList").on("click", function() {
             let id = $(this).data("id");
+
             $("#postId").val(id);
             $.ajax({
                 type:"get"
@@ -180,7 +173,20 @@
                 , data:{"postId":id}
                 , success:function(response) {
                     if(response.result == "success") {
+                        let comments = response.commentList;
+                        let html = "";
+                        $(".modal-body").empty();
+                        $.each(comments, function(idx, comment) {
 
+                            html = '<div class="modalComment d-flex my-3 align-items-center">' +
+            '                            <div class="userProfileImage">' +
+            '                                <i class="bi bi-person-circle"></i>' +
+            '                            </div>' +
+            '                            <div class="mx-2 userName">' + comment.name + '</div>' +
+            '                            <div class="ml-5 userComment">' + comment.comment + '</div>' +
+            '                        </div>';
+                            $(".modal-body").append(html);
+                        });
                     } else {
                         alert("댓글 불러오기 실패!");
                     }
