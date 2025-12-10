@@ -53,8 +53,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="comments-top3 m-3 p-3">
-                    <div class="comment d-flex my-1 align-items-center">
+                <div th:with="length=${post.comments.size() > 2 ? 2 : post.comments.size() - 1}" class="comments-top3 m-3 p-3">
+                    <div th:if="${!post.comments.isEmpty()}" th:each="idx : ${#numbers.sequence(0,length)}" class="comment d-flex my-1 align-items-center">
                         <div>
                             <i class="bi bi-person-circle"></i>
                         </div>
@@ -62,6 +62,9 @@
                         <div class="ml-5">
                             댓글 내용
                         </div>
+                    </div>
+                    <div th:unless="${!post.comments.isEmpty()}">
+                        <div class="font-weight-bold text-center">댓글이 없습니다</div>
                     </div>
                 </div>
             </div>
