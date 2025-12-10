@@ -9,7 +9,9 @@ import com.devwork.weekend.post.postDTO.PostModifyDTO;
 import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.repository.PostRepository;
 import com.devwork.weekend.user.domain.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.Optional;
 @Service
 public class PostService {
 
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
     public PostService(PostRepository postRepository) {
 
@@ -36,9 +38,14 @@ public class PostService {
                     .contents(writeDTO.getContents())
                     .imagePath(writeDTO.getImagePath())
                     .build();
-
-        return postRepository.save(post) != null;
+        try {
+            postRepository.save(post);
+        } catch(DataAccessException e) {
+            return false;
+        }
+        return true;
     }
+
 
     public List<PostListDTO> getPostList() {
 
@@ -53,6 +60,8 @@ public class PostService {
                 commentListDTO.setId(comment.getId());
                 commentListDTO.setPostId(comment.getPost().getId());
                 commentListDTO.setUserId(comment.getUser().getId());
+                commentListDTO.setName(comment.getUser().getName());
+                commentListDTO.setProfileImage(comment.getUser().getProfileImage());
                 commentListDTO.setComment(comment.getComment());
                 comments.add(commentListDTO);
             }

@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping("/post/comment")
 public class CommentRestController {
 
-    private CommentService commentService;
+    private final CommentService commentService;
 
     public CommentRestController(CommentService commentService) {
         this.commentService = commentService;

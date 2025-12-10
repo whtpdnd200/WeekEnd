@@ -15,6 +15,10 @@
         <header class="d-flex justify-content-center align-items-center border">
             <h1>WeekEnd</h1>
         </header>
+        <div th:if="${!session.isEmpty()}" class="text-right">
+            <span th:text="${session.userInfo.getName()}"></span>
+            <a href="/user/logout">로그아웃</a>
+        </div>
         <th:block layout:fragment="contents"></th:block>
         <th:block layout:fragment="footer"></th:block>
     </div>

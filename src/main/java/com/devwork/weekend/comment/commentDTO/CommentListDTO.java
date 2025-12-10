@@ -12,5 +12,7 @@ public class CommentListDTO {
     private long id;
     private long postId;
     private long userId;
+    private String name;
+    private String profileImage;
     private String comment;
 }

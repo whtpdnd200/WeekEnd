@@ -6,6 +6,7 @@ import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.common.SHA256HashingEncoder;
 import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -37,7 +38,12 @@ public class UserService {
                 .email(userJoinDTO.getEmail())
                 .build();
 
-        return userRepository.save(user) != null;
+        try {
+            userRepository.save(user);
+        } catch(DataAccessException e) {
+            return false;
+        }
+        return true;
     }
 
     public LoginUserDTO updateUser(UserModifyDTO modifyDTO, long id) {

@@ -5,12 +5,13 @@ import com.devwork.weekend.comment.domain.Comment;
 import com.devwork.weekend.comment.repository.CommentRepository;
 import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.user.domain.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CommentService {
 
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
     public CommentService(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
@@ -31,6 +32,11 @@ public class CommentService {
                     .post(post)
                     .comment(writeCommentDTO.getComment())
                     .build();
-        return commentRepository.save(comment) != null;
+        try {
+            commentRepository.save(comment);
+        } catch(DataAccessException e) {
+            return false;
+        }
+        return true;
     }
 }
