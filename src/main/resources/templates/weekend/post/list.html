@@ -31,7 +31,7 @@
                         <div class="w-75 d-flex justify-content-between">
                             <div class="d-flex justify-content-between w-50 mr-5">
                                 <div class="d-flex align-items-center">
-                                    <i class="bi bi-heart text-danger"></i>
+                                    <i th:data-post-id="${post.id}" class="bi bi-heart text-danger likeEmpty"></i>
                                     <div class="ml-2">132</div>
                                 </div>
                                 <div class="d-flex align-items-center">
@@ -116,6 +116,9 @@
 
             var userId = "[[${session.userInfo.getId()}]]";
 
+            $(".likeEmpty").on("click", function() {
+
+            });
 
             $("#commentBtn").on("click", function() {
                 let id = $("#postId").val();
@@ -298,8 +301,6 @@
             });
 
         });
-
-
 
     </script>
 </html>
