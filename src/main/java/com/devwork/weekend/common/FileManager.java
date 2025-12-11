@@ -13,12 +13,18 @@ public class FileManager {
 
     // public final static String  FILE_UPLOAD_PATH = "D:\\joseung_Workspace\\springProject\\upload\\WeekEnd";
     public final static String  FILE_UPLOAD_PATH = "/Users/jose-ung/Downloads/springProject/upload/WeekEnd";
+    private final static String[] IMAGE_EXTENSION = {"jpg", "jpeg", "png", "webp"};
+
     public static String savaFile(long userId, MultipartFile file) {
 
+
         // 파일이 전송 되었는지 확인
-        if(file == null) {
+        if(file == null || !isImage(file)) {
             return null;
         }
+
+
+
 
         // 원본파일 이름 그대로 저장
         // 디렉터리(폴더)로 구분해서 파일 저장
@@ -53,5 +59,18 @@ public class FileManager {
         // urlPath : /images/3_15431323546/test.png
 
         return "/images" + directoryName + "/" + file.getOriginalFilename();
+    }
+
+    public static boolean isImage(MultipartFile file) {
+
+        for(String extension : IMAGE_EXTENSION) {
+
+            String fileName = file.getOriginalFilename();
+
+            if(fileName.endsWith(extension)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
