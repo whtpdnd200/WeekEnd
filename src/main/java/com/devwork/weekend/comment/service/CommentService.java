@@ -58,6 +58,9 @@ public class CommentService {
                                                 , comment.getComment());
 
             comments.add(commentListDTO);
+            if(comments.size() > 2) {
+                break;
+            }
         }
 
         return comments;

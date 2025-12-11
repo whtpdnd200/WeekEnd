@@ -21,8 +21,8 @@
                         <div th:text="${post.name}" class="pl-1 my-1">회원 이름</div>
                     </div>
 
-                    <div th:if="${post.imagePath != ''}" class="d-flex justify-content-center my-1">
-                        <img class="postImage" width="450px" height="300px" src="https://cdn.pixabay.com/photo/2023/12/19/21/52/trees-8458466_1280.jpg">
+                    <div th:if="${post.imagePath != '' && post.imagePath != null}" class="d-flex justify-content-center my-1">
+                        <img class="postImage" width="450px" height="300px" th:src="${post.imagePath}">
                     </div>
                     <div class="my-3 pl-5">
                         <div th:text="${post.contents}" class="postContents"></div>
@@ -186,9 +186,9 @@
                             $.each(comments, function(idx, comment) {
 
                                 if(userId == comment.userId) {
-                                    modiAndDelBtn = '<div class="d-flex">' +
-                                        '               <div>' +
-                                        '                   <a href="#" class="text-dark"><i class="bi bi-pencil fs-5 commentModify"></i></a>' +
+                                    modiAndDelBtn = '<div class="d-flex justify-content-end align-items-end">' +
+                                        '               <div class="mr-3">' +
+                                        '                   <i class="bi bi-pencil commentModify"></i>' +
                                         '               </div>' +
                                         '               <div>' +
                                         '                   <i class="bi bi-trash commentRemove"></i>' +
@@ -196,16 +196,19 @@
                                         '           </div>'
                                 }
 
-                                html = '<div class="modalComment d-flex my-3 align-items-center">' +
+                                html = '<div class="modalComment d-flex my-3 align-items-center justify-content-between">' +
+                                    '<div class="d-flex align-items-center">' +
                                     '                            <div class="userProfileImage">' +
                                     '                                <i class="bi bi-person-circle personIcon"></i>' +
                                     '                            </div>' +
                                     '                            <div>' +
-                                        '                            <div data-user-id="' + comment.userId + '" class="mx-3 my-1">' + comment.name + '</div>' +
-                                        '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
+                                    '                            <div data-comment-id="' + comment.id + '" data-user-id="' + comment.userId + '" class="mx-3 my-1">' + comment.name + '</div>' +
+                                    '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
                                     '                           </div>' +
+                                    '</div>' +
+
                                                                 modiAndDelBtn +
-                                    '                        </div>';
+                                    '</div>';
                                 $(".modal-body").append(html);
                             });
                         } else {
@@ -218,7 +221,12 @@
                 });
                 myModal.show();
             });
+
+            $(".commentModify").on("click", function() {
+                console.log("tea");
+            });
         });
+
 
 
     </script>

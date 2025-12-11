@@ -50,6 +50,14 @@ section > .post-list {
     font-size: 36px;
 }
 
+.commentModify {
+    font-size: 18px;
+}
+
+.commentRemove {
+    font-size: 18px;
+}
+
 footer {
     height: 70px;
     border: solid 1px lightgray;

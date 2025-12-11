@@ -8,6 +8,7 @@ import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,10 +27,13 @@ public class PostRestController {
 
     @PostMapping("/write-process")
     public Map<String, String> writePost(@ModelAttribute WriteDTO writeDTO
+                                         , @RequestPart(value = "imageFile", required = false) MultipartFile file
                                     , HttpSession session) {
 
+        if(file != null) {
+            writeDTO.setImagePath(file);
+        }
         Map<String, String> resultMap = new HashMap<>();
-
         LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("userInfo");
         long id = loginUserDTO.getId();
         if(postService.createPost(writeDTO, id)) {

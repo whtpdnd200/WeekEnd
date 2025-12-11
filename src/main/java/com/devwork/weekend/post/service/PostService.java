@@ -2,6 +2,7 @@ package com.devwork.weekend.post.service;
 
 import com.devwork.weekend.comment.commentDTO.CommentListDTO;
 import com.devwork.weekend.comment.service.CommentService;
+import com.devwork.weekend.common.FileManager;
 import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.post.postDTO.PostDTO;
 import com.devwork.weekend.post.postDTO.PostListDTO;
@@ -32,6 +33,9 @@ public class PostService {
 
     public boolean createPost(WriteDTO writeDTO, long id) {
 
+
+        String imagePath = FileManager.savaFile(id, writeDTO.getImagePath());
+
         User user = User.builder()
                         .id(id)
                         .build();
@@ -39,7 +43,7 @@ public class PostService {
         Post post = Post.builder()
                     .user(user)
                     .contents(writeDTO.getContents())
-                    .imagePath(writeDTO.getImagePath())
+                    .imagePath(imagePath)
                     .build();
         try {
             postRepository.save(post);

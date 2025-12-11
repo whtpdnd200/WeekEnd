@@ -22,7 +22,7 @@
         $("#modifyBtn").on("click", function() {
             let id = $("#idHiddenInput").data("id");
             let contents = $("#contentsInput").val();
-            let image = $("#fileInput").val();
+            let image = $("#fileInput")[0].files[0];
 
             if(contents == "") {
                 alert("내용을 입력하세요!");
