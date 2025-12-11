@@ -24,7 +24,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             SELECT c FROM Comment c
             JOIN FETCH c.user
             WHERE c.post.id = :postId
-            ORDER BY c.createdAt
+            ORDER BY c.createdAt DESC
             LIMIT 3
             """)
     public List<Comment> findByPostIdLimit3(@Param("postId") long postId);
