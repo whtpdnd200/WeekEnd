@@ -1,6 +1,7 @@
 package com.devwork.weekend.comment;
 
 import com.devwork.weekend.comment.commentDTO.CommentListDTO;
+import com.devwork.weekend.comment.commentDTO.ModifyCommentDTO;
 import com.devwork.weekend.comment.commentDTO.WriteCommentDTO;
 import com.devwork.weekend.comment.service.CommentService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
@@ -49,6 +50,34 @@ public class CommentRestController {
             resultMap.put("commentList", commentList);
             return  resultMap;
         }
+        resultMap.put("result", "fail");
+        return resultMap;
+    }
+
+    @DeleteMapping("/remove-process")
+    public Map<String, String> removeComment(@RequestParam long commentId) {
+
+        Map<String, String> resultMap = new HashMap<>();
+
+        if(commentService.deleteComment(commentId)) {
+            resultMap.put("result", "success");
+            return resultMap;
+        }
+
+        resultMap.put("result", "fail");
+        return resultMap;
+    }
+
+    @PutMapping("/modify-process")
+    public Map<String, String> modifyComment(@RequestBody ModifyCommentDTO modifyCommentDTO) {
+
+        Map<String, String> resultMap = new HashMap<>();
+
+        if(commentService.updatedComment(modifyCommentDTO)) {
+            resultMap.put("result", "success");
+            return resultMap;
+        }
+
         resultMap.put("result", "fail");
         return resultMap;
     }

@@ -11,8 +11,8 @@ import java.nio.file.Paths;
 public class FileManager {
     
 
-    public final static String  FILE_UPLOAD_PATH = "D:\\joseung_Workspace\\springProject\\upload\\WeekEnd";
-
+    // public final static String  FILE_UPLOAD_PATH = "D:\\joseung_Workspace\\springProject\\upload\\WeekEnd";
+    public final static String  FILE_UPLOAD_PATH = "/Users/jose-ung/Downloads/springProject/upload/WeekEnd";
     public static String savaFile(long userId, MultipartFile file) {
 
         // 파일이 전송 되었는지 확인

@@ -1,6 +1,7 @@
 package com.devwork.weekend.comment.service;
 
 import com.devwork.weekend.comment.commentDTO.CommentListDTO;
+import com.devwork.weekend.comment.commentDTO.ModifyCommentDTO;
 import com.devwork.weekend.comment.commentDTO.WriteCommentDTO;
 import com.devwork.weekend.comment.domain.Comment;
 import com.devwork.weekend.comment.repository.CommentRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -58,9 +60,6 @@ public class CommentService {
                                                 , comment.getComment());
 
             comments.add(commentListDTO);
-            if(comments.size() > 2) {
-                break;
-            }
         }
 
         return comments;
@@ -85,5 +84,40 @@ public class CommentService {
             commentList.add(commentListDTO);
         }
         return commentList;
+    }
+
+    public boolean deleteComment(long id) {
+
+        Optional<Comment> optionalComment = commentRepository.findById(id);
+
+        if(optionalComment.isPresent()) {
+            Comment comment = optionalComment.get();
+
+            commentRepository.delete(comment);
+
+            return true;
+        }
+        return false;
+    }
+
+    public boolean updatedComment(ModifyCommentDTO modifyCommentDTO) {
+
+        Optional<Comment> optionalComment = commentRepository.findById(modifyCommentDTO.getId());
+
+        Comment comment = null;
+        if(optionalComment.isPresent()) {
+            comment = optionalComment.get();
+
+            comment = comment.toBuilder()
+                             .comment(modifyCommentDTO.getComment())
+                             .build();
+
+        }
+        try {
+            commentRepository.save(comment);
+            return true;
+        } catch(DataAccessException e) {
+            return false;
+        }
     }
 }

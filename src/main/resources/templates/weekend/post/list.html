@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a th:data-id="${post.id}" class="commentList" data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
-                                    <div th:text="${post.getComments().size()}" class="ml-2">32</div>
+                                    <div th:text="${post.comments.size()}" class="ml-2">32</div>
                                 </div>
                             </div>
                             <div th:if="${!session.isEmpty()}" class="d-flex justify-content-between w-50 ml-5">
@@ -181,33 +181,33 @@
                         if(response.result == "success") {
                             let comments = response.commentList;
                             let html = "";
-                            let modiAndDelBtn = "";
+
                             $(".modal-body").empty();
                             $.each(comments, function(idx, comment) {
-
+                                let modiAndDelBtn = "";
                                 if(userId == comment.userId) {
+
                                     modiAndDelBtn = '<div class="d-flex justify-content-end align-items-end">' +
                                         '               <div class="mr-3">' +
-                                        '                   <i class="bi bi-pencil commentModify"></i>' +
+                                        '                   <i data-comment-id="' + comment.id + '" class="isModify bi bi-pencil commentModify"></i>' +
                                         '               </div>' +
                                         '               <div>' +
-                                        '                   <i class="bi bi-trash commentRemove"></i>' +
+                                        '                   <i data-comment-id="' + comment.id + '" class="bi bi-trash commentRemove"></i>' +
                                         '               </div>' +
                                         '           </div>'
                                 }
 
                                 html = '<div class="modalComment d-flex my-3 align-items-center justify-content-between">' +
-                                    '<div class="d-flex align-items-center">' +
-                                    '                            <div class="userProfileImage">' +
-                                    '                                <i class="bi bi-person-circle personIcon"></i>' +
-                                    '                            </div>' +
-                                    '                            <div>' +
-                                    '                            <div data-comment-id="' + comment.id + '" data-user-id="' + comment.userId + '" class="mx-3 my-1">' + comment.name + '</div>' +
-                                    '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
-                                    '                           </div>' +
-                                    '</div>' +
-
-                                                                modiAndDelBtn +
+                                            '<div class="d-flex align-items-center">' +
+                    '                            <div class="userProfileImage">' +
+                    '                                <i class="bi bi-person-circle personIcon"></i>' +
+                    '                            </div>' +
+                    '                            <div class="testDiv">' +
+                        '                            <div class="mx-3 my-1 userName">' + comment.name + '</div>' +
+                        '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
+                    '                           </div>' +
+                                            '</div>' +
+                                        modiAndDelBtn +
                                     '</div>';
                                 $(".modal-body").append(html);
                             });
@@ -222,9 +222,81 @@
                 myModal.show();
             });
 
-            $(".commentModify").on("click", function() {
-                console.log("tea");
+        });
+
+
+        $(document).on("click", ".isModify", function() {
+
+            let commentId = $(this).data("comment-id");
+
+            let text = $(this).parent().parent().prev().children().eq(1).children().eq(1).text();
+
+            let modifyForm = '<div id="modifyForm" class="d-flex p-3 align-items-end modifyForm">' +
+                '                        <input data-id="' + commentId + '" value="' + text + '" type="text" class="form-control col-9" id="modifyInput">' +
+                '                        <button id="modifyBtn" type="button" class="btn btn-info col-3 ml-2">수정</button>' +
+                '                    </div>';
+
+            let tagPosition = $(this).parent().parent().parent();
+
+            tagPosition.after(modifyForm);
+
+            $(this).parent().parent().parent().remove();
+
+            $(".commentModify").removeClass("isModify");
+        });
+
+        $(document).on("click", "#modifyBtn", function() {
+            let id = $("#modifyInput").data("id");
+            let comment = $("#modifyInput").val();
+
+            if(comment == "") {
+                alert("댓글을 입력 하세요!");
+                $("#modifyInput").focus();
+                return;
+            }
+
+
+            $.ajax({
+                type:"put"
+                , contentType:"application/json"
+                , url:"/post/comment/modify-process"
+                , data:JSON.stringify({
+                    "id" : id
+                    , "comment" : comment
+                })
+                , success:function(response) {
+                    if(response.result == "success") {
+                        location.reload();
+                    } else {
+                        alert("댓글 수정 실패!");
+                        location.reload();
+                    }
+                }
+                , error:function() {
+                    alert("댓글 수정 에러!");
+                }
             });
+        });
+
+        $(document).on("click", ".commentRemove", function() {
+            let commentId = $(this).data("comment-id");
+
+            $.ajax({
+                type:"delete"
+                , url:"/post/comment/remove-process"
+                , data:{"commentId":commentId}
+                , success:function(response) {
+                    if(response.result == "success") {
+                        location.reload();
+                    } else {
+                        alert("댓글 삭제 실패!");
+                    }
+                }
+                , error:function() {
+                    alert("댓글 삭제 에러!");
+                }
+            });
+
         });
 
 

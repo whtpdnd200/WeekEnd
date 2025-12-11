@@ -88,10 +88,13 @@ public class PostService {
                     .contents(postModifyDTO.getContents())
                     .imagePath(postModifyDTO.getImagePath())
                     .build();
-
-            post = postRepository.save(post);
         }
-        return post != null;
+        try{
+            postRepository.save(post);
+            return true;
+        } catch(DataAccessException e) {
+            return false;
+        }
     }
 
     public boolean deletePost(long id) {
