@@ -12,7 +12,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(""" 
             SELECT p FROM Post p
             JOIN FETCH p.user
-            LEFT JOIN FETCH p.commentList
+            LEFT JOIN FETCH p.commentList c
+            LEFT JOIN FETCH c.user
             ORDER BY p.createdAt DESC 
             """)
     public List<Post> findAllPost();

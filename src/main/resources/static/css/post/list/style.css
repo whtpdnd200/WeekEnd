@@ -46,6 +46,10 @@ section > .post-list {
     max-height: 550px;
 }
 
+.personIcon {
+    font-size: 36px;
+}
+
 footer {
     height: 70px;
     border: solid 1px lightgray;

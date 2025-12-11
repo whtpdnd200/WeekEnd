@@ -53,15 +53,16 @@
                 <div th:with="length=${post.comments.size() > 2 ? 2 : post.comments.size() - 1}" class="comments-top3 m-3 p-3">
                     <div th:if="${!post.comments.isEmpty()}" th:each="idx : ${#numbers.sequence(0,length)}" class="comment d-flex my-1 align-items-center">
                         <div th:if="${post.comments.get(idx).profileImage == '' || post.comments.get(idx).profileImage == null}">
-                            <i class="bi bi-person-circle"></i>
+                            <i class="bi bi-person-circle personIcon"></i>
                         </div>
                         <div th:unless="${post.comments.get(idx).profileImage == '' || post.comments.get(idx).profileImage == null}">
                             <img src="">
                         </div>
-                        <div th:text="${post.comments.get(idx).name}" class="mx-2">유저 이름</div>
-                        <div th:text="${post.comments.get(idx).comment}" class="ml-5">
-                            댓글 내용
+                        <div>
+                            <div th:text="${post.comments.get(idx).name}" class="mx-3" my-1>유저 이름</div>
+                            <div th:text="${post.comments.get(idx).comment}" class="mx-3" my-1>댓글 내용</div>
                         </div>
+
                     </div>
                     <div th:unless="${!post.comments.isEmpty()}">
                         <div class="font-weight-bold text-center">댓글이 없습니다</div>
@@ -107,100 +108,118 @@
         </div>
     </footer>
     <script layout:fragment="modalScript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script layout:fragment="script">
-
-        var myModal = new bootstrap.Modal($("#myModal"));
+    <script th:inline="javascript" layout:fragment="script">
 
         $(document).ready(function() {
-            let session = sessionStorage.getItem("userInfo");
-            console.log(session);
-        });
 
-        $("#commentBtn").on("click", function() {
-            let id = $("#postId").val();
-            let comment = $("#commentInput").val();
+            var myModal = new bootstrap.Modal($("#myModal"));
 
-            if(comment == "") {
-                alert("댓글을 입력 해주세요!");
-                $("#commentInput").focus();
-                return;
-            }
+            var userId = "[[${session.userInfo.getId()}]]";
 
-            $.ajax({
-                type:"post"
-                , url:"/post/comment/write-process"
-                , data:{"postId" : id, "comment" : comment}
-                , success:function(response) {
-                    if(response.result == "success") {
-                        location.reload();
-                    } else {
-                        alert("댓글 작성 실패!");
+
+            $("#commentBtn").on("click", function() {
+                let id = $("#postId").val();
+                let comment = $("#commentInput").val();
+
+                if(comment == "") {
+                    alert("댓글을 입력 해주세요!");
+                    $("#commentInput").focus();
+                    return;
+                }
+
+                $.ajax({
+                    type:"post"
+                    , url:"/post/comment/write-process"
+                    , data:{"postId" : id, "comment" : comment}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("댓글 작성 실패!");
+                        }
                     }
-                }
-                , error:function() {
-                    alert("댓글 작성 에러!");
-                }
+                    , error:function() {
+                        alert("댓글 작성 에러!");
+                    }
+                });
+
             });
 
-        });
+            $(".postRemove").on("click", function() {
+                let id = $(this).data("id");
 
-        $(".postRemove").on("click", function() {
-            let id = $(this).data("id");
-
-            $.ajax({
-                type:"delete"
-                , url:"/post/remove-process"
-                , data:{"postId" : id}
-                , success:function(response) {
-                    if(response.result == "success") {
-                        location.reload();
-                    } else {
-                        alert("게시글 삭제 실패!");
+                $.ajax({
+                    type:"delete"
+                    , url:"/post/remove-process"
+                    , data:{"postId" : id}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("게시글 삭제 실패!");
+                        }
                     }
-                }
-                , error:function() {
-                    alert("게시글 삭제 에러!");
-                }
+                    , error:function() {
+                        alert("게시글 삭제 에러!");
+                    }
+                });
+            });
+
+            $("#closeBtn").on("click", function() {
+                myModal.hide();
+            });
+
+            $(".commentList").on("click", function() {
+                let id = $(this).data("id");
+
+                $("#postId").val(id);
+                $.ajax({
+                    type:"get"
+                    , url:"/post/comment/comment-process"
+                    , data:{"postId":id}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            let comments = response.commentList;
+                            let html = "";
+                            let modiAndDelBtn = "";
+                            $(".modal-body").empty();
+                            $.each(comments, function(idx, comment) {
+
+                                if(userId == comment.userId) {
+                                    modiAndDelBtn = '<div class="d-flex">' +
+                                        '               <div>' +
+                                        '                   <a href="#" class="text-dark"><i class="bi bi-pencil fs-5 commentModify"></i></a>' +
+                                        '               </div>' +
+                                        '               <div>' +
+                                        '                   <i class="bi bi-trash commentRemove"></i>' +
+                                        '               </div>' +
+                                        '           </div>'
+                                }
+
+                                html = '<div class="modalComment d-flex my-3 align-items-center">' +
+                                    '                            <div class="userProfileImage">' +
+                                    '                                <i class="bi bi-person-circle personIcon"></i>' +
+                                    '                            </div>' +
+                                    '                            <div>' +
+                                        '                            <div data-user-id="' + comment.userId + '" class="mx-3 my-1">' + comment.name + '</div>' +
+                                        '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
+                                    '                           </div>' +
+                                                                modiAndDelBtn +
+                                    '                        </div>';
+                                $(".modal-body").append(html);
+                            });
+                        } else {
+                            alert("댓글 불러오기 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("댓글 불러오기 에러!");
+                    }
+                });
+                myModal.show();
             });
         });
 
-        $("#closeBtn").on("click", function() {
-            myModal.hide();
-        });
 
-        $(".commentList").on("click", function() {
-            let id = $(this).data("id");
-
-            $("#postId").val(id);
-            $.ajax({
-                type:"get"
-                , url:"/post/comment/comment-process"
-                , data:{"postId":id}
-                , success:function(response) {
-                    if(response.result == "success") {
-                        let comments = response.commentList;
-                        let html = "";
-                        $(".modal-body").empty();
-                        $.each(comments, function(idx, comment) {
-
-                            html = '<div class="modalComment d-flex my-3 align-items-center">' +
-            '                            <div class="userProfileImage">' +
-            '                                <i class="bi bi-person-circle"></i>' +
-            '                            </div>' +
-            '                            <div class="mx-2 userName">' + comment.name + '</div>' +
-            '                            <div class="ml-5 userComment">' + comment.comment + '</div>' +
-            '                        </div>';
-                            $(".modal-body").append(html);
-                        });
-                    } else {
-                        alert("댓글 불러오기 실패!");
-                    }
-                }
-                , error:function() {
-                    alert("댓글 불러오기 에러!");
-                }
-            });
-            myModal.show();
-        });
     </script>
 </html>

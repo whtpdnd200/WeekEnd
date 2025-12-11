@@ -50,7 +50,6 @@ public class PostService {
     }
 
 
-    @Transactional
     public List<PostListDTO> getPostList() {
 
         List<Post> posts = postRepository.findAllPost();
