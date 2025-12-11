@@ -111,6 +111,11 @@
 
         var myModal = new bootstrap.Modal($("#myModal"));
 
+        $(document).ready(function() {
+            let session = sessionStorage.getItem("userInfo");
+            console.log(session);
+        });
+
         $("#commentBtn").on("click", function() {
             let id = $("#postId").val();
             let comment = $("#commentInput").val();
