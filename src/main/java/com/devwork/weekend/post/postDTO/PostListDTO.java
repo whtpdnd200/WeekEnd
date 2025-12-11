@@ -20,6 +20,7 @@ public class PostListDTO {
     private String contents;
     private String imagePath;
     private List<CommentListDTO> comments = new ArrayList<>();
+    private int commentCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

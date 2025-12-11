@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a th:data-id="${post.id}" class="commentList" data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
-                                    <div th:text="${post.comments.size()}" class="ml-2">32</div>
+                                    <div th:text="${post.commentCount}" class="ml-2">32</div>
                                 </div>
                             </div>
                             <div th:if="${!session.isEmpty()}" class="d-flex justify-content-between w-50 ml-5">

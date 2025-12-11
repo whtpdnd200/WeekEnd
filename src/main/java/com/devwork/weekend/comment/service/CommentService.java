@@ -47,45 +47,6 @@ public class CommentService {
         return true;
     }
 
-    public List<CommentListDTO> addList(List<Comment> commentList) {
-
-        List<CommentListDTO> comments = new ArrayList<>();
-        for(Comment comment : commentList) {
-            CommentListDTO commentListDTO = new CommentListDTO(
-                                                comment.getId()
-                                                , comment.getPost().getId()
-                                                , comment.getUser().getId()
-                                                , comment.getUser().getName()
-                                                , comment.getUser().getProfileImage()
-                                                , comment.getComment());
-
-            comments.add(commentListDTO);
-        }
-
-        return comments;
-    }
-
-    public List<CommentListDTO> getComments(long postId) {
-
-        List<Comment> comments = commentRepository.findByPostId(postId);
-
-        List<CommentListDTO> commentList = new ArrayList<>();
-
-        for(Comment comment : comments) {
-
-            CommentListDTO commentListDTO = new CommentListDTO(
-                                                comment.getId()
-                                                , comment.getPost().getId()
-                                                , comment.getUser().getId()
-                                                , comment.getUser().getName()
-                                                , comment.getUser().getProfileImage()
-                                                , comment.getComment());
-
-            commentList.add(commentListDTO);
-        }
-        return commentList;
-    }
-
     public boolean deleteComment(long id) {
 
         Optional<Comment> optionalComment = commentRepository.findById(id);
@@ -109,8 +70,8 @@ public class CommentService {
             comment = optionalComment.get();
 
             comment = comment.toBuilder()
-                             .comment(modifyCommentDTO.getComment())
-                             .build();
+                    .comment(modifyCommentDTO.getComment())
+                    .build();
 
         }
         try {
@@ -120,4 +81,70 @@ public class CommentService {
             return false;
         }
     }
+
+    public List<CommentListDTO> getComment3(long postId) {
+
+        List<CommentListDTO> commentList = new ArrayList<>();
+
+        List<Comment> comments = commentRepository.findByPostIdLimit3(postId);
+
+        for(Comment comment : comments) {
+
+            CommentListDTO commentListDTO = new CommentListDTO(
+                                                comment.getId()
+                                                , comment.getPost().getId()
+                                                , comment.getUser().getId()
+                                                , comment.getUser().getName()
+                                                , comment.getUser().getProfileImage()
+                                                , comment.getComment());
+            commentList.add(commentListDTO);
+        }
+        return commentList;
+    }
+
+    public int getCommentCount(long postId) {
+
+        return commentRepository.countCommentByPostId(postId);
+    }
+
+
+    public List<CommentListDTO> getComments(long postId) {
+
+        List<Comment> comments = commentRepository.findByPostId(postId);
+
+        List<CommentListDTO> commentList = new ArrayList<>();
+
+        for(Comment comment : comments) {
+
+            CommentListDTO commentListDTO = new CommentListDTO(
+                                                comment.getId()
+                                                , comment.getPost().getId()
+                                                , comment.getUser().getId()
+                                                , comment.getUser().getName()
+                                                , comment.getUser().getProfileImage()
+                                                , comment.getComment());
+
+            commentList.add(commentListDTO);
+        }
+        return commentList;
+    }
+
+
+//    public List<CommentListDTO> addList(List<Comment> commentList) {
+//
+//        List<CommentListDTO> comments = new ArrayList<>();
+//        for(Comment comment : commentList) {
+//            CommentListDTO commentListDTO = new CommentListDTO(
+//                    comment.getId()
+//                    , comment.getPost().getId()
+//                    , comment.getUser().getId()
+//                    , comment.getUser().getName()
+//                    , comment.getUser().getProfileImage()
+//                    , comment.getComment());
+//
+//            comments.add(commentListDTO);
+//        }
+//
+//        return comments;
+//    }
 }

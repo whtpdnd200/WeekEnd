@@ -60,15 +60,14 @@ public class PostService {
         List<PostListDTO> postList = new ArrayList<>();
 
         for(Post post : posts) {
-            List<CommentListDTO> comments = commentService.addList(post.getCommentList());
-
             PostListDTO postListDTO = new PostListDTO(post.getId()
                                                     , post.getUser().getId()
                                                     , post.getUser().getName()
                                                     , post.getUser().getProfileImage()
                                                     , post.getContents()
                                                     , post.getImagePath()
-                                                    , comments
+                                                    , commentService.getComment3(post.getId())
+                                                    , commentService.getCommentCount(post.getId())
                                                     , post.getCreatedAt()
                                                     , post.getUpdatedAt());
             postList.add(postListDTO);
