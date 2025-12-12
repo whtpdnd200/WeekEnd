@@ -19,9 +19,16 @@
     </section>
 
     <script layout:fragment="script">
+
+        var images = [".jpeg"
+                      , ".jpg"
+                      , ".png"
+                      , ".webp"]
+
         $("#writeBtn").on("click", function() {
             let contents = $("#contentsInput").val();
             let imageFile = $("#fileInput")[0].files[0];
+            let dotName = imageFile.name.substring(imageFile.name.lastIndexOf("."));
 
             if(contents == "") {
                 alert("내용을 입력하세요!");
@@ -29,6 +36,10 @@
                 return;
             }
 
+            if(!images.includes(dotName)) {
+                alert("이미지 파일만 업로드 가능 합니다!");
+                return;
+            }
 
 
             let formData = new FormData();
