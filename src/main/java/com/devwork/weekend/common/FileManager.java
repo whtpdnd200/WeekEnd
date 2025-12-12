@@ -11,8 +11,8 @@ import java.nio.file.Paths;
 public class FileManager {
     
 
-    public final static String  FILE_UPLOAD_PATH = "D:\\joseung_Workspace\\springProject\\upload\\WeekEnd";
-    // public final static String  FILE_UPLOAD_PATH = "/Users/jose-ung/Downloads/springProject/upload/WeekEnd";
+    // public final static String  FILE_UPLOAD_PATH = "D:\\joseung_Workspace\\springProject\\upload\\WeekEnd";
+    public final static String  FILE_UPLOAD_PATH = "/Users/jose-ung/Downloads/springProject/upload/WeekEnd";
     private final static String[] IMAGE_EXTENSION = {".jpg", ".jpeg", ".png", ".webp"};
 
     public static String savaFile(long userId, MultipartFile file) {
@@ -70,6 +70,33 @@ public class FileManager {
             }
         }
         return false;
+    }
+
+    public static void deleteFile(String dirName) {
+
+        dirName = dirName.replace("/images", "");
+        String imagePath = FILE_UPLOAD_PATH + dirName;
+
+        File folder = new File(imagePath);
+
+        try {
+            if(folder.exists()) {
+
+                File[] folderList = folder.listFiles();
+                for(int i = 0; i < folderList.length; i++) {
+
+                    if(folderList[i].isFile()) {
+                        folderList[i].delete();
+                    } else {
+                        deleteFile(folderList[i].getPath());
+                    }
+                    folderList[i].delete();
+                }
+                folder.delete();
+            }
+        } catch(Exception e) {
+
+        }
     }
 
 
