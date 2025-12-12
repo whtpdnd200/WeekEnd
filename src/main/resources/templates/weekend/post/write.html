@@ -28,7 +28,12 @@
         $("#writeBtn").on("click", function() {
             let contents = $("#contentsInput").val();
             let imageFile = $("#fileInput")[0].files[0];
-            let dotName = imageFile.name.substring(imageFile.name.lastIndexOf("."));
+            let dotName = "";
+            if(imageFile != undefined)
+            {
+                dotName = imageFile.name.substring(imageFile.name.lastIndexOf("."));
+            }
+
 
             if(contents == "") {
                 alert("내용을 입력하세요!");
@@ -36,7 +41,7 @@
                 return;
             }
 
-            if(!images.includes(dotName)) {
+            if(imageFile != undefined && !images.includes(dotName)) {
                 alert("이미지 파일만 업로드 가능 합니다!");
                 return;
             }
@@ -46,6 +51,7 @@
 
             formData.append("contents", contents);
             formData.append("imageFile", imageFile);
+
 
             $.ajax({
                 type:"post"

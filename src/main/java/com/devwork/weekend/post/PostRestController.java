@@ -66,11 +66,18 @@ public class PostRestController {
     }
 
     @PutMapping("/modify-process")
-    public Map<String, String> modifyPost(@RequestBody PostModifyDTO postModifyDTO) {
+    public Map<String, String> modifyPost(@ModelAttribute PostModifyDTO postModifyDTO
+                                            , @RequestPart(value = "imageFile", required = false) MultipartFile file
+                                          , HttpSession session) {
 
         Map<String, String> resultMap = new HashMap<>();
+        if(file != null) {
+            postModifyDTO.setImagePath(file);
+        }
+        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("userInfo");
+        long id = loginUserDTO.getId();
 
-        if(postService.updatePost(postModifyDTO)) {
+        if(postService.updatePost(postModifyDTO, id)) {
             resultMap.put("result", "success");
             return resultMap;
         }

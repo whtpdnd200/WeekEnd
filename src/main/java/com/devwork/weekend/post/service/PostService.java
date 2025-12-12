@@ -75,17 +75,18 @@ public class PostService {
         return postList;
     }
 
-    public boolean updatePost(PostModifyDTO postModifyDTO) {
+    public boolean updatePost(PostModifyDTO postModifyDTO, long id) {
 
         Optional<Post> optionalPost = postRepository.findById(postModifyDTO.getId());
 
+        String imagePath = FileManager.savaFile(id, postModifyDTO.getImagePath());
         Post post = null;
         if(optionalPost.isPresent()) {
             post = optionalPost.get();
 
             post = post.toBuilder()
                     .contents(postModifyDTO.getContents())
-                    .imagePath(postModifyDTO.getImagePath())
+                    .imagePath(imagePath)
                     .build();
         }
         try{

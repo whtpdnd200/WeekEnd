@@ -28,6 +28,11 @@
 
     <script layout:fragment="script">
 
+        var images = [".jpeg"
+            , ".jpg"
+            , ".png"
+            , ".webp"]
+
         $("#modifyBtn").on("click", function (){
 
             let password = $("#passwordInput").val();
@@ -35,7 +40,17 @@
             let name = $("#nameInput").val();
             let email = $("#emailInput").val();
             let profileImage = $("#imageInput")[0].files[0];
+            let dotName = "";
 
+            if(profileImage != undefined)
+            {
+                dotName = profileImage.name.substring(profileImage.name.lastIndexOf("."));
+            }
+
+            if(profileImage != undefined && !images.includes(dotName)) {
+                alert("이미지 파일만 업로드 가능 합니다!");
+                return;
+            }
 
             if(password == "") {
                 alert("비밀번호를 입력하세요");
@@ -60,16 +75,18 @@
                 return;
             }
 
+            let formData = new FormData();
+            formData.append("password", password);
+            formData.append("email", email);
+            formData.append("name", name);
+            formData.append("profileImage", profileImage);
+
             $.ajax({
                 type:"put"
-                , contentType:"application/json"
+                , processData:false
+                , contentType:false
                 , url:"/user/modify-process"
-                , data:JSON.stringify({
-                    "password" : password
-                    , "email" : email
-                    , "name" : name
-                    , "profileImage":profileImage
-                })
+                , data:formData
                 , success:function(response) {
                     if(response.result == "success") {
                         location.reload();

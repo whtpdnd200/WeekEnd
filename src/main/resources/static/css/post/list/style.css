@@ -58,6 +58,12 @@ section > .post-list {
     font-size: 18px;
 }
 
+.round-image {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid darkgray;
+}
+
 footer {
     height: 70px;
     border: solid 1px lightgray;

@@ -1,5 +1,6 @@
 package com.devwork.weekend.user.service;
 
+import com.devwork.weekend.common.FileManager;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import com.devwork.weekend.user.UserDTO.UserModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
@@ -48,6 +49,9 @@ public class UserService {
 
     public LoginUserDTO updateUser(UserModifyDTO modifyDTO, long id) {
 
+
+        String imagePath = FileManager.savaFile(id, modifyDTO.getProfileImage());
+
         Optional<User> optionalUser = userRepository.findById(id);
         User user = null;
         LoginUserDTO loginUserDTO = null;
@@ -58,7 +62,7 @@ public class UserService {
                     .password(encodedPassword)
                     .email(modifyDTO.getEmail())
                     .name(modifyDTO.getName())
-                    .profileImage(modifyDTO.getProfileImage())
+                    .profileImage(imagePath)
                     .build();
             user = userRepository.save(user);
 

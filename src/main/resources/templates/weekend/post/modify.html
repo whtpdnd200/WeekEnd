@@ -14,15 +14,30 @@
         <h2 class="text-center mt-2">글 수정</h2>
         <input th:data-id="${post.id}" id="idHiddenInput" type="hidden" >
         <textarea th:text="${post.contents}" rows="10" class="form-control my-2" id="contentsInput"></textarea>
+        <img width="450px" height="300px" th:if="${post.imagePath != '' && post.imagePath != null}" th:src="${post.imagePath}">
         <input type="file" class="my-2" id="fileInput">
         <button type="button" class="btn btn-info btn-block my-2" id="modifyBtn">수정</button>
     </section>
 
     <script layout:fragment="script">
+
+        var images = [".jpeg"
+            , ".jpg"
+            , ".png"
+            , ".webp"]
+
         $("#modifyBtn").on("click", function() {
             let id = $("#idHiddenInput").data("id");
             let contents = $("#contentsInput").val();
-            let image = $("#fileInput")[0].files[0];
+            let imageFile = $("#fileInput")[0].files[0];
+
+            let dotName = "";
+
+            if(imageFile != undefined)
+            {
+                dotName = imageFile.name.substring(imageFile.name.lastIndexOf("."));
+            }
+
 
             if(contents == "") {
                 alert("내용을 입력하세요!");
@@ -30,11 +45,25 @@
                 return;
             }
 
+            if(imageFile != undefined && !images.includes(dotName)) {
+                alert("이미지 파일만 업로드 가능 합니다!");
+                return;
+            }
+
+
+
+            let formData = new FormData();
+            formData.append("id", id);
+            formData.append("contents", contents);
+            formData.append("imageFile", imageFile);
+
+
             $.ajax({
                 type:"put"
-                ,contentType:"application/json"
+                , processData:false
+                , contentType:false
                 , url:"/post/modify-process"
-                , data:JSON.stringify({"id" : id, "contents" : contents, "imagePath" : image})
+                , data:formData
                 ,success:function(response) {
                     if(response.result == "success") {
                         location.href = "/post/list";

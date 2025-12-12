@@ -17,7 +17,7 @@
                 <div class="post-info">
                     <div class="d-flex pl-3 align-items-center">
                         <div th:if="${post.profileImage == '' || post.profileImage == null}"><i class="bi bi-person-circle"></i></div>
-                        <div th:unless="${post.profileImage == '' || post.profileImage == null}"><img src=""></div>
+                        <div th:unless="${post.profileImage == '' || post.profileImage == null}"><img class="round-image" width="24px" height="24px" th:src="${post.profileImage}"></div>
                         <div th:text="${post.name}" class="pl-1 my-1">회원 이름</div>
                     </div>
 
@@ -56,7 +56,7 @@
                             <i class="bi bi-person-circle personIcon"></i>
                         </div>
                         <div th:unless="${post.comments.get(idx).profileImage == '' || post.comments.get(idx).profileImage == null}">
-                            <img src="">
+                            <img class="round-image" width="36px" height="36px" th:src="${post.comments.get(idx).profileImage}">
                         </div>
                         <div>
                             <div th:text="${post.comments.get(idx).name}" class="mx-3" my-1>유저 이름</div>
@@ -190,6 +190,18 @@
                             $(".modal-body").empty();
                             $.each(comments, function(idx, comment) {
                                 let modiAndDelBtn = "";
+                                let profileTag = "";
+                                console.log(comment);
+                                if(comment.profileImage != '') {
+                                    profileTag = '<div class="userProfileImage">' +
+                                        '   <img class="round-image" width="36px" height="36px" src="' + comment.profileImage +'">' +
+                                        '</div>';
+                                } else {
+                                    profileTag = '<div class="userProfileImage">' +
+                                    '                   <i class="bi bi-person-circle personIcon"></i>' +
+                                                 '</div>';
+                                }
+
                                 if(userId == comment.userId) {
 
                                     modiAndDelBtn = '<div class="d-flex justify-content-end align-items-end">' +
@@ -204,9 +216,7 @@
 
                                 html = '<div class="modalComment d-flex my-3 align-items-center justify-content-between">' +
                                             '<div class="d-flex align-items-center">' +
-                    '                            <div class="userProfileImage">' +
-                    '                                <i class="bi bi-person-circle personIcon"></i>' +
-                    '                            </div>' +
+                                    profileTag +
                     '                            <div class="testDiv">' +
                         '                            <div class="mx-3 my-1 userName">' + comment.name + '</div>' +
                         '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
