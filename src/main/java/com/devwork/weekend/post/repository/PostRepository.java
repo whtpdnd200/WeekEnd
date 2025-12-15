@@ -20,4 +20,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """)
     public List<Post> findAllPost(Pageable pageable);
 
+    @Query(""" 
+            SELECT p FROM Post p
+            JOIN FETCH p.user
+            ORDER BY p.createdAt DESC
+            """)
+    public Slice<Post> selectAllPost(Pageable pageable);
 }
