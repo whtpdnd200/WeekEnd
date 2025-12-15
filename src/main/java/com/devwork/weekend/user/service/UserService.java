@@ -49,7 +49,6 @@ public class UserService {
 
     public LoginUserDTO updateUser(UserModifyDTO modifyDTO, long id) {
 
-
         String imagePath = FileManager.savaFile(id, modifyDTO.getProfileImage());
         
         Optional<User> optionalUser = userRepository.findById(id);
@@ -58,16 +57,11 @@ public class UserService {
         if(optionalUser.isPresent()) {
             user = optionalUser.get();
 
-            if(modifyDTO.getProfileImage() != null && user.getProfileImage() != null) {
+            if(imagePath != null && user.getProfileImage() != null) {
                 FileManager.deleteFile(user.getProfileImage());
-                user = user.toBuilder()
-                           .profileImage(null)
-                           .build();
+
             }
 
-            if(imagePath == null) {
-                imagePath = user.getProfileImage();
-            }
             
             String encodedPassword = SHA256HashingEncoder.encode(modifyDTO.getPassword());
             user = user.toBuilder()
