@@ -84,6 +84,13 @@ public class PostService {
         if(optionalPost.isPresent()) {
             post = optionalPost.get();
 
+            if(postModifyDTO.getImagePath() != null && post.getImagePath() != null) {
+                FileManager.deleteFile(post.getImagePath());
+                post = post.toBuilder()
+                        .imagePath(null)
+                        .build();
+            }
+
             post = post.toBuilder()
                     .contents(postModifyDTO.getContents())
                     .imagePath(imagePath)

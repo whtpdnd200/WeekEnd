@@ -19,6 +19,7 @@
                 <input type="password" class="form-control my-3" placeholder="비밀번호 확인" id="passwordConfirmInput">
                 <div id="passwordUnChecked" class="text-danger small d-none">비밀번호가 일치하지 않습니다!</div>
                 <div id="passwordChecked" class="text-success small d-none">비밀번호가 일치 합니다</div>
+                <img width="450px" height="300px" th:if="${session.userInfo.profileImage != null && session.userInfo.profileImage != ''}" th:src="${session.userInfo.profileImage}">
                 <input type="file" class="my-3" id="imageInput">
                 <input th:value="${session.userInfo.getName()}"  type="text" class="form-control my-3" placeholder="이름" id="nameInput">
                 <input th:value="${session.userInfo.getEmail()}" type="text" class="form-control my-3" placeholder="이메일" id="emailInput">

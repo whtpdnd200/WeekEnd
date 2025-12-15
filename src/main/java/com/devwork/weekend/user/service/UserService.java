@@ -51,15 +51,24 @@ public class UserService {
 
 
         String imagePath = FileManager.savaFile(id, modifyDTO.getProfileImage());
-
+        
         Optional<User> optionalUser = userRepository.findById(id);
         User user = null;
         LoginUserDTO loginUserDTO = null;
         if(optionalUser.isPresent()) {
             user = optionalUser.get();
+
+            if(modifyDTO.getProfileImage() != null && user.getProfileImage() != null) {
+                FileManager.deleteFile(user.getProfileImage());
+                user = user.toBuilder()
+                           .profileImage(null)
+                           .build();
+            }
+
             if(imagePath == null) {
                 imagePath = user.getProfileImage();
             }
+            
             String encodedPassword = SHA256HashingEncoder.encode(modifyDTO.getPassword());
             user = user.toBuilder()
                     .password(encodedPassword)
@@ -80,6 +89,7 @@ public class UserService {
         }
         return loginUserDTO;
     }
+
 
     public boolean isDuplicateId(String memberId) {
 

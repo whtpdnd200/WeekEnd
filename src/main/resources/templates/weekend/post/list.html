@@ -192,7 +192,7 @@
                                 let modiAndDelBtn = "";
                                 let profileTag = "";
                                 console.log(comment);
-                                if(comment.profileImage != '') {
+                                if(comment.profileImage != '' || comment.profileImage != null) {
                                     profileTag = '<div class="userProfileImage">' +
                                         '   <img class="round-image" width="36px" height="36px" src="' + comment.profileImage +'">' +
                                         '</div>';

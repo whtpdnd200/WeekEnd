@@ -72,31 +72,24 @@ public class FileManager {
         return false;
     }
 
-    public static void deleteFile(String dirName) {
+    public static boolean deleteFile(String dirName) {
 
         dirName = dirName.replace("/images", "");
         String imagePath = FILE_UPLOAD_PATH + dirName;
 
-        File folder = new File(imagePath);
+        File imageFile = new File(imagePath);
 
-        try {
-            if(folder.exists()) {
+        String dirPath = imagePath.replace(imagePath.substring(imagePath.lastIndexOf("/")), "");
 
-                File[] folderList = folder.listFiles();
-                for(int i = 0; i < folderList.length; i++) {
+        File directoryPath = new File(dirPath);
 
-                    if(folderList[i].isFile()) {
-                        folderList[i].delete();
-                    } else {
-                        deleteFile(folderList[i].getPath());
-                    }
-                    folderList[i].delete();
-                }
-                folder.delete();
-            }
-        } catch(Exception e) {
 
-        }
+        boolean fileDelete = imageFile.delete();
+
+        boolean dirDelete = directoryPath.delete();
+
+        return fileDelete && dirDelete;
+
     }
 
 
