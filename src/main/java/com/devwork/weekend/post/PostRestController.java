@@ -7,6 +7,9 @@ import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,9 +50,10 @@ public class PostRestController {
     }
 
     @GetMapping("/list-process")
-    public List<PostListDTO> getPostList() {
+    public List<PostListDTO> getPostList(Pageable pageable) {
 
-        return postService.getPostList();
+
+        return postService.getPostList(pageable);
     }
 
     @DeleteMapping("/remove-process")
@@ -85,4 +89,5 @@ public class PostRestController {
         resultMap.put("result", "fail");
         return resultMap;
     }
+
 }

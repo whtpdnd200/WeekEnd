@@ -1,6 +1,7 @@
 package com.devwork.weekend.post;
 
 import com.devwork.weekend.post.service.PostService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +19,9 @@ public class PostController {
     }
 
     @GetMapping("/list")
-    public String list(Model model) {
+    public String list(Model model, Pageable pageable) {
 
-        model.addAttribute("postList", postService.getPostList());
+        model.addAttribute("postList", postService.getPostList(pageable));
         return "weekend/post/list";
     }
 
