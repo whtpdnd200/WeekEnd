@@ -114,4 +114,9 @@ public class UserService {
 
         return null;
     }
+
+    public User getUser(long id) {
+
+        return userRepository.findById(id).get();
+    }
 }

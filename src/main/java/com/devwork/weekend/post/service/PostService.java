@@ -10,7 +10,9 @@ import com.devwork.weekend.post.postDTO.PostModifyDTO;
 import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.repository.PostRepository;
 import com.devwork.weekend.user.domain.User;
+import com.devwork.weekend.user.service.UserService;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +24,13 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
-    
-    private final CommentService commentService;
 
-    public PostService(PostRepository postRepository, CommentService commentService) {
+    private final UserService userService;
+
+    public PostService(PostRepository postRepository, UserService userService) {
 
         this.postRepository = postRepository;
-        this.commentService = commentService;
+        this.userService = userService;
     }
 
     public boolean createPost(WriteDTO writeDTO, long id) {
@@ -56,22 +58,28 @@ public class PostService {
 
     public List<PostListDTO> getPostList() {
 
-        List<Post> posts = postRepository.findAllPost();
+        List<Post> posts = postRepository.findAll(Sort.by("id").descending());
+
         List<PostListDTO> postList = new ArrayList<>();
 
         for(Post post : posts) {
-            PostListDTO postListDTO = new PostListDTO(post.getId()
-                                                    , post.getUser().getId()
-                                                    , post.getUser().getName()
-                                                    , post.getUser().getProfileImage()
-                                                    , post.getContents()
-                                                    , post.getImagePath()
-                                                    , commentService.getComment3(post.getId())
-                                                    , commentService.getCommentCount(post.getId())
-                                                    , post.getCreatedAt()
-                                                    , post.getUpdatedAt());
+
+            // Post -> PostDetail
+            // 1 + N 문제  : cache
+            User user = userService.getUser(post.getUser().getId());
+
+            PostListDTO postListDTO = PostListDTO.builder()
+                    .id(post.getId())
+                    .userId(post.getUser().getId())
+                    .name(post.getUser().getName())
+                    .profileImage(post.getUser().getProfileImage())
+                    .contents(post.getContents())
+                    .imagePath(post.getImagePath())
+                    .build();
+
             postList.add(postListDTO);
         }
+
         return postList;
     }
 
