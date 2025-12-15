@@ -89,6 +89,10 @@ public class PostService {
                 
             }
 
+            if(imagePath == null) {
+                imagePath = post.getImagePath();
+            }
+
             post = post.toBuilder()
                     .contents(postModifyDTO.getContents())
                     .imagePath(imagePath)

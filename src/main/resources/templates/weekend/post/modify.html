@@ -14,8 +14,10 @@
         <h2 class="text-center mt-2">글 수정</h2>
         <input th:data-id="${post.id}" id="idHiddenInput" type="hidden" >
         <textarea th:text="${post.contents}" rows="10" class="form-control my-2" id="contentsInput"></textarea>
-        <img width="450px" height="300px" th:if="${post.imagePath != '' && post.imagePath != null}" th:src="${post.imagePath}">
-        <input type="file" class="my-2" id="fileInput">
+        <i class="bi bi-image img-icon" id="imageBtn"></i>
+        <div><img id="postImage" width="450px" height="300px" th:if="${post.imagePath != '' && post.imagePath != null}" th:src="${post.imagePath}"></div>
+        <input type="file" class="my-2 d-none" id="fileInput">
+        <div id="image"></div>
         <button type="button" class="btn btn-info btn-block my-2" id="modifyBtn">수정</button>
     </section>
 
@@ -25,6 +27,24 @@
             , ".jpg"
             , ".png"
             , ".webp"]
+
+        $("#fileInput").on("change", function() {
+            let file = $(this)[0].files[0];
+            $("#postImage").addClass("d-none");
+            $("#image").empty();
+
+            let reader = new FileReader();
+
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                $("#image").append('<img width="450px" height="300px" src="' + e.target.result + '">');
+            }
+
+        });
+
+        $("#imageBtn").on("click", function() {
+            $("#fileInput").click();
+        });
 
         $("#modifyBtn").on("click", function() {
             let id = $("#idHiddenInput").data("id");
@@ -48,6 +68,10 @@
             if(imageFile != undefined && !images.includes(dotName)) {
                 alert("이미지 파일만 업로드 가능 합니다!");
                 return;
+            }
+
+            if(imageFile == undefined) {
+                imageFile = null;
             }
 
 

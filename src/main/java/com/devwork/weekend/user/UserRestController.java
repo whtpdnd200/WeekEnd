@@ -69,7 +69,7 @@ public class UserRestController {
 
     @PutMapping("/modify-process")
     public Map<String, String> modify(@ModelAttribute UserModifyDTO modifyDTO
-                                      , @RequestPart(value = "profileImage", required = false) MultipartFile file
+                                      , @RequestPart(value = "image", required = false) MultipartFile file
                                       , HttpSession session) {
 
 

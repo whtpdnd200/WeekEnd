@@ -50,17 +50,17 @@
                         </div>
                     </div>
                 </div>
-                <div th:with="length=${post.comments.size() > 2 ? 2 : post.comments.size() - 1}" class="comments-top3 m-3 p-3">
-                    <div th:if="${!post.comments.isEmpty()}" th:each="idx : ${#numbers.sequence(0,length)}" class="comment d-flex my-1 align-items-center">
-                        <div th:if="${post.comments.get(idx).profileImage == '' || post.comments.get(idx).profileImage == null}">
+                <div class="comments-top3 m-3 p-3">
+                    <div th:if="${!post.comments.isEmpty()}" th:each="comment : ${post.comments}" class="comment d-flex my-1 align-items-center">
+                        <div th:if="${comment.profileImage == '' || comment.profileImage == null}">
                             <i class="bi bi-person-circle personIcon"></i>
                         </div>
-                        <div th:unless="${post.comments.get(idx).profileImage == '' || post.comments.get(idx).profileImage == null}">
-                            <img class="round-image" width="36px" height="36px" th:src="${post.comments.get(idx).profileImage}">
+                        <div th:unless="${comment.profileImage == '' || comment.profileImage == null}">
+                            <img class="round-image" width="36px" height="36px" th:src="${comment.profileImage}">
                         </div>
                         <div>
-                            <div th:text="${post.comments.get(idx).name}" class="mx-3" my-1>유저 이름</div>
-                            <div th:text="${post.comments.get(idx).comment}" class="mx-3" my-1>댓글 내용</div>
+                            <div th:text="${comment.name}" class="mx-3" my-1>유저 이름</div>
+                            <div th:text="${comment.comment}" class="mx-3" my-1>댓글 내용</div>
                         </div>
 
                     </div>
@@ -192,7 +192,7 @@
                                 let modiAndDelBtn = "";
                                 let profileTag = "";
                                 console.log(comment);
-                                if(comment.profileImage != '' || comment.profileImage != null) {
+                                if(comment.profileImage != '' && comment.profileImage != null) {
                                     profileTag = '<div class="userProfileImage">' +
                                         '   <img class="round-image" width="36px" height="36px" src="' + comment.profileImage +'">' +
                                         '</div>';

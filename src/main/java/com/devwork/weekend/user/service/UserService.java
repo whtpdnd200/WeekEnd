@@ -62,6 +62,10 @@ public class UserService {
 
             }
 
+            if(imagePath == null) {
+                imagePath = user.getProfileImage();
+            }
+
             
             String encodedPassword = SHA256HashingEncoder.encode(modifyDTO.getPassword());
             user = user.toBuilder()
