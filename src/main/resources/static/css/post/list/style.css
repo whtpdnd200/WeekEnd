@@ -43,7 +43,7 @@ section > .post-list {
 }
 
 .modal-body {
-    max-height: 550px;
+    height: 550px;
 }
 
 .personIcon {

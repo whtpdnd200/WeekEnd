@@ -2,12 +2,12 @@ package com.devwork.weekend.comment;
 
 import com.devwork.weekend.comment.commentDTO.CommentListDTO;
 import com.devwork.weekend.comment.commentDTO.ModifyCommentDTO;
+import com.devwork.weekend.comment.commentDTO.SliceCommentDTO;
 import com.devwork.weekend.comment.commentDTO.WriteCommentDTO;
 import com.devwork.weekend.comment.service.CommentService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import jakarta.servlet.http.HttpSession;
-import lombok.Getter;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -41,11 +41,25 @@ public class CommentRestController {
     }
 
     @GetMapping("/comment-process")
-    public Map<String, Object> getCommentList(@RequestParam long postId) {
+    public Map<String, Object> getCommentList(@RequestParam long postId, Pageable pageable) {
 
         Map<String, Object> resultMap = new HashMap<>();
-        List<CommentListDTO> commentList = commentService.getComments(postId);
-        if(commentList != null) {
+        SliceCommentDTO commentList = commentService.getComments(postId, pageable);
+        if(commentList.getContent() != null) {
+            resultMap.put("result", "success");
+            resultMap.put("commentList", commentList);
+            return  resultMap;
+        }
+        resultMap.put("result", "fail");
+        return resultMap;
+    }
+
+    @GetMapping("/comment-next-process")
+    public Map<String, Object> getCommentNextList(@RequestParam long postId,@RequestParam long lastId, Pageable pageable) {
+
+        Map<String, Object> resultMap = new HashMap<>();
+        SliceCommentDTO commentList = commentService.getNextComments(postId, lastId, pageable);
+        if(commentList.getContent() != null) {
             resultMap.put("result", "success");
             resultMap.put("commentList", commentList);
             return  resultMap;

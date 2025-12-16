@@ -2,12 +2,16 @@ package com.devwork.weekend.comment.service;
 
 import com.devwork.weekend.comment.commentDTO.CommentListDTO;
 import com.devwork.weekend.comment.commentDTO.ModifyCommentDTO;
+import com.devwork.weekend.comment.commentDTO.SliceCommentDTO;
 import com.devwork.weekend.comment.commentDTO.WriteCommentDTO;
 import com.devwork.weekend.comment.domain.Comment;
 import com.devwork.weekend.comment.repository.CommentRepository;
 import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.user.domain.User;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -108,9 +112,13 @@ public class CommentService {
     }
 
 
-    public List<CommentListDTO> getComments(long postId) {
+    public SliceCommentDTO getComments(long postId, Pageable pageable) {
 
-        List<Comment> comments = commentRepository.findByPostId(postId);
+        Slice<Comment> sliceComments = commentRepository.findByPostId(postId, PageRequest.of(0, 6));
+
+        List<Comment> comments = sliceComments.getContent();
+
+        long id = comments.get(comments.size() - 1).getId();
 
         List<CommentListDTO> commentList = new ArrayList<>();
 
@@ -126,7 +134,46 @@ public class CommentService {
 
             commentList.add(commentListDTO);
         }
-        return commentList;
+
+        SliceCommentDTO sliceCommentDTO = SliceCommentDTO.builder()
+                .content(commentList)
+                .hasNext(sliceComments.hasNext())
+                .lastId(id)
+                .build();
+
+        return sliceCommentDTO;
+    }
+
+    public SliceCommentDTO getNextComments(long postId, long lastId, Pageable pageable) {
+
+        Slice<Comment> sliceComments = commentRepository.findByNextPostId(postId, lastId, PageRequest.of(0, 6));
+
+        List<Comment> comments = sliceComments.getContent();
+
+        long id = comments.get(comments.size() - 1).getId();
+
+        List<CommentListDTO> commentList = new ArrayList<>();
+
+        for(Comment comment : comments) {
+
+            CommentListDTO commentListDTO = new CommentListDTO(
+                    comment.getId()
+                    , comment.getPost().getId()
+                    , comment.getUser().getId()
+                    , comment.getUser().getName()
+                    , comment.getUser().getProfileImage()
+                    , comment.getComment());
+
+            commentList.add(commentListDTO);
+        }
+
+        SliceCommentDTO sliceCommentDTO = SliceCommentDTO.builder()
+                .content(commentList)
+                .hasNext(sliceComments.hasNext())
+                .lastId(id)
+                .build();
+
+        return sliceCommentDTO;
     }
 
 
