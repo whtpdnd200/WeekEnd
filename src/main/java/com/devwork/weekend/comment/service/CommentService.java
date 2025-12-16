@@ -146,7 +146,7 @@ public class CommentService {
 
     public SliceCommentDTO getNextComments(long postId, long lastId, Pageable pageable) {
 
-        Slice<Comment> sliceComments = commentRepository.findByNextPostId(postId, lastId, PageRequest.of(0, 6));
+        Slice<Comment> sliceComments = commentRepository.findByNextPostId(postId, lastId, PageRequest.of(0, 5));
 
         List<Comment> comments = sliceComments.getContent();
 

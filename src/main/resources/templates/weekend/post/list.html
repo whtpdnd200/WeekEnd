@@ -67,6 +67,10 @@
                     <div th:unless="${!post.comments.isEmpty()}">
                         <div class="font-weight-bold text-center">댓글이 없습니다</div>
                     </div>
+                    <div class="d-flex p-3 align-items-end">
+                        <input name="documentCommentInput" th:data-post-id="${post.id}" type="text" class="form-control col-9 documentCommentInput">
+                        <button type="button" class="btn btn-info col-3 ml-2 documentCommentBtn">입력</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -274,7 +278,12 @@
                                             '                    </div>' +
                                             '                </div>' +
                                             commentTop3 +
+                                            '<div class="d-flex p-3 align-items-end">' +
+                                            '    <input name="documentCommentInput" data-post-id="' + content.id + '" type="text" class="form-control col-9 documentCommentInput">' +
+                                            '    <button type="button" class="btn btn-info col-3 ml-2 documentCommentBtn">입력</button>' +
+                                            '</div>' +
                                             '            </div>';
+
 
 
                                         $(".post-list").append(html);
@@ -330,6 +339,39 @@
 
             });
 
+            $(".documentCommentBtn").on("click", function() {
+                let id = $(this).data("post-id");
+                let comment = $(".documentCommentInput").val();
+
+                console.log(id);
+                console.log(comment);
+
+                return;
+
+                if(comment == "") {
+                    alert("댓글을 입력 해주세요!");
+                    $("#commentInput").focus();
+                    return;
+                }
+
+                $.ajax({
+                    type:"post"
+                    , url:"/post/comment/write-process"
+                    , data:{"postId" : id, "comment" : comment}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("댓글 작성 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("댓글 작성 에러!");
+                    }
+                });
+
+            });
+
 
             $(document).on("click", ".postRemove", function() {
                 let id = $(this).data("id");
@@ -357,28 +399,27 @@
 
             $("#myModal").on("shown.bs.modal", function(e) {
 
-                $(this).find(".modal-body").on("scroll", function() {
+                let modalBody = $(this).find(".modal-body");
+                modalBody.off(scroll);
+
+                modalBody.on("scroll", function() {
+
+
                     //현재 높이 저장
-                    var currentModalScroll = $(this).scrollTop();
+                    var currentModalScroll = this.scrollTop;
                     //전체 문서의 높이
-                    var documentModalHeight = $(this).height() + 85;
+                    var clientHeight = this.clientHeight;
 
-                    //(현재 화면상단 + 현재 화면 높이)
-                    var nowModalHeight = $(this).scrollTop() + $(this).height();
+                    var scrollHeight = this.scrollHeight;
 
-                    console.log("현재 높이 : " + currentModalScroll);
-                    console.log("전체 모달 높이 : " + documentModalHeight);
-                    console.log("현재 높이 + 현재 화면 높이 : " + nowModalHeight);
+                    // console.log("현재 높이 : " + currentModalScroll);
+                    // console.log("전체 모달 높이 : " + clientHeight);
+                    // console.log("스크롤 높이 : " + scrollHeight);
 
                     //스크롤이 아래로 내려갔을때만 해당 이벤트 진행.
                     if(currentModalScroll > lastModalScroll){
 
-                        //nowHeight을 통해 현재 화면의 끝이 어디까지 내려왔는지 파악가능
-                        //즉 전체 문서의 높이에 일정량 근접했을때 글 더 불러오기)
-                        let height = nowModalHeight + (documentModalHeight * 0.001);
-                        console.log("deadLine : " + height);
-                        if(documentModalHeight < (nowModalHeight + (documentModalHeight * 0.001))){
-
+                        if(currentModalScroll + clientHeight >= scrollHeight - 10){
 
                             if(isScrollModalBottom) {
                                 return;
@@ -406,9 +447,6 @@
                                         commentHasNext = comments.hasNext;
                                         lastCommentId = comments.lastId;
 
-                                        console.log(commentHasNext);
-                                        console.log(lastCommentId);
-                                        console.log(comments);
 
                                         $.each(comments.content, function(idx, comment) {
                                             let modiAndDelBtn = "";
