@@ -54,7 +54,7 @@ public class PostRestController {
     }
 
     @GetMapping("/list-process")
-    public List<PostListDTO> getPostList(Pageable pageable) {
+    public SlicePostDTO getPostList(Pageable pageable) {
 
 
         return postService.getPostList(pageable);
@@ -94,9 +94,9 @@ public class PostRestController {
         return resultMap;
     }
 
-    @GetMapping("/test")
-    public SlicePostDTO test(@PageableDefault(size = 5, sort = "id", direction = DESC) Pageable pageable) {
+    @GetMapping("/nextPostList-process")
+    public SlicePostDTO nextPostList(Pageable pageable, @RequestParam long lastId) {
 
-        return postService.selectPost(pageable);
+        return postService.getNextPostList(pageable, lastId);
     }
 }

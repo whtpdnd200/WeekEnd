@@ -54,9 +54,14 @@ public class PostService {
     }
 
 
-    public List<PostListDTO> getPostList(Pageable pageable) {
+    public SlicePostDTO getPostList(Pageable pageable) {
 
-        List<Post> posts = postRepository.findAllPost(pageable);
+        Slice<Post> slicePosts = postRepository.findAllPost(PageRequest.of(0, 2));
+
+        List<Post> posts = slicePosts.getContent();
+
+        long id = posts.get(posts.size() - 1).getId();
+
         List<PostListDTO> postList = new ArrayList<>();
 
         for(Post post : posts) {
@@ -72,7 +77,53 @@ public class PostService {
                                                     , post.getUpdatedAt());
             postList.add(postListDTO);
         }
-        return postList;
+
+        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
+                .content(postList)
+                .hasNext(slicePosts.hasNext())
+                .number(slicePosts.getNumber())
+                .size(slicePosts.getSize())
+                .lastId(id)
+                .pageable(slicePosts.getPageable())
+                .nextPageable(slicePosts.nextPageable())
+                .build();
+
+
+        return slicePostDTO;
+    }
+
+    public SlicePostDTO getNextPostList(Pageable pageable, long lastId) {
+        Slice<Post> slicePosts = postRepository.selectAllPost(PageRequest.of(0, 2), lastId);
+        List<Post> posts = slicePosts.getContent();
+        long id = posts.get(posts.size() - 1).getId();
+        List<PostListDTO> postList = new ArrayList<>();
+
+        for(Post post : posts) {
+            PostListDTO postListDTO = new PostListDTO(post.getId()
+                    , post.getUser().getId()
+                    , post.getUser().getName()
+                    , post.getUser().getProfileImage()
+                    , post.getContents()
+                    , post.getImagePath()
+                    , commentService.getComment3(post.getId())
+                    , commentService.getCommentCount(post.getId())
+                    , post.getCreatedAt()
+                    , post.getUpdatedAt());
+            postList.add(postListDTO);
+
+        }
+
+        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
+                .content(postList)
+                .hasNext(slicePosts.hasNext())
+                .number(slicePosts.getNumber())
+                .size(slicePosts.getSize())
+                .lastId(id)
+                .pageable(slicePosts.getPageable())
+                .nextPageable(slicePosts.nextPageable())
+                .build();
+
+        return slicePostDTO;
     }
 
     public boolean updatePost(PostModifyDTO postModifyDTO, long id) {
@@ -133,34 +184,5 @@ public class PostService {
         return postDTO;
     }
 
-    public SlicePostDTO selectPost(Pageable pageable) {
-        Slice<Post> posts = postRepository.selectAllPost(PageRequest.of(0, 2));
 
-        List<PostListDTO> postList = new ArrayList<>();
-
-        for(Post post : posts) {
-            PostListDTO postListDTO = new PostListDTO(post.getId()
-                    , post.getUser().getId()
-                    , post.getUser().getName()
-                    , post.getUser().getProfileImage()
-                    , post.getContents()
-                    , post.getImagePath()
-                    , commentService.getComment3(post.getId())
-                    , commentService.getCommentCount(post.getId())
-                    , post.getCreatedAt()
-                    , post.getUpdatedAt());
-            postList.add(postListDTO);
-
-        }
-
-        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
-                .content(postList)
-                .hasNext(posts.hasNext())
-                .number(posts.getNumber())
-                .size(posts.getSize())
-                .pageable(posts.getPageable())
-                .build();
-
-        return slicePostDTO;
-    }
 }

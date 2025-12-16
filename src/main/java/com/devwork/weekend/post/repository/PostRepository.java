@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
@@ -18,12 +19,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             JOIN FETCH p.user
             ORDER BY p.createdAt DESC
             """)
-    public List<Post> findAllPost(Pageable pageable);
+    public Slice<Post> findAllPost(Pageable pageable);
 
     @Query(""" 
             SELECT p FROM Post p
             JOIN FETCH p.user
+            WHERE p.id < :lastId
             ORDER BY p.createdAt DESC
             """)
-    public Slice<Post> selectAllPost(Pageable pageable);
+    public Slice<Post> selectAllPost(Pageable pageable, @Param("lastId") long lastId);
 }

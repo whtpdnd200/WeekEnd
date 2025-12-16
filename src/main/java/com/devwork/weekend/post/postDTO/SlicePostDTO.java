@@ -13,6 +13,9 @@ public class SlicePostDTO {
     private boolean hasNext;
     private int number;
     private int size;
+    private long lastId;
     private Pageable pageable;
+    private Pageable nextPageable;
+
 
 }
