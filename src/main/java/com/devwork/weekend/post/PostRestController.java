@@ -53,14 +53,6 @@ public class PostRestController {
         return resultMap;
     }
 
-    @GetMapping("/list-process")
-    public SlicePostDTO getPostList(Pageable pageable
-                                    , HttpSession session) {
-
-        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
-
-        return postService.getPostList(pageable, loginUserDTO.getId());
-    }
 
     @DeleteMapping("/remove-process")
     public Map<String, String> removePost(@RequestParam long postId) {
@@ -96,6 +88,15 @@ public class PostRestController {
         return resultMap;
     }
 
+    @GetMapping("/list-process")
+    public SlicePostDTO getPostList(Pageable pageable
+            , HttpSession session) {
+
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+
+        return postService.getPostList(pageable, loginUserDTO.getId());
+    }
+
     @GetMapping("/nextPostList-process")
     public SlicePostDTO nextPostList(Pageable pageable, @RequestParam long lastId
                                     , HttpSession session) {
@@ -103,5 +104,19 @@ public class PostRestController {
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
 
         return postService.getNextPostList(pageable, lastId, loginUserDTO.getId());
+    }
+
+    @GetMapping("/follow-list-process")
+    public SlicePostDTO getPostListByFollow(Pageable pageable, HttpSession session) {
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+
+        return postService.getPostListByFollow(pageable, loginUserDTO.getId());
+    }
+
+    @GetMapping("/test")
+    public SlicePostDTO test(Pageable pageable, long lastId, HttpSession session) {
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+
+        return postService.getNextPostListByFollow(pageable, lastId, loginUserDTO.getId());
     }
 }

@@ -27,5 +27,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             WHERE p.id < :lastId
             ORDER BY p.createdAt DESC
             """)
-    public Slice<Post> selectAllPost(Pageable pageable, @Param("lastId") long lastId);
+    public Slice<Post> findAllNextPost(Pageable pageable, @Param("lastId") long lastId);
+
+    @Query(""" 
+            SELECT p FROM Post p
+            JOIN FETCH p.user
+            WHERE p.user.id IN(:followList)
+            ORDER BY p.createdAt DESC
+            """)
+    public Slice<Post> findAllPostByFollow(Pageable pageable, @Param("followList") List<Long> followList);
+
+    @Query(""" 
+            SELECT p FROM Post p
+            JOIN FETCH p.user
+            WHERE p.id < :lastId AND p.user.id IN(:followList) 
+            ORDER BY p.createdAt DESC
+            """)
+    public Slice<Post> findAllNextPostByFollow(Pageable pageable, @Param("followList") List<Long> followList, @Param("lastId") long lastId);
 }

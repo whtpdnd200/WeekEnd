@@ -45,6 +45,8 @@ public class LikeService {
             } catch(DataAccessException e) {
                 return false;
             }
+        } else {
+            return false;
         }
         return true;
     }

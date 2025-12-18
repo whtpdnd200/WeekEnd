@@ -13,6 +13,15 @@ section {
 
 }
 
+.postSelect {
+    text-decoration: none !important;
+}
+
+.postCategory {
+    border-bottom: 5px solid gray;
+
+}
+
 section > .post-list {
 }
 
@@ -27,6 +36,7 @@ section > .post-list {
 }
 
 .followRemoveBtn {
+    width: 120px;
     height: 24px;
     padding-bottom: 0px;
     padding-top: 0px;

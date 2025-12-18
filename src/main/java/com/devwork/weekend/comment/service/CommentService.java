@@ -117,7 +117,11 @@ public class CommentService {
 
         List<Comment> comments = sliceComments.getContent();
 
-        long id = comments.get(comments.size() - 1).getId();
+        long id = 0;
+        if(comments.size() > 0) {
+            id = comments.get(comments.size() - 1).getId();
+        }
+
 
         List<CommentListDTO> commentList = new ArrayList<>();
 
@@ -149,7 +153,10 @@ public class CommentService {
 
         List<Comment> comments = sliceComments.getContent();
 
-        long id = comments.get(comments.size() - 1).getId();
+        long id = 0;
+        if(comments.size() > 0) {
+            id = comments.get(comments.size() - 1).getId();
+        }
 
         List<CommentListDTO> commentList = new ArrayList<>();
 
