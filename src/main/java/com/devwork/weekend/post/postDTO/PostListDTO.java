@@ -22,6 +22,9 @@ public class PostListDTO {
     private List<CommentListDTO> comments = new ArrayList<>();
     private int commentCount;
     private int likeCount;
+    private boolean isLike;
+    private boolean isFollow;
+    private boolean isFollower;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

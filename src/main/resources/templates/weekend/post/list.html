@@ -19,10 +19,10 @@
                         <div th:if="${post.profileImage == '' || post.profileImage == null}"><i class="bi bi-person-circle"></i></div>
                         <div th:unless="${post.profileImage == '' || post.profileImage == null}"><img class="round-image" width="24px" height="24px" th:src="${post.profileImage}"></div>
                         <div th:text="${post.name}" class="pl-1 my-1">회원 이름</div>
-                        <div class="ml-2">
-                            <button class="followBtn btn btn-primary" type="button">팔로우</button>
-                            <button class="followBtn btn btn-success" type="button">맞팔로우</button>
-                            <button class="followBtn btn btn-danger" type="button">팔로우 취소</button>
+                        <div th:if="${session.userInfo.id != post.userId}" class="ml-2">
+                            <button th:if="${!post.follow && !post.follower}" th:data-id="${post.userId}" class="followBtn btn btn-primary" type="button">팔로우</button>
+                            <button th:if="${post.follower}" class="followBtn btn btn-success" type="button">맞팔로우</button>
+                            <button th:if="${post.follow}"  class="followRemoveBtn btn btn-danger" type="button">팔로우 취소</button>
                         </div>
                     </div>
 
@@ -36,8 +36,8 @@
                         <div class="w-75 d-flex justify-content-between">
                             <div class="d-flex justify-content-between w-50 mr-5">
                                 <div class="d-flex align-items-center">
-                                    <i th:data-post-id="${post.id}" class="bi bi-heart text-danger unlike-btn"></i>
-                                    <i th:data-post-id="${post.id}" class="bi bi-heart text-danger like-btn d-none"></i>
+                                    <i th:if="${post.like}" th:data-post-id="${post.id}" class="bi bi-heart-fill text-danger like-btn"></i>
+                                    <i th:unless="${post.like}" th:data-post-id="${post.id}" class="bi bi-heart text-danger unlike-btn"></i>
                                     <div th:text="${post.likeCount}" class="ml-2">132</div>
                                 </div>
                                 <div class="d-flex align-items-center">
@@ -124,7 +124,9 @@
 
             var myModal = new bootstrap.Modal($("#myModal"));
 
-            var userId = "[[${session.userInfo.getId()}]]";
+            var userId = [[${session.userInfo.getId()}]];
+
+            var lastId = [[${postList.lastId}]];
 
             var lastScroll = 0;
 
@@ -139,6 +141,26 @@
             var lastCommentId;
 
             var isScrollModalBottom = false;
+
+            $(document).on("click", ".followBtn", function() {
+                let followId = $(this).data("id");
+
+                $.ajax({
+                    type:"POST"
+                    , url:"/post/follow/follow-process"
+                    , data:{"followId":followId}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("팔로우 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("팔로우 에러!");
+                    }
+                });
+            });
 
 
             $(window).on("scroll", function() {
@@ -169,8 +191,6 @@
                         isScrollBottom = true;
 
 
-                        let lastId = "[[${postList.lastId}]]";
-
                         if(!hasNext) {
 
                             alert("다음 게시글이 없습니다!");
@@ -187,15 +207,38 @@
                                     console.log(response);
 
                                     hasNext = response.hasNext;
+                                    lastId = response.lastId;
                                     let html = '';
                                     $.each(response.content, function(idx, content) {
                                         let profileImageTag = '';
                                         let postImageTag = '';
                                         let modiAndDelBtn = '';
                                         let commentTop3 = '<div class="comments-top3 m-3 p-3">';
-
-
+                                        let isLikeTag = '';
                                         let commentBox = '';
+                                        let followTag = '';
+
+                                        if(userId != content.userId) {
+                                            if(content.follow) {
+                                                followTag = '<button data-id="' + content.userId + '" class="followRemoveBtn btn btn-danger" type="button">팔로우 취소</button>'
+                                            }
+                                            if(!content.follow && !content.follower) {
+                                                followTag = '<button data-id="' + content.userId + '" class="followBtn btn btn-primary" type="button">팔로우</button>'
+                                            }
+
+                                            if(content.follower) {
+                                                followTag = '<button class="followBtn btn btn-success" type="button">맞팔로우</button>';
+                                            }
+
+                                        }
+
+
+
+                                        if(content.like) {
+                                            isLikeTag = '<i data-post-id="' + content.id + '" class="bi bi-heart-fill text-danger like-btn"></i>';
+                                        } else {
+                                            isLikeTag = '<i data-post-id="' + content.id + '" class="bi bi-heart text-danger unlike-btn"></i>';
+                                        }
 
                                         if(content.profileImage == null || content.profileImage == '') {
                                             profileImageTag = '<div class="d-flex pl-3 align-items-center">' +
@@ -262,9 +305,7 @@
                                             '                <div class="post-info">' +
                                             profileImageTag +
                                             '<div class="ml-2">' +
-                                            '<button class="followBtn btn btn-primary" type="button">팔로우</button>' +
-                                            '<button class="followBtn btn btn-success" type="button">맞팔로우</button>' +
-                                            '<button class="followBtn btn btn-danger" type="button">팔로우 취소</button>' +
+                                            followTag +
                                             '</div>' +
                                             '</div>' +
                                             postImageTag +
@@ -275,8 +316,7 @@
                                             '                        <div class="w-75 d-flex justify-content-between">' +
                                             '                            <div class="d-flex justify-content-between w-50 mr-5">' +
                                             '                                <div class="d-flex align-items-center">' +
-                                            ' <i data-post-id="' + content.id + '" class="bi bi-heart text-danger unlike-btn"></i>' +
-                                            ' <i data-post-id="' + content.id + '" class="bi bi-heart text-danger like-btn d-none"></i>' +
+                                                        isLikeTag +
                                             '                                    <div class="ml-2">' + content.likeCount + '</div>' +
                                             '                                </div>' +
                                             '                                <div class="d-flex align-items-center">' +
@@ -313,6 +353,26 @@
 
                 //현재위치 최신화
                 lastScroll = currentScroll;
+            });
+
+            $(document).on("click", ".like-btn", function() {
+                let postId = $(this).data("post-id");
+
+                $.ajax({
+                    type:"delete"
+                    , url:"/post/like/like-remove-process"
+                    , data:{"postId":postId}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("좋아요 취소 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("좋아요 취소 에러!");
+                    }
+                });
             });
 
 
@@ -374,7 +434,7 @@
 
                 if(comment == "") {
                     alert("댓글을 입력 해주세요!");
-                    $("#commentInput").focus();
+                    $(this).prev().focus();
                     return;
                 }
 

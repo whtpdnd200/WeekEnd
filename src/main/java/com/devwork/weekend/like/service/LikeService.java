@@ -5,6 +5,8 @@ import com.devwork.weekend.like.repository.LikeRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class LikeService {
 
@@ -31,8 +33,29 @@ public class LikeService {
         return true;
     }
 
+    public boolean deleteLike(long postId, long userId) {
+
+        Optional<Like> optionalLike = likeRepository.findByPostIdAndUserId(postId, userId);
+
+        if(optionalLike.isPresent()) {
+            Like like = optionalLike.get();
+
+            try {
+                likeRepository.delete(like);
+            } catch(DataAccessException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public int getLikeCount(long postId) {
 
         return likeRepository.countByPostId(postId);
+    }
+
+    public boolean isLikeByPostIdAndUserId(long postId, long userId) {
+
+        return likeRepository.existsByPostIdAndUserId(postId, userId);
     }
 }

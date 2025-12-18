@@ -1,6 +1,8 @@
 package com.devwork.weekend.post;
 
 import com.devwork.weekend.post.service.PostService;
+import com.devwork.weekend.user.UserDTO.LoginUserDTO;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +21,11 @@ public class PostController {
     }
 
     @GetMapping("/list")
-    public String list(Model model, Pageable pageable) {
+    public String list(Model model, Pageable pageable
+                        , HttpSession session) {
 
-        model.addAttribute("postList", postService.getPostList(pageable));
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        model.addAttribute("postList", postService.getPostList(pageable, loginUserDTO.getId()));
         return "weekend/post/list";
     }
 

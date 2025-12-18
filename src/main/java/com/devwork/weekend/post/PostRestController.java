@@ -54,10 +54,12 @@ public class PostRestController {
     }
 
     @GetMapping("/list-process")
-    public SlicePostDTO getPostList(Pageable pageable) {
+    public SlicePostDTO getPostList(Pageable pageable
+                                    , HttpSession session) {
 
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
 
-        return postService.getPostList(pageable);
+        return postService.getPostList(pageable, loginUserDTO.getId());
     }
 
     @DeleteMapping("/remove-process")
@@ -95,8 +97,11 @@ public class PostRestController {
     }
 
     @GetMapping("/nextPostList-process")
-    public SlicePostDTO nextPostList(Pageable pageable, @RequestParam long lastId) {
+    public SlicePostDTO nextPostList(Pageable pageable, @RequestParam long lastId
+                                    , HttpSession session) {
 
-        return postService.getNextPostList(pageable, lastId);
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+
+        return postService.getNextPostList(pageable, lastId, loginUserDTO.getId());
     }
 }

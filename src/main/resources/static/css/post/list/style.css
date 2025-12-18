@@ -26,6 +26,12 @@ section > .post-list {
     padding-top: 0px;
 }
 
+.followRemoveBtn {
+    height: 24px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
 .post-info {
     border-bottom: solid 1px lightgray;
 }

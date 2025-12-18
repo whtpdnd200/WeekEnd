@@ -8,6 +8,7 @@ import com.devwork.weekend.comment.domain.Comment;
 import com.devwork.weekend.comment.repository.CommentRepository;
 import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.user.domain.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,14 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class CommentService {
 
     private final CommentRepository commentRepository;
 
-    public CommentService(CommentRepository commentRepository) {
-        this.commentRepository = commentRepository;
-    }
 
     public boolean createComment(WriteCommentDTO writeCommentDTO, long id) {
 

@@ -2,6 +2,7 @@ package com.devwork.weekend.post.service;
 
 import com.devwork.weekend.comment.service.CommentService;
 import com.devwork.weekend.common.FileManager;
+import com.devwork.weekend.follow.service.FollowService;
 import com.devwork.weekend.like.service.LikeService;
 import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.post.postDTO.*;
@@ -25,11 +26,9 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
-    
     private final CommentService commentService;
-
     private final LikeService likeService;
-
+    private final FollowService followService;
 
     public boolean createPost(WriteDTO writeDTO, long id) {
 
@@ -54,9 +53,9 @@ public class PostService {
     }
 
 
-    public SlicePostDTO getPostList(Pageable pageable) {
+    public SlicePostDTO getPostList(Pageable pageable, long userId) {
 
-        Slice<Post> slicePosts = postRepository.findAllPost(PageRequest.of(0, 2));
+        Slice<Post> slicePosts = postRepository.findAllPost(PageRequest.of(0, 3));
 
         List<Post> posts = slicePosts.getContent();
 
@@ -74,6 +73,9 @@ public class PostService {
                                                     , commentService.getComment3(post.getId())
                                                     , commentService.getCommentCount(post.getId())
                                                     , likeService.getLikeCount(post.getId())
+                                                    , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
+                                                    , followService.isFollow(userId, post.getUser().getId())
+                                                    , followService.isFollow(post.getUser().getId(), userId)
                                                     , post.getCreatedAt()
                                                     , post.getUpdatedAt());
             postList.add(postListDTO);
@@ -93,11 +95,12 @@ public class PostService {
         return slicePostDTO;
     }
 
-    public SlicePostDTO getNextPostList(Pageable pageable, long lastId) {
-        Slice<Post> slicePosts = postRepository.selectAllPost(PageRequest.of(0, 2), lastId);
+    public SlicePostDTO getNextPostList(Pageable pageable, long lastId, long userId) {
+        Slice<Post> slicePosts = postRepository.selectAllPost(PageRequest.of(0, 3), lastId);
         List<Post> posts = slicePosts.getContent();
         long id = posts.get(posts.size() - 1).getId();
         List<PostListDTO> postList = new ArrayList<>();
+
 
         for(Post post : posts) {
             PostListDTO postListDTO = new PostListDTO(post.getId()
@@ -109,6 +112,9 @@ public class PostService {
                     , commentService.getComment3(post.getId())
                     , commentService.getCommentCount(post.getId())
                     , likeService.getLikeCount(post.getId())
+                    , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
+                    , followService.isFollow(userId, post.getUser().getId())
+                    , followService.isFollow(post.getUser().getId(), userId)
                     , post.getCreatedAt()
                     , post.getUpdatedAt());
             postList.add(postListDTO);
