@@ -19,6 +19,11 @@
                         <div th:if="${post.profileImage == '' || post.profileImage == null}"><i class="bi bi-person-circle"></i></div>
                         <div th:unless="${post.profileImage == '' || post.profileImage == null}"><img class="round-image" width="24px" height="24px" th:src="${post.profileImage}"></div>
                         <div th:text="${post.name}" class="pl-1 my-1">회원 이름</div>
+                        <div class="ml-2">
+                            <button class="followBtn btn btn-primary" type="button">팔로우</button>
+                            <button class="followBtn btn btn-success" type="button">맞팔로우</button>
+                            <button class="followBtn btn btn-danger" type="button">팔로우 취소</button>
+                        </div>
                     </div>
 
                     <div th:if="${post.imagePath != '' && post.imagePath != null}" class="d-flex justify-content-center my-1">
@@ -195,13 +200,11 @@
                                         if(content.profileImage == null || content.profileImage == '') {
                                             profileImageTag = '<div class="d-flex pl-3 align-items-center">' +
                                                 '                        <div><i class="bi bi-person-circle"></i></div>' +
-                                                '                        <div class="pl-1 my-1"> ' + content.name + '</div>' +
-                                                '                    </div>';
+                                                '                        <div class="pl-1 my-1"> ' + content.name + '</div>';
                                         } else {
                                             profileImageTag = '<div class="d-flex pl-3 align-items-center">' +
                                                 '                        <div><img class="round-image" width="24px" height="24px" src="' + content.profileImage + '"></div>' +
-                                                '                        <div class="pl-1 my-1"> ' + content.name + '</div>' +
-                                                '                    </div>';
+                                                '                        <div class="pl-1 my-1"> ' + content.name + '</div>';
                                         }
 
                                         if(content.imagePath != null && content.imagePath != '') {
@@ -258,6 +261,12 @@
                                         html = '<div class="post m-2">' +
                                             '                <div class="post-info">' +
                                             profileImageTag +
+                                            '<div class="ml-2">' +
+                                            '<button class="followBtn btn btn-primary" type="button">팔로우</button>' +
+                                            '<button class="followBtn btn btn-success" type="button">맞팔로우</button>' +
+                                            '<button class="followBtn btn btn-danger" type="button">팔로우 취소</button>' +
+                                            '</div>' +
+                                            '</div>' +
                                             postImageTag +
                                             '                    <div class="my-3 pl-5">' +
                                             '                        <div class="postContents">' + content.contents + '</div>' +
