@@ -21,6 +21,7 @@ public class PostListDTO {
     private String imagePath;
     private List<CommentListDTO> comments = new ArrayList<>();
     private int commentCount;
+    private int likeCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

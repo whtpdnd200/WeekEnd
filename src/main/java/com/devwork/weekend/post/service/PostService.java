@@ -2,22 +2,25 @@ package com.devwork.weekend.post.service;
 
 import com.devwork.weekend.comment.service.CommentService;
 import com.devwork.weekend.common.FileManager;
+import com.devwork.weekend.like.service.LikeService;
 import com.devwork.weekend.post.domain.Post;
 import com.devwork.weekend.post.postDTO.*;
 import com.devwork.weekend.post.repository.PostRepository;
 import com.devwork.weekend.user.domain.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor  // 필수 멤버변수 를 생성자를 통해 대응
 @Service
 public class PostService {
 
@@ -25,11 +28,8 @@ public class PostService {
     
     private final CommentService commentService;
 
-    public PostService(PostRepository postRepository, CommentService commentService) {
+    private final LikeService likeService;
 
-        this.postRepository = postRepository;
-        this.commentService = commentService;
-    }
 
     public boolean createPost(WriteDTO writeDTO, long id) {
 
@@ -73,6 +73,7 @@ public class PostService {
                                                     , post.getImagePath()
                                                     , commentService.getComment3(post.getId())
                                                     , commentService.getCommentCount(post.getId())
+                                                    , likeService.getLikeCount(post.getId())
                                                     , post.getCreatedAt()
                                                     , post.getUpdatedAt());
             postList.add(postListDTO);
@@ -107,6 +108,7 @@ public class PostService {
                     , post.getImagePath()
                     , commentService.getComment3(post.getId())
                     , commentService.getCommentCount(post.getId())
+                    , likeService.getLikeCount(post.getId())
                     , post.getCreatedAt()
                     , post.getUpdatedAt());
             postList.add(postListDTO);

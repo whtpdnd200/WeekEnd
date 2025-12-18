@@ -31,8 +31,9 @@
                         <div class="w-75 d-flex justify-content-between">
                             <div class="d-flex justify-content-between w-50 mr-5">
                                 <div class="d-flex align-items-center">
-                                    <i th:data-post-id="${post.id}" class="bi bi-heart text-danger likeEmpty"></i>
-                                    <div class="ml-2">132</div>
+                                    <i th:data-post-id="${post.id}" class="bi bi-heart text-danger unlike-btn"></i>
+                                    <i th:data-post-id="${post.id}" class="bi bi-heart text-danger like-btn d-none"></i>
+                                    <div th:text="${post.likeCount}" class="ml-2">132</div>
                                 </div>
                                 <div class="d-flex align-items-center">
                                     <a th:data-id="${post.id}" class="commentList" data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>
@@ -265,8 +266,9 @@
                                             '                        <div class="w-75 d-flex justify-content-between">' +
                                             '                            <div class="d-flex justify-content-between w-50 mr-5">' +
                                             '                                <div class="d-flex align-items-center">' +
-                                            '                                    <i data-post-id="' + content.id + '" class="bi bi-heart text-danger likeEmpty"></i>' +
-                                            '                                    <div class="ml-2">132</div>' +
+                                            ' <i data-post-id="' + content.id + '" class="bi bi-heart text-danger unlike-btn"></i>' +
+                                            ' <i data-post-id="' + content.id + '" class="bi bi-heart text-danger like-btn d-none"></i>' +
+                                            '                                    <div class="ml-2">' + content.likeCount + '</div>' +
                                             '                                </div>' +
                                             '                                <div class="d-flex align-items-center">' +
                                             '                                    <a data-id="' + content.id + '" class="commentList" data-bs-toggle="modal" href="#myModal" id="commentList"><i class="bi bi-chat-right text-dark"></i></a>' +
@@ -305,9 +307,26 @@
             });
 
 
-            $(".likeEmpty").on("click", function() {
+            $(document).on("click", ".unlike-btn", function() {
                 let postId = $(this).data("post-id");
 
+                console.log(postId);
+
+                $.ajax({
+                    type:"post"
+                    , url:"/post/like/like-process"
+                    , data:{"postId":postId}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("좋아요 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("좋아요 에러!");
+                    }
+                });
 
             });
 
