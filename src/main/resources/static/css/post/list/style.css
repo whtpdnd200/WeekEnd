@@ -4,6 +4,10 @@
     margin: 0 auto;
 }
 
+.bi {
+    font-size: 24px;
+}
+
 header {
     height: 100px;
     background-color: #F4F4F4;
