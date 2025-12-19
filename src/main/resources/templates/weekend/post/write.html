@@ -14,14 +14,46 @@
     <section layout:fragment="contents">
         <h2 class="text-center mt-2">글 작성</h2>
         <textarea rows="10" class="form-control my-2" id="contentsInput"></textarea>
-        <input type="file" class="my-2" id="fileInput">
+        <i class="bi bi-image img-icon" id="imageBtn"></i>
+        <input type="file" class="my-2 d-none" id="fileInput">
+        <div id="image"></div>
         <button type="button" class="btn btn-info btn-block my-2" id="writeBtn">작성</button>
     </section>
 
     <script layout:fragment="script">
+
+        var images = [".jpeg"
+                      , ".jpg"
+                      , ".png"
+                      , ".webp"]
+
+        $("#fileInput").on("change", function() {
+            let file = $(this)[0].files[0];
+            $("#image").empty();
+
+            let reader = new FileReader();
+
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                $("#image").append('<img width="450px" height="300px" src="' + e.target.result + '">');
+            }
+
+        });
+
+        $("#imageBtn").on("click", function() {
+            $("#fileInput").click();
+
+        });
+
         $("#writeBtn").on("click", function() {
             let contents = $("#contentsInput").val();
-            let image = $("#fileInput").val();
+            let imageFile = $("#fileInput")[0].files[0];
+            let dotName = "";
+            if(imageFile != undefined)
+            {
+                dotName = imageFile.name.substring(imageFile.name.lastIndexOf("."));
+            }
+
 
             if(contents == "") {
                 alert("내용을 입력하세요!");
@@ -29,10 +61,24 @@
                 return;
             }
 
+            if(imageFile != undefined && !images.includes(dotName)) {
+                alert("이미지 파일만 업로드 가능 합니다!");
+                return;
+            }
+
+
+            let formData = new FormData();
+
+            formData.append("contents", contents);
+            formData.append("imageFile", imageFile);
+
+
             $.ajax({
                 type:"post"
                 , url:"/post/write-process"
-                , data:{"contents" : contents, "imagePath" : image}
+                , data:formData
+                , processData:false
+                , contentType:false
                 ,success:function(response) {
                     if(response.result == "success") {
                         location.href = "/post/list";

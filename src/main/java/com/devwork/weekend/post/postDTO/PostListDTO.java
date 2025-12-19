@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -19,7 +18,12 @@ public class PostListDTO {
     private String profileImage;
     private String contents;
     private String imagePath;
-    private List<CommentListDTO> comments = new ArrayList<>();
+    private List<CommentListDTO> comments;
+    private int commentCount;
+    private int likeCount;
+    private boolean isLike;
+    private boolean isFollow;
+    private boolean isFollower;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

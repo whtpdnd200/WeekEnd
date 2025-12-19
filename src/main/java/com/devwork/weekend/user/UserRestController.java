@@ -7,6 +7,7 @@ import com.devwork.weekend.user.domain.User;
 import com.devwork.weekend.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,8 +68,14 @@ public class UserRestController {
     }
 
     @PutMapping("/modify-process")
-    public Map<String, String> modify(@RequestBody UserModifyDTO modifyDTO
+    public Map<String, String> modify(@ModelAttribute UserModifyDTO modifyDTO
+                                      , @RequestPart(value = "image", required = false) MultipartFile file
                                       , HttpSession session) {
+
+
+        if(file != null) {
+            modifyDTO.setProfileImage(file);
+        }
 
         Map<String, String> resultMap = new HashMap<>();
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");

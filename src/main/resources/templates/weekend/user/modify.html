@@ -19,7 +19,10 @@
                 <input type="password" class="form-control my-3" placeholder="비밀번호 확인" id="passwordConfirmInput">
                 <div id="passwordUnChecked" class="text-danger small d-none">비밀번호가 일치하지 않습니다!</div>
                 <div id="passwordChecked" class="text-success small d-none">비밀번호가 일치 합니다</div>
-                <input type="file" class="my-3" id="imageInput">
+                <i class="bi bi-image img-icon" id="imageBtn"></i>
+                <div><img id="userImage" width="450px" height="300px" th:if="${session.userInfo.profileImage != null && session.userInfo.profileImage != ''}" th:src="${session.userInfo.profileImage}"></div>
+                <div id="image"></div>
+                <input type="file" class="my-3 d-none" id="imageInput">
                 <input th:value="${session.userInfo.getName()}"  type="text" class="form-control my-3" placeholder="이름" id="nameInput">
                 <input th:value="${session.userInfo.getEmail()}" type="text" class="form-control my-3" placeholder="이메일" id="emailInput">
                 <button id="modifyBtn" class="btn btn-block btn-secondary my-3" type="button">정보 수정</button>
@@ -28,14 +31,47 @@
 
     <script layout:fragment="script">
 
+        var images = [".jpeg"
+            , ".jpg"
+            , ".png"
+            , ".webp"]
+
+        $("#imageInput").on("change", function() {
+            let file = $(this)[0].files[0];
+            $("#userImage").addClass("d-none");
+            $("#image").empty();
+
+            let reader = new FileReader();
+
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                $("#image").append('<img width="450px" height="300px" src="' + e.target.result + '">');
+            }
+
+        });
+
+        $("#imageBtn").on("click", function() {
+            $("#imageInput").click();
+        });
+
         $("#modifyBtn").on("click", function (){
 
             let password = $("#passwordInput").val();
             let passwordConfirm = $("#passwordConfirmInput").val();
             let name = $("#nameInput").val();
             let email = $("#emailInput").val();
-            let profileImage = $("#imageInput").val();
+            let profileImage = $("#imageInput")[0].files[0];
+            let dotName = "";
 
+            if(profileImage != undefined)
+            {
+                dotName = profileImage.name.substring(profileImage.name.lastIndexOf("."));
+            }
+
+            if(profileImage != undefined && !images.includes(dotName)) {
+                alert("이미지 파일만 업로드 가능 합니다!");
+                return;
+            }
 
             if(password == "") {
                 alert("비밀번호를 입력하세요");
@@ -60,16 +96,23 @@
                 return;
             }
 
+            if(profileImage == undefined) {
+                profileImage = null;
+            }
+
+
+            let formData = new FormData();
+            formData.append("password", password);
+            formData.append("email", email);
+            formData.append("name", name);
+            formData.append("image", profileImage);
+
             $.ajax({
-                type:"PUT"
-                , contentType:"application/json"
+                type:"put"
+                , processData:false
+                , contentType:false
                 , url:"/user/modify-process"
-                , data:JSON.stringify({
-                    "password" : password
-                    , "email" : email
-                    , "name" : name
-                    , "profileImage":profileImage
-                })
+                , data:formData
                 , success:function(response) {
                     if(response.result == "success") {
                         location.reload();

@@ -1,5 +1,6 @@
 package com.devwork.weekend.user.service;
 
+import com.devwork.weekend.common.FileManager;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import com.devwork.weekend.user.UserDTO.UserModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
@@ -48,17 +49,30 @@ public class UserService {
 
     public LoginUserDTO updateUser(UserModifyDTO modifyDTO, long id) {
 
+        String imagePath = FileManager.savaFile(id, modifyDTO.getProfileImage());
+        
         Optional<User> optionalUser = userRepository.findById(id);
         User user = null;
         LoginUserDTO loginUserDTO = null;
         if(optionalUser.isPresent()) {
             user = optionalUser.get();
+
+            if(imagePath != null && user.getProfileImage() != null) {
+                FileManager.deleteFile(user.getProfileImage());
+
+            }
+
+            if(imagePath == null) {
+                imagePath = user.getProfileImage();
+            }
+
+            
             String encodedPassword = SHA256HashingEncoder.encode(modifyDTO.getPassword());
             user = user.toBuilder()
                     .password(encodedPassword)
                     .email(modifyDTO.getEmail())
                     .name(modifyDTO.getName())
-                    .profileImage(modifyDTO.getProfileImage())
+                    .profileImage(imagePath)
                     .build();
             user = userRepository.save(user);
 
@@ -73,6 +87,7 @@ public class UserService {
         }
         return loginUserDTO;
     }
+
 
     public boolean isDuplicateId(String memberId) {
 

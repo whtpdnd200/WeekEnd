@@ -17,13 +17,8 @@ section {
 
 }
 
-.postSelect {
-    text-decoration: none !important;
-}
-
-.postCategory {
-    border-bottom: 5px solid gray;
-
+#imageCircle {
+    font-size: 100px;
 }
 
 section > .post-list {

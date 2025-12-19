@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{weekend/layouts/default}">
+<head>
+    <meta charset="UTF-8">
+    <title>타임라인</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/post/list/style.css">
+</head>
+    <section layout:fragment="contents">
+
+        <div class="post-list my-1">
+            <div th:each="post : ${postList.getContent()}" class="post m-2">
+                <div class="post-info">
+                    <div class="d-flex pl-3 align-items-center">
+                        <div th:if="${post.profileImage == '' || post.profileImage == null}"><i class="bi bi-person-circle"></i></div>
+                        <div th:unless="${post.profileImage == '' || post.profileImage == null}"><img class="round-image" width="24px" height="24px" th:src="${post.profileImage}"></div>
+                        <div th:text="${post.name}" class="pl-1 my-1">회원 이름</div>
+                        <div th:if="${session.userInfo.id != post.userId}" class="ml-2">
+                            <div th:if="${!post.follow}">
+                                <button th:data-id="${post.userId}" class="followBtn btn btn-primary" type="button">팔로우</button>
+                                <span th:if="${post.follower}" class="text-small text-secondary">회원님을 팔로우중 입니다</span>
+                            </div>
+                            <button th:if="${post.follow && post.follower}" th:data-id="${post.userId}" class="followRemoveBtn btn btn-success" type="button">맞 팔로우중</button>
+                            <button th:if="${post.follow && !post.follower}" th:data-id="${post.userId}" class="followRemoveBtn btn btn-info" type="button">팔로우중</button>
+                            <!--<button th:if="${post.follow}"  class="followRemoveBtn btn btn-danger" type="button">팔로우 취소</button>-->
+                        </div>
+                    </div>
+
+                    <div th:if="${post.imagePath != '' && post.imagePath != null}" class="d-flex justify-content-center my-1">
+                        <img class="postImage" width="450px" height="300px" th:src="${post.imagePath}">
+                    </div>
+                    <div class="my-3 pl-5">
+                        <div th:text="${post.contents}" class="postContents"></div>
+                    </div>
+                    <div class="d-flex justify-content-center my-3">
+                        <div class="w-75 d-flex justify-content-between">
+                            <div class="d-flex justify-content-between w-50 mr-5">
+                                <div class="d-flex align-items-center">
+                                    <i th:if="${post.like}" th:data-post-id="${post.id}" class="bi bi-heart-fill text-danger like-btn"></i>
+                                    <i th:unless="${post.like}" th:data-post-id="${post.id}" class="bi bi-heart text-danger unlike-btn"></i>
+                                    <div th:text="${post.likeCount}" class="ml-2">132</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <a th:data-id="${post.id}" class="commentList" data-bs-toggle="modal" href="#myModal"><i class="bi bi-chat-right text-dark"></i></a>
+                                    <div th:text="${post.commentCount}" class="ml-2">32</div>
+                                </div>
+                            </div>
+                            <div th:if="${!session.isEmpty()}" class="d-flex justify-content-between w-50 ml-5">
+                                <div th:if="${post.userId == session.userInfo.getId()}">
+                                    <a th:href="@{/post/modify(postId=${post.id})}" class="text-dark"><i class="bi bi-pencil fs-5 postModify"></i></a>
+                                </div>
+                                <div th:if="${post.userId == session.userInfo.getId()}">
+                                    <i th:data-id="${post.id}" class="bi bi-trash postRemove"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comments-top3 m-3 p-3">
+                    <div th:if="${!post.comments.isEmpty()}" th:each="comment : ${post.comments}" class="comment d-flex my-1 align-items-center">
+                        <div th:if="${comment.profileImage == '' || comment.profileImage == null}">
+                            <i class="bi bi-person-circle personIcon"></i>
+                        </div>
+                        <div th:unless="${comment.profileImage == '' || comment.profileImage == null}">
+                            <img class="round-image" width="36px" height="36px" th:src="${comment.profileImage}">
+                        </div>
+                        <div>
+                            <div th:text="${comment.name}" class="mx-3" my-1>유저 이름</div>
+                            <div th:text="${comment.comment}" class="mx-3" my-1>댓글 내용</div>
+                        </div>
+
+                    </div>
+                    <div th:unless="${!post.comments.isEmpty()}">
+                        <div class="font-weight-bold text-center">댓글이 없습니다</div>
+                    </div>
+                    <div class="d-flex p-3 align-items-end">
+                        <input name="documentCommentInput" type="text" class="form-control col-9 documentCommentInput">
+                        <button type="button" th:data-post-id="${post.id}" class="btn btn-info col-3 ml-2 documentCommentBtn">입력</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="myModal" class="modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">댓글</h5>
+                        <input type="hidden" value="" id="postId">
+                        <button id="closeBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="d-flex p-3 align-items-end">
+                        <input type="text" class="form-control col-9" id="commentInput">
+                        <button id="commentBtn" type="button" class="btn btn-info col-3 ml-2">입력</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer layout:fragment="footer" class="d-flex align-items-center justify-content-center">
+        <div class="w-75 d-flex justify-content-between align-items-center">
+            <div>
+                <a href="/post/write"><i class="bi bi-clipboard-plus text-dark"></i></a>
+            </div>
+            <div>
+                <a href="#"><i class="bi bi-search text-dark"></i></a>
+            </div>
+            <div>
+                <a href="#"><i class="bi bi-heart-fill text-dark"></i></a>
+            </div>
+            <div>
+                <a href="#"><i class="bi bi-person text-dark"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script layout:fragment="modalScript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript" layout:fragment="script">
+
+        $(document).ready(function() {
+
+            var myModal = new bootstrap.Modal($("#myModal"));
+
+            var userId = [[${session.userInfo.getId()}]];
+
+            var lastId = [[${postList.lastId}]];
+
+            var lastScroll = 0;
+
+            var lastModalScroll = 0;
+
+            var hasNext = [[${postList.hasNext}]];
+
+            var commentHasNext;
+
+            var isScrollBottom = false;
+
+            var isScrollModalBottom = false;
+
+            var lastCommentId;
+
+            var btnClass;
+
+            var btnText;
+
+
+            $(document).on("click", ".followRemoveBtn", function() {
+                let followId = $(this).data("id");
+
+                $.ajax({
+                    type:"delete"
+                    , url:"/post/follow/follow-remove-process"
+                    , data:{"followId":followId}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("팔로우 취소 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("팔로우 취소 에러!");
+                    }
+                });
+            });
+
+            $(document).on("mouseleave", ".followRemoveBtn", function() {
+                $(this).removeClass("btn-danger");
+                $(this).addClass(btnClass[2]);
+                $(this).text(btnText);
+                btnClass = null;
+                btnText = null;
+            });
+
+            $(document).on("mouseenter", ".followRemoveBtn", function() {
+                btnClass = $(this).attr('class').split(" ");
+                btnText = $(this).text();
+                $(this).removeClass(btnClass[2]);
+                $(this).addClass("btn-danger");
+                $(this).text("팔로우 취소");
+            });
+
+
+            $(document).on("click", ".followBtn", function() {
+                let followId = $(this).data("id");
+
+                $.ajax({
+                    type:"POST"
+                    , url:"/post/follow/follow-process"
+                    , data:{"followId":followId}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("팔로우 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("팔로우 에러!");
+                    }
+                });
+            });
+
+
+            $(window).on("scroll", function() {
+
+                //현재 높이 저장
+                var currentScroll = $(this).scrollTop();
+                //전체 문서의 높이
+                var documentHeight = $(document).height();
+
+                //(현재 화면상단 + 현재 화면 높이)
+                var nowHeight = $(this).scrollTop() + $(window).height();
+
+                // console.log("현재 높이 : " + currentScroll);
+                // console.log("전체 문서 높이 : " + documentHeight);
+                // console.log("현재 높이 + 현재 화면 높이 : " + nowHeight);
+
+                //스크롤이 아래로 내려갔을때만 해당 이벤트 진행.
+                if(currentScroll > lastScroll){
+
+                    //nowHeight을 통해 현재 화면의 끝이 어디까지 내려왔는지 파악가능
+                    //즉 전체 문서의 높이에 일정량 근접했을때 글 더 불러오기)
+                    if(documentHeight <= (nowHeight + (documentHeight*0.01))){
+
+
+                        if(isScrollBottom) {
+                            return;
+                        }
+
+                        isScrollBottom = true;
+
+
+                        if(!hasNext) {
+
+                            alert("다음 게시글이 없습니다!");
+                            return;
+                        }
+
+                        if(hasNext) {
+
+                            $.ajax({
+                                type:"get"
+                                , url:"/post/like-next-process"
+                                , data:{"lastId" : lastId}
+                                , success:function(response) {
+                                    console.log(response);
+
+                                    hasNext = response.hasNext;
+                                    lastId = response.lastId;
+                                    let html = '';
+                                    $.each(response.content, function(idx, content) {
+                                        let profileImageTag = '';
+                                        let postImageTag = '';
+                                        let modiAndDelBtn = '';
+                                        let commentTop3 = '<div class="comments-top3 m-3 p-3">';
+                                        let isLikeTag = '';
+                                        let commentBox = '';
+                                        let followTag = '';
+                                        let followingTag = '';
+                                        if(userId != content.userId) {
+
+                                            if(content.follower) {
+                                                followingTag = '<span class="ml-2 text-small text-secondary">회원님을 팔로우중 입니다</span>';
+                                            }
+                                            if(!content.follow) {
+                                                followTag = '<div>' +
+                                                    '   <button data-id="'+ content.userId +'" class="followBtn btn btn-primary" type="button">팔로우</button>' +
+                                                    followingTag +
+                                                    '</div>'
+                                            }
+
+                                            if(content.follow && content.follower) {
+                                                followTag = '<button data-id="' + content.userId + '" class="followRemoveBtn btn btn-success" type="button">맞 팔로우중</button>';
+                                            }
+
+                                            if(content.follow && !content.follower) {
+                                                followTag = '<button data-id="'+ content.userId +'" class="followRemoveBtn btn btn-info" type="button">팔로우중</button>';
+                                            }
+                                        }
+
+
+
+                                        if(content.like) {
+                                            isLikeTag = '<i data-post-id="' + content.id + '" class="bi bi-heart-fill text-danger like-btn"></i>';
+                                        } else {
+                                            isLikeTag = '<i data-post-id="' + content.id + '" class="bi bi-heart text-danger unlike-btn"></i>';
+                                        }
+
+                                        if(content.profileImage == null || content.profileImage == '') {
+                                            profileImageTag = '<div class="d-flex pl-3 align-items-center">' +
+                                                '                        <div><i class="bi bi-person-circle"></i></div>' +
+                                                '                        <div class="pl-1 my-1"> ' + content.name + '</div>';
+                                        } else {
+                                            profileImageTag = '<div class="d-flex pl-3 align-items-center">' +
+                                                '                        <div><img class="round-image" width="24px" height="24px" src="' + content.profileImage + '"></div>' +
+                                                '                        <div class="pl-1 my-1"> ' + content.name + '</div>';
+                                        }
+
+                                        if(content.imagePath != null && content.imagePath != '') {
+                                            postImageTag = '<div class="d-flex justify-content-center my-1">' +
+                                                '                        <img class="postImage" width="450px" height="300px" src="' + content.imagePath + '">' +
+                                                '                    </div>'
+                                        }
+
+
+                                        if(userId != null && content.userId == userId) {
+                                            modiAndDelBtn = '<div class="d-flex justify-content-between w-50 ml-5">' +
+                                                '                                <div>' +
+                                                '                                    <a href="/post/modify?postId='+ content.id +'" class="text-dark"><i class="bi bi-pencil fs-5 postModify"></i></a>' +
+                                                '                                </div>' +
+                                                '                                <div>' +
+                                                '                                    <i data-id="' + content.id + '" class="bi bi-trash postRemove"></i>' +
+                                                '                                </div>' +
+                                                '                            </div>';
+                                        }
+
+                                        if(content.comments.length == 0) {
+                                            commentBox = '<div>' +
+                                                '            <div class="font-weight-bold text-center">댓글이 없습니다</div>' +
+                                                '         </div>';
+                                            commentTop3 += commentBox;
+                                        } else {
+                                            $.each(content.comments, function(idx, comment) {
+                                                commentBox = '';
+                                                let commentProfileImage = '';
+
+                                                if(comment.profileImage == null || comment.profileImage == '') {
+                                                    commentProfileImage = '<div>' +
+                                                        '                     <i class="bi bi-person-circle personIcon"></i>' +
+                                                        '                  </div>';
+                                                } else {
+                                                    commentProfileImage = '<div>' +
+                                                        '                     <img class="round-image" width="36px" height="36px" src="' + comment.profileImage + '">' +
+                                                        '                   </div>';
+                                                }
+
+                                                commentBox = '<div class="comment d-flex my-1 align-items-center">' +
+                                                    commentProfileImage +
+                                                    '                        <div>' +
+                                                    '                            <div class=" my-1">' + comment.name + '</div>' +
+                                                    '                            <div class="mx-3 my-1">' + comment.comment + '</div>' +
+                                                    '                        </div>' +
+                                                    '</div>';
+
+                                                commentTop3 += commentBox;
+                                            });
+                                        }
+
+                                        commentTop3 += '                </div>';
+                                        html = '<div class="post m-2">' +
+                                            '                <div class="post-info">' +
+                                            profileImageTag +
+                                            '<div class="ml-2">' +
+                                            followTag +
+                                            '</div>' +
+                                            '</div>' +
+                                            postImageTag +
+                                            '                    <div class="my-3 pl-5">' +
+                                            '                        <div class="postContents">' + content.contents + '</div>' +
+                                            '                    </div>' +
+                                            '                    <div class="d-flex justify-content-center my-3">' +
+                                            '                        <div class="w-75 d-flex justify-content-between">' +
+                                            '                            <div class="d-flex justify-content-between w-50 mr-5">' +
+                                            '                                <div class="d-flex align-items-center">' +
+                                            isLikeTag +
+                                            '                                    <div class="ml-2">' + content.likeCount + '</div>' +
+                                            '                                </div>' +
+                                            '                                <div class="d-flex align-items-center">' +
+                                            '                                    <a data-id="' + content.id + '" class="commentList" data-bs-toggle="modal" href="#myModal"><i class="bi bi-chat-right text-dark"></i></a>' +
+                                            '                                    <div class="ml-2">' + content.commentCount + '</div>' +
+                                            '                                </div>' +
+                                            '                            </div>' +
+                                            modiAndDelBtn +
+                                            '                        </div>' +
+                                            '                    </div>' +
+                                            '                </div>' +
+                                            commentTop3 +
+                                            '<div class="d-flex p-3 align-items-end">' +
+                                            '    <input name="documentCommentInput" type="text" class="form-control col-9 documentCommentInput">' +
+                                            '    <button type="button" data-post-id="' + content.id + '"  class="btn btn-info col-3 ml-2 documentCommentBtn">입력</button>' +
+                                            '</div>' +
+                                            '            </div>';
+
+
+
+                                        $(".post-list").append(html);
+                                    });
+                                }
+                                , complete:function () {
+                                    isScrollBottom = false;
+                                }
+                                , error:function() {
+                                    alert("게시글 불러오기 에러!");
+                                }
+                            });
+                        }
+
+                    }
+                }
+
+                //현재위치 최신화
+                lastScroll = currentScroll;
+            });
+
+            $(document).on("click", ".like-btn", function() {
+                let postId = $(this).data("post-id");
+
+                $.ajax({
+                    type:"delete"
+                    , url:"/post/like/like-remove-process"
+                    , data:{"postId":postId}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("좋아요 취소 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("좋아요 취소 에러!");
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".unlike-btn", function() {
+                let postId = $(this).data("post-id");
+
+                console.log(postId);
+
+                $.ajax({
+                    type:"post"
+                    , url:"/post/like/like-process"
+                    , data:{"postId":postId}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("좋아요 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("좋아요 에러!");
+                    }
+                });
+
+            });
+
+            $("#commentBtn").on("click", function() {
+                let id = $("#postId").val();
+                let comment = $("#commentInput").val();
+
+                if(comment == "") {
+                    alert("댓글을 입력 해주세요!");
+                    $("#commentInput").focus();
+                    return;
+                }
+
+                $.ajax({
+                    type:"post"
+                    , url:"/post/comment/write-process"
+                    , data:{"postId" : id, "comment" : comment}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("댓글 작성 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("댓글 작성 에러!");
+                    }
+                });
+
+            });
+
+            $(document).on("click", ".documentCommentBtn", function() {
+                let id = $(this).data("post-id");
+                let comment = $(this).prev().val();
+
+
+                if(comment == "") {
+                    alert("댓글을 입력 해주세요!");
+                    $(this).prev().focus();
+                    return;
+                }
+
+                $.ajax({
+                    type:"post"
+                    , url:"/post/comment/write-process"
+                    , data:{"postId" : id, "comment" : comment}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("댓글 작성 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("댓글 작성 에러!");
+                    }
+                });
+
+            });
+
+
+            $(document).on("click", ".postRemove", function() {
+                let id = $(this).data("id");
+
+                $.ajax({
+                    type:"delete"
+                    , url:"/post/remove-process"
+                    , data:{"postId" : id}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            location.reload();
+                        } else {
+                            alert("게시글 삭제 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("게시글 삭제 에러!");
+                    }
+                });
+            });
+
+            $("#closeBtn").on("click", function() {
+                myModal.hide();
+            });
+
+            $("#myModal").on("shown.bs.modal", function(e) {
+
+                let modalBody = $(this).find(".modal-body");
+                modalBody.off(scroll);
+
+                modalBody.on("scroll", function() {
+
+
+                    //현재 높이 저장
+                    var currentModalScroll = this.scrollTop;
+                    //전체 문서의 높이
+                    var clientHeight = this.clientHeight;
+
+                    var scrollHeight = this.scrollHeight;
+
+                    // console.log("현재 높이 : " + currentModalScroll);
+                    // console.log("전체 모달 높이 : " + clientHeight);
+                    // console.log("스크롤 높이 : " + scrollHeight);
+
+                    //스크롤이 아래로 내려갔을때만 해당 이벤트 진행.
+                    if(currentModalScroll > lastModalScroll){
+
+                        if(currentModalScroll + clientHeight >= scrollHeight - 10){
+
+                            if(isScrollModalBottom) {
+                                return;
+                            }
+
+                            isScrollModalBottom = true;
+
+                            if(!commentHasNext) {
+                                alert("더이상 댓글이 없습니다!");
+                                return;
+                            }
+
+                            let postId = $("#postId").val();
+
+                            $.ajax({
+                                type:"get"
+                                , url:"/post/comment/comment-next-process"
+                                , data:{"postId": postId, "lastId":lastCommentId}
+                                , success:function(response) {
+                                    if(response.result == "success") {
+
+                                        let comments = response.commentList;
+                                        let html = "";
+
+                                        commentHasNext = comments.hasNext;
+                                        lastCommentId = comments.lastId;
+
+
+                                        $.each(comments.content, function(idx, comment) {
+                                            let modiAndDelBtn = "";
+                                            let profileTag = "";
+                                            if(comment.profileImage != '' && comment.profileImage != null) {
+                                                profileTag = '<div class="userProfileImage">' +
+                                                    '   <img class="round-image" width="36px" height="36px" src="' + comment.profileImage +'">' +
+                                                    '</div>';
+                                            } else {
+                                                profileTag = '<div class="userProfileImage">' +
+                                                    '                   <i class="bi bi-person-circle personIcon"></i>' +
+                                                    '</div>';
+                                            }
+
+                                            if(userId == comment.userId) {
+
+                                                modiAndDelBtn = '<div class="d-flex justify-content-end align-items-end">' +
+                                                    '               <div class="mr-3">' +
+                                                    '                   <i data-comment-id="' + comment.id + '" class="isModify bi bi-pencil commentModify"></i>' +
+                                                    '               </div>' +
+                                                    '               <div>' +
+                                                    '                   <i data-comment-id="' + comment.id + '" class="bi bi-trash commentRemove"></i>' +
+                                                    '               </div>' +
+                                                    '           </div>'
+                                            }
+
+                                            html = '<div class="modalComment d-flex my-3 align-items-center justify-content-between">' +
+                                                '<div class="d-flex align-items-center">' +
+                                                profileTag +
+                                                '                            <div class="testDiv">' +
+                                                '                            <div class="mx-3 my-1 userName">' + comment.name + '</div>' +
+                                                '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
+                                                '                           </div>' +
+                                                '</div>' +
+                                                modiAndDelBtn +
+                                                '</div>';
+                                            $(".modal-body").append(html);
+                                        });
+                                    } else {
+                                        alert("댓글 출력 실패!");
+                                    }
+                                }
+                                , complete:function() {
+                                    isScrollModalBottom = false;
+                                }
+                                , error:function() {
+                                    alert("댓글 출력 에러!");
+                                }
+                            });
+                        }
+                    }
+
+                    //현재위치 최신화
+                    lastModalScroll = currentModalScroll;
+                });
+            });
+
+            $(document).on("click", ".commentList", function() {
+                let id = $(this).data("id");
+
+                $("#postId").val(id);
+                $.ajax({
+                    type:"get"
+                    , url:"/post/comment/comment-process"
+                    , data:{"postId":id}
+                    , success:function(response) {
+                        if(response.result == "success") {
+                            let comments = response.commentList;
+                            let html = "";
+
+                            commentHasNext = comments.hasNext;
+                            lastCommentId = comments.lastId;
+
+                            $(".modal-body").empty();
+
+                            $.each(comments.content, function(idx, comment) {
+                                let modiAndDelBtn = "";
+                                let profileTag = "";
+                                if(comment.profileImage != '' && comment.profileImage != null) {
+                                    profileTag = '<div class="userProfileImage">' +
+                                        '   <img class="round-image" width="36px" height="36px" src="' + comment.profileImage +'">' +
+                                        '</div>';
+                                } else {
+                                    profileTag = '<div class="userProfileImage">' +
+                                        '                   <i class="bi bi-person-circle personIcon"></i>' +
+                                        '</div>';
+                                }
+
+                                if(userId == comment.userId) {
+
+                                    modiAndDelBtn = '<div class="d-flex justify-content-end align-items-end">' +
+                                        '               <div class="mr-3">' +
+                                        '                   <i data-comment-id="' + comment.id + '" class="isModify bi bi-pencil commentModify"></i>' +
+                                        '               </div>' +
+                                        '               <div>' +
+                                        '                   <i data-comment-id="' + comment.id + '" class="bi bi-trash commentRemove"></i>' +
+                                        '               </div>' +
+                                        '           </div>'
+                                }
+
+                                html = '<div class="modalComment d-flex my-3 align-items-center justify-content-between">' +
+                                    '<div class="d-flex align-items-center">' +
+                                    profileTag +
+                                    '                            <div class="testDiv">' +
+                                    '                            <div class="mx-3 my-1 userName">' + comment.name + '</div>' +
+                                    '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
+                                    '                           </div>' +
+                                    '</div>' +
+                                    modiAndDelBtn +
+                                    '</div>';
+                                $(".modal-body").append(html);
+                            });
+                        } else {
+                            alert("댓글 불러오기 실패!");
+                        }
+                    }
+                    , error:function() {
+                        alert("댓글 불러오기 에러!");
+                    }
+                });
+                myModal.show();
+            });
+
+        });
+
+
+        $(document).on("click", ".isModify", function() {
+
+            let commentId = $(this).data("comment-id");
+
+            let text = $(this).parent().parent().prev().children().eq(1).children().eq(1).text();
+
+            let modifyForm = '<div id="modifyForm" class="d-flex p-3 align-items-end modifyForm">' +
+                '                        <input data-id="' + commentId + '" value="' + text + '" type="text" class="form-control col-9" id="modifyInput">' +
+                '                        <button id="modifyBtn" type="button" class="btn btn-info col-3 ml-2">수정</button>' +
+                '                    </div>';
+
+            let tagPosition = $(this).parent().parent().parent();
+
+            tagPosition.after(modifyForm);
+
+            $(this).parent().parent().parent().remove();
+
+            $(".commentModify").removeClass("isModify");
+        });
+
+        $(document).on("click", "#modifyBtn", function() {
+            let id = $("#modifyInput").data("id");
+            let comment = $("#modifyInput").val();
+
+            if(comment == "") {
+                alert("댓글을 입력 하세요!");
+                $("#modifyInput").focus();
+                return;
+            }
+
+
+            $.ajax({
+                type:"put"
+                , contentType:"application/json"
+                , url:"/post/comment/modify-process"
+                , data:JSON.stringify({
+                    "id" : id
+                    , "comment" : comment
+                })
+                , success:function(response) {
+                    if(response.result == "success") {
+                        location.reload();
+                    } else {
+                        alert("댓글 수정 실패!");
+                        location.reload();
+                    }
+                }
+                , error:function() {
+                    alert("댓글 수정 에러!");
+                }
+            });
+        });
+
+        $(document).on("click", ".commentRemove", function() {
+            let commentId = $(this).data("comment-id");
+
+            $.ajax({
+                type:"delete"
+                , url:"/post/comment/remove-process"
+                , data:{"commentId":commentId}
+                , success:function(response) {
+                    if(response.result == "success") {
+                        location.reload();
+                    } else {
+                        alert("댓글 삭제 실패!");
+                    }
+                }
+                , error:function() {
+                    alert("댓글 삭제 에러!");
+                }
+            });
+
+        });
+
+    </script>
+</html>
