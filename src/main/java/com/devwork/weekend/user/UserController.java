@@ -37,4 +37,10 @@ public class UserController {
 
         return "redirect:/user/login";
     }
+
+    @GetMapping("/info")
+    public String userInfo() {
+
+        return "weekend/user/user-info";
+    }
 }

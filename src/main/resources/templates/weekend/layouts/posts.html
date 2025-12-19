@@ -26,13 +26,13 @@
                     <a href="/post/write"><i class="bi bi-clipboard-plus text-dark"></i></a>
                 </div>
                 <div>
-                    <a href="#"><i class="bi bi-search text-dark"></i></a>
+                    <a href="/post/search"><i class="bi bi-search text-dark"></i></a>
                 </div>
                 <div>
                     <a href="/post/like-list"><i class="bi bi-heart-fill text-dark"></i></a>
                 </div>
                 <div>
-                    <a href="#"><i class="bi bi-person text-dark"></i></a>
+                    <a th:href="@{/user/info(id=${session.userInfo.id})}"><i class="bi bi-person text-dark"></i></a>
                 </div>
             </div>
         </footer>
@@ -932,7 +932,7 @@
 
         $(document).on("click", ".documentCommentBtn", function() {
             let id = $(this).data("post-id");
-            let comment = $(this).prev().val();
+            let comment = $("#commentInput" + id).val();
 
 
             if(comment == "") {
@@ -1060,12 +1060,12 @@
                                                 '           </div>'
                                         }
 
-                                        html = '<div class="modalComment d-flex my-3 align-items-center justify-content-between">' +
+                                        html = '<div id="modalComment'+ comment.id +'" class="modalComment d-flex my-3 align-items-center justify-content-between">' +
                                             '<div class="d-flex align-items-center">' +
                                             profileTag +
                                             '                            <div class="testDiv">' +
                                             '                            <div class="mx-3 my-1 userName">' + comment.name + '</div>' +
-                                            '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
+                                            '                            <div id="userComment'+ comment.id +'" class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
                                             '                           </div>' +
                                             '</div>' +
                                             modiAndDelBtn +
@@ -1134,12 +1134,12 @@
                                     '           </div>'
                             }
 
-                            html = '<div class="modalComment d-flex my-3 align-items-center justify-content-between">' +
+                            html = '<div id="modalComment'+ comment.id +'" class="modalComment d-flex my-3 align-items-center justify-content-between">' +
                                 '<div class="d-flex align-items-center">' +
                                 profileTag +
                                 '                            <div class="testDiv">' +
                                 '                            <div class="mx-3 my-1 userName">' + comment.name + '</div>' +
-                                '                            <div class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
+                                '                            <div id="userComment'+ comment.id +'" class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
                                 '                           </div>' +
                                 '</div>' +
                                 modiAndDelBtn +
@@ -1164,18 +1164,19 @@
 
         let commentId = $(this).data("comment-id");
 
-        let text = $(this).parent().parent().prev().children().eq(1).children().eq(1).text();
+        let text = $("#userComment" + commentId).text();
+
 
         let modifyForm = '<div id="modifyForm" class="d-flex p-3 align-items-end modifyForm">' +
             '                        <input data-id="' + commentId + '" value="' + text + '" type="text" class="form-control col-9" id="modifyInput">' +
             '                        <button id="modifyBtn" type="button" class="btn btn-info col-3 ml-2">수정</button>' +
             '                    </div>';
 
-        let tagPosition = $(this).parent().parent().parent();
+        let tagPosition = $("#modalComment" + commentId);
 
         tagPosition.after(modifyForm);
 
-        $(this).parent().parent().parent().remove();
+        tagPosition.remove();
 
         $(".commentModify").removeClass("isModify");
     });

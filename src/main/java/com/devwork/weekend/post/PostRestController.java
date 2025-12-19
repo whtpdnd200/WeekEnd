@@ -114,15 +114,59 @@ public class PostRestController {
     }
 
     @GetMapping("/follow-next-process")
-    public SlicePostDTO getNextPostListByFollow(Pageable pageable, long lastId, HttpSession session) {
+    public SlicePostDTO getNextPostListByFollow(Pageable pageable, @RequestParam long lastId, HttpSession session) {
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
 
         return postService.getNextPostListByFollow(pageable, lastId, loginUserDTO.getId());
     }
 
     @GetMapping("/like-next-process")
-    public SlicePostDTO getNextPostListByLike(Pageable pageable, long lastId, HttpSession session) {
+    public SlicePostDTO getNextPostListByLike(Pageable pageable, @RequestParam long lastId, HttpSession session) {
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
         return postService.getNextPostListByLike(pageable, lastId, loginUserDTO.getId());
+    }
+
+    @GetMapping("/search-process")
+    public Map<String, Object> getSearchList(Pageable pageable
+                                            , @RequestParam String keyword
+                                            , HttpSession session) {
+
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        SlicePostDTO slicePostDTO = postService.getPostListByKeyword(pageable, keyword, loginUserDTO.getId());
+
+        if(slicePostDTO != null) {
+            resultMap.put("result", "success");
+            resultMap.put("postList", slicePostDTO);
+            return resultMap;
+        }
+
+        resultMap.put("result", "fail");
+        return resultMap;
+    }
+
+    @GetMapping("/search-next-process")
+    public Map<String, Object> getNextSearchList(Pageable pageable
+                                                , @RequestParam long lastId
+                                                , @RequestParam String keyword
+                                                , HttpSession session) {
+
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        SlicePostDTO slicePostDTO = postService.getNextPostListByKeyword(pageable, keyword, loginUserDTO.getId(), lastId);
+
+        if(slicePostDTO != null) {
+            resultMap.put("result", "success");
+            resultMap.put("postList", slicePostDTO);
+            return resultMap;
+        }
+
+        resultMap.put("result", "fail");
+        return resultMap;
+
     }
 }

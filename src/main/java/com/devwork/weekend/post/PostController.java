@@ -50,8 +50,9 @@ public class PostController {
         return "weekend/post/like-list";
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "weekend/post/test";
+    @GetMapping("/search")
+    public String search() {
+
+        return "weekend/post/search";
     }
 }

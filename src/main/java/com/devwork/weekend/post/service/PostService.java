@@ -87,11 +87,8 @@ public class PostService {
         SlicePostDTO slicePostDTO = SlicePostDTO.builder()
                 .content(postList)
                 .hasNext(slicePosts.hasNext())
-                .number(slicePosts.getNumber())
                 .size(slicePosts.getSize())
                 .lastId(id)
-                .pageable(slicePosts.getPageable())
-                .nextPageable(slicePosts.nextPageable())
                 .build();
 
 
@@ -130,11 +127,8 @@ public class PostService {
         SlicePostDTO slicePostDTO = SlicePostDTO.builder()
                 .content(postList)
                 .hasNext(slicePosts.hasNext())
-                .number(slicePosts.getNumber())
                 .size(slicePosts.getSize())
                 .lastId(id)
-                .pageable(slicePosts.getPageable())
-                .nextPageable(slicePosts.nextPageable())
                 .build();
 
         return slicePostDTO;
@@ -175,11 +169,8 @@ public class PostService {
         SlicePostDTO slicePostDTO = SlicePostDTO.builder()
                 .content(postList)
                 .hasNext(slicePosts.hasNext())
-                .number(slicePosts.getNumber())
                 .size(slicePosts.getSize())
                 .lastId(id)
-                .pageable(slicePosts.getPageable())
-                .nextPageable(slicePosts.nextPageable())
                 .build();
 
         return slicePostDTO;
@@ -222,11 +213,8 @@ public class PostService {
         SlicePostDTO slicePostDTO = SlicePostDTO.builder()
                 .content(postList)
                 .hasNext(slicePosts.hasNext())
-                .number(slicePosts.getNumber())
                 .size(slicePosts.getSize())
                 .lastId(id)
-                .pageable(slicePosts.getPageable())
-                .nextPageable(slicePosts.nextPageable())
                 .build();
 
         return slicePostDTO;
@@ -325,11 +313,8 @@ public class PostService {
         SlicePostDTO slicePostDTO = SlicePostDTO.builder()
                 .content(postList)
                 .hasNext(slicePosts.hasNext())
-                .number(slicePosts.getNumber())
                 .size(slicePosts.getSize())
                 .lastId(id)
-                .pageable(slicePosts.getPageable())
-                .nextPageable(slicePosts.nextPageable())
                 .build();
 
         return slicePostDTO;
@@ -370,11 +355,88 @@ public class PostService {
         SlicePostDTO slicePostDTO = SlicePostDTO.builder()
                 .content(postList)
                 .hasNext(slicePosts.hasNext())
-                .number(slicePosts.getNumber())
                 .size(slicePosts.getSize())
                 .lastId(id)
-                .pageable(slicePosts.getPageable())
-                .nextPageable(slicePosts.nextPageable())
+                .build();
+
+        return slicePostDTO;
+    }
+
+    public SlicePostDTO getPostListByKeyword(Pageable pageable, String keyword, long userId) {
+
+        Slice<Post> slicePosts = postRepository.findAllPostByKeyword(PageRequest.of(0,3), keyword);
+
+        List<PostListDTO> postList = new ArrayList<>();
+
+        List<Post> posts = slicePosts.getContent();
+
+        long id = 0;
+        if(posts.size() > 0) {
+            id = posts.get(posts.size() - 1).getId();
+        }
+
+        for(Post post : posts) {
+            PostListDTO postListDTO = new PostListDTO(post.getId()
+                    , post.getUser().getId()
+                    , post.getUser().getName()
+                    , post.getUser().getProfileImage()
+                    , post.getContents()
+                    , post.getImagePath()
+                    , commentService.getComment3(post.getId())
+                    , commentService.getCommentCount(post.getId())
+                    , likeService.getLikeCount(post.getId())
+                    , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
+                    , followService.isFollow(userId, post.getUser().getId())
+                    , followService.isFollow(post.getUser().getId(), userId)
+                    , post.getCreatedAt()
+                    , post.getUpdatedAt());
+            postList.add(postListDTO);
+        }
+        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
+                .content(postList)
+                .hasNext(slicePosts.hasNext())
+                .size(slicePosts.getSize())
+                .lastId(id)
+                .build();
+
+        return slicePostDTO;
+    }
+
+    public SlicePostDTO getNextPostListByKeyword(Pageable pageable, String keyword, long userId, long lastId) {
+
+        Slice<Post> slicePosts = postRepository.findAllNextPostByKeyword(PageRequest.of(0,3), keyword, lastId);
+
+        List<PostListDTO> postList = new ArrayList<>();
+
+        List<Post> posts = slicePosts.getContent();
+
+        long id = 0;
+        if(posts.size() > 0) {
+            id = posts.get(posts.size() - 1).getId();
+        }
+
+        for(Post post : posts) {
+            PostListDTO postListDTO = new PostListDTO(post.getId()
+                    , post.getUser().getId()
+                    , post.getUser().getName()
+                    , post.getUser().getProfileImage()
+                    , post.getContents()
+                    , post.getImagePath()
+                    , commentService.getComment3(post.getId())
+                    , commentService.getCommentCount(post.getId())
+                    , likeService.getLikeCount(post.getId())
+                    , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
+                    , followService.isFollow(userId, post.getUser().getId())
+                    , followService.isFollow(post.getUser().getId(), userId)
+                    , post.getCreatedAt()
+                    , post.getUpdatedAt());
+            postList.add(postListDTO);
+        }
+        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
+                .content(postList)
+                .hasNext(slicePosts.hasNext())
+                .size(slicePosts.getSize())
+                .lastId(id)
                 .build();
 
         return slicePostDTO;

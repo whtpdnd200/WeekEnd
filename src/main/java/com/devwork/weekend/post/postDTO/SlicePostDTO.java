@@ -11,11 +11,6 @@ import java.util.List;
 public class SlicePostDTO {
     private List<PostListDTO> content;
     private boolean hasNext;
-    private int number;
     private int size;
     private long lastId;
-    private Pageable pageable;
-    private Pageable nextPageable;
-
-
 }

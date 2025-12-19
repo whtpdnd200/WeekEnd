@@ -57,10 +57,25 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(""" 
             SELECT p FROM Post p
             JOIN FETCH p.user
-            WHERE p.id < :lastId AND p.id IN(:postIdList) 
+            WHERE p.id < :lastId AND p.id IN(:postIdList)
             ORDER BY p.createdAt DESC
             """)
     public Slice<Post> findALlNextPostByLike(Pageable pageable, @Param("postIdList") List<Long> postIdList, @Param("lastId") long lastId);
 
 
+    @Query("""
+        SELECT p FROM Post p
+        JOIN FETCH p.user
+        WHERE p.contents LIKE CONCAT('%', :keyword, '%')
+        ORDER BY p.createdAt DESC
+        """)
+    public Slice<Post> findAllPostByKeyword(Pageable pageable, @Param("keyword") String keyword);
+
+    @Query("""
+        SELECT p FROM Post p
+        JOIN FETCH p.user
+        WHERE p.id < :lastId AND p.contents LIKE CONCAT('%', :keyword, '%')
+        ORDER BY p.createdAt DESC
+        """)
+    public Slice<Post> findAllNextPostByKeyword(Pageable pageable, @Param("keyword") String keyword, @Param("lastId") long lastId);
 }

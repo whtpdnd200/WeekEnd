@@ -1,0 +1,92 @@
+#wrap {
+    width: 600px;
+
+    margin: 0 auto;
+}
+
+.bi {
+    font-size: 24px;
+}
+
+header {
+    height: 100px;
+    background-color: #F4F4F4;
+}
+
+section {
+
+}
+
+#imageCircle {
+    font-size: 100px;
+}
+
+section > .post-list {
+}
+
+.post-list > .post {
+    border: solid 1px lightgray;
+}
+
+.followBtn {
+    height: 24px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.followRemoveBtn {
+    width: 120px;
+    height: 24px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.post-info {
+    border-bottom: solid 1px lightgray;
+}
+
+.comments-top3 {
+    border: solid 1px lightgray;
+
+}
+
+.modal {
+    top: 100px;
+}
+
+.modal-content {
+    height: 550px;
+    max-height: 700px;
+}
+
+.modal-dialog {
+    max-width: 587px;
+}
+
+.modal-body {
+    height: 550px;
+}
+
+.personIcon {
+    font-size: 36px;
+}
+
+.commentModify {
+    font-size: 18px;
+}
+
+.commentRemove {
+    font-size: 18px;
+}
+
+.round-image {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid darkgray;
+}
+
+footer {
+    height: 70px;
+    border: solid 1px lightgray;
+    background-color: #F4F4F4;
+}
