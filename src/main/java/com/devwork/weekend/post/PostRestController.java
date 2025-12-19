@@ -113,8 +113,8 @@ public class PostRestController {
         return postService.getPostListByFollow(pageable, loginUserDTO.getId());
     }
 
-    @GetMapping("/test")
-    public SlicePostDTO test(Pageable pageable, long lastId, HttpSession session) {
+    @GetMapping("/follow-next-process")
+    public SlicePostDTO getNextPostListByFollow(Pageable pageable, long lastId, HttpSession session) {
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
 
         return postService.getNextPostListByFollow(pageable, lastId, loginUserDTO.getId());

@@ -142,6 +142,7 @@ public class PostService {
 
     public SlicePostDTO getPostListByFollow(Pageable pageable, long userId) {
         List<Long> followList = followService.getFollowList(userId);
+        followList.add(userId);
         Slice<Post> slicePosts = postRepository.findAllPostByFollow(PageRequest.of(0, 3), followList);
 
         List<Post> posts = slicePosts.getContent();
@@ -186,6 +187,7 @@ public class PostService {
 
     public SlicePostDTO getNextPostListByFollow(Pageable pageable, long lastId, long userId) {
         List<Long> followList = followService.getFollowList(userId);
+        followList.add(userId);
         Slice<Post> slicePosts = postRepository.findAllNextPostByFollow(PageRequest.of(0, 3), followList, lastId);
 
         List<Post> posts = slicePosts.getContent();
