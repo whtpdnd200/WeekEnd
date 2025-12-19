@@ -41,4 +41,12 @@ public class PostController {
         model.addAttribute("post", postService.getPost(postId));
         return "weekend/post/modify";
     }
+
+    @GetMapping("/like-list")
+    public String likeList(Pageable pageable, HttpSession session, Model model) {
+
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        model.addAttribute("postList", postService.getPostListByLike(pageable, loginUserDTO.getId()));
+        return "weekend/post/like-list";
+    }
 }

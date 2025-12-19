@@ -119,4 +119,10 @@ public class PostRestController {
 
         return postService.getNextPostListByFollow(pageable, lastId, loginUserDTO.getId());
     }
+
+    @GetMapping("/like-next-process")
+    public SlicePostDTO getNextPostListByLike(Pageable pageable, long lastId, HttpSession session) {
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        return postService.getNextPostListByLike(pageable, lastId, loginUserDTO.getId());
+    }
 }

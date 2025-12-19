@@ -44,4 +44,23 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY p.createdAt DESC
             """)
     public Slice<Post> findAllNextPostByFollow(Pageable pageable, @Param("followList") List<Long> followList, @Param("lastId") long lastId);
+
+    @Query(""" 
+            SELECT p FROM Post p
+            JOIN FETCH p.user
+            WHERE p.id IN(:postIdList)
+            ORDER BY p.createdAt DESC
+            """)
+    public Slice<Post> findALlPostByLike(Pageable pageable, @Param("postIdList") List<Long> postIdList);
+
+
+    @Query(""" 
+            SELECT p FROM Post p
+            JOIN FETCH p.user
+            WHERE p.id < :lastId AND p.id IN(:postIdList) 
+            ORDER BY p.createdAt DESC
+            """)
+    public Slice<Post> findALlNextPostByLike(Pageable pageable, @Param("postIdList") List<Long> postIdList, @Param("lastId") long lastId);
+
+
 }

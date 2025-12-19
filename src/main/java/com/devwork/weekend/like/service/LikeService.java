@@ -5,6 +5,8 @@ import com.devwork.weekend.like.repository.LikeRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,5 +61,18 @@ public class LikeService {
     public boolean isLikeByPostIdAndUserId(long postId, long userId) {
 
         return likeRepository.existsByPostIdAndUserId(postId, userId);
+    }
+
+    public List<Long> getLikeList(long userId) {
+
+        List<Like> list = likeRepository.findByUserId(userId);
+
+        List<Long> postIdList = new ArrayList<>();
+
+        for(Like like : list) {
+            postIdList.add(like.getPostId());
+        }
+
+        return postIdList;
     }
 }
