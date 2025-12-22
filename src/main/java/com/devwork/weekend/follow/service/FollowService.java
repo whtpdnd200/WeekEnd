@@ -50,7 +50,7 @@ public class FollowService {
     }
 
     public List<Long> getFollowList(long userId) {
-        List<Follow> follows = followRepository.findByUserId(userId);
+        List<Follow> follows = followRepository.findByUserId(userId).getContent();
         List<Long> followUserList = new ArrayList<>();
 
         for(Follow follow : follows) {

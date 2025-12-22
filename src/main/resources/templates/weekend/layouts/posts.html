@@ -37,9 +37,19 @@
             </div>
         </footer>
     </div>
-    <div id="myModal" class="modal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal fade" id="commentRemoveModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
+                <input type="hidden" value="" id="postIdHidden">
+                <div class="modal-body text-center postRemove">
+                    <a class="text-danger" href="#">게시글 삭제하기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="myModal" class="modal modalComment" tabindex="-1">
+        <div class="modal-dialog modal-comment-dialog modal-dialog-scrollable">
+            <div class="modal-content modal-comment-content">
                 <div class="modal-header">
                     <h5 class="modal-title">댓글</h5>
                     <input type="hidden" value="" id="postId">
@@ -47,12 +57,51 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-comment-body modal-body">
 
                 </div>
                 <div class="d-flex p-3 align-items-end">
                     <input type="text" class="form-control col-9" id="commentInput">
                     <button id="commentBtn" type="button" class="btn btn-info col-3 ml-2">입력</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="followModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 500px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-center follow-list" id="exampleModalLabel">팔로우 목록</h5>
+                    <button id="followCloseBtn" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="w-75 mx-auto">
+                    <div class="d-flex justify-content-between px-5 mt-3">
+                        <div id="followingList" class="followCategory">
+                            <a class="text-dark followSelect" href="#">팔로잉 목록</a>
+                        </div>
+                        <div id="followerList">
+                            <a class="text-dark followSelect" href="#">팔로워 목록</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between px-3">
+                        <div class="d-flex px-2">
+                            <div>
+                                <i class="bi bi-person-circle personIcon"></i>
+                            </div>
+                            <div class="ml-2">
+                                <div>유저 네임</div>
+                                <div>유저 아이디</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <button class="followBtn btn btn-primary" type="button">팔로우</button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -65,6 +114,8 @@
         $(document).ready(function() {
 
             var myModal = new bootstrap.Modal($("#myModal"));
+
+            var followModal = new bootstrap.Modal($("#followModal"));
 
             var userId = $("#wrap").data("user-id");
 
@@ -123,7 +174,30 @@
                     searchParam = {"lastId":lastId, "userInfoId":userInfoId};
             }
 
-            console.log(userId);
+            $("#followingList").on("click", function() {
+
+                if($("#followingList").hasClass("followCategory")) {
+                    alert("이미 선택된 카테고리 입니다!");
+                    return;
+                }
+
+                $("#followerList").removeClass("followCategory");
+                $("#followingList").addClass("followCategory");
+            });
+
+            $("#followerList").on("click", function() {
+                if($("#followerList").hasClass("followCategory")) {
+                    alert("이미 선택된 카테고리 입니다!");
+                    return;
+                }
+
+                $("#followingList").removeClass("followCategory");
+                $("#followerList").addClass("followCategory");
+            });
+
+            $("#followCloseBtn").on("click", function() {
+                followModal.hide();
+            });
 
             $("#searchBtn").on("click", function() {
                 keyword = "";
@@ -497,9 +571,15 @@
 
             });
 
+            $(document).on("click", ".postRemoveModal", function() {
+                let id = $(this).data("id");
+                $("#postIdHidden").val(id);
+            });
+
 
             $(document).on("click", ".postRemove", function() {
-                let id = $(this).data("id");
+                let id = $("#postIdHidden").val();
+
 
                 $.ajax({
                     type:"delete"
@@ -573,7 +653,7 @@
 
                                         $.each(comments.content, function(idx, comment) {
 
-                                            $(".modal-body").append(createCommentTag(comment, userId));
+                                            $(".modal-comment-body").append(createCommentTag(comment, userId));
                                         });
                                     } else {
                                         alert("댓글 출력 실패!");
@@ -613,7 +693,7 @@
 
                             $.each(comments.content, function(idx, comment) {
 
-                                $(".modal-body").append(createCommentTag(comment, userId));
+                                $(".modal-comment-body").append(createCommentTag(comment, userId));
                             });
                         } else {
                             alert("댓글 불러오기 실패!");
@@ -764,7 +844,7 @@
                     '                                    <a href="/post/modify?postId=' + content.id + '" class="text-dark"><i class="bi bi-pencil fs-5 postModify"></i></a>' +
                     '                                </div>' +
                     '                                <div>' +
-                    '                                    <i data-id="' + content.id + '" class="bi bi-trash postRemove"></i>' +
+                    '                                    <i data-id="' + content.id + '" class="bi bi-trash postRemoveModal" data-bs-toggle="modal" data-bs-target="#commentRemoveModal"></i>' +
                     '                                </div>' +
                     '                            </div>';
             }

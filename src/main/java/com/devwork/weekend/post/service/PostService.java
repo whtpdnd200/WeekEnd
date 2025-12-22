@@ -175,7 +175,7 @@ public class PostService {
         return slicePostDTO;
     }
 
-    public SlicePostDTO getPostNextListByUserId(Pageable pageable, long userId, long lastId) {
+    public SlicePostDTO getPostNextListByUserId(Pageable pageable, long userId, long lastId, long loginId) {
 
         Slice<Post> slicePosts = postRepository.findAllNextPostByUserId(PageRequest.of(0, 2), userId, lastId);
 
@@ -198,8 +198,8 @@ public class PostService {
                     , commentService.getCommentCount(post.getId())
                     , likeService.getLikeCount(post.getId())
                     , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
-                    , followService.isFollow(userId, post.getUser().getId())
-                    , followService.isFollow(post.getUser().getId(), userId)
+                    , followService.isFollow(loginId, userId)
+                    , followService.isFollow(userId, loginId)
                     , post.getCreatedAt()
                     , post.getUpdatedAt());
             postList.add(postListDTO);

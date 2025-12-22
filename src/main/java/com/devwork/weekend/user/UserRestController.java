@@ -96,8 +96,9 @@ public class UserRestController {
     }
 
     @GetMapping("/info-next-process")
-    public SlicePostDTO getNextPost(Pageable pageable, @RequestParam long userInfoId, @RequestParam long lastId) {
+    public SlicePostDTO getNextPost(Pageable pageable, @RequestParam long userInfoId, @RequestParam long lastId, HttpSession session) {
 
-        return userService.getUserPostNext(pageable, userInfoId, lastId);
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        return userService.getUserPostNext(pageable, userInfoId, lastId, loginUserDTO.getId());
     }
 }

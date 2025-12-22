@@ -63,21 +63,38 @@ section > .post-list {
 
 }
 
-.modal {
+.modalComment {
     top: 100px;
 }
 
-.modal-content {
+.modal-comment-content {
     height: 550px;
     max-height: 700px;
 }
 
-.modal-dialog {
+.modal-comment-dialog {
     max-width: 587px;
 }
 
-.modal-body {
+.modal-comment-body {
     height: 550px;
+}
+
+.follow-list {
+    width: 100%;
+}
+
+.followSelect {
+    text-decoration: none !important;
+    font-size: 24px;
+}
+
+.followCategory {
+    border-bottom: 5px solid gray;
+}
+
+.modal-dialog {
+    max-width: 500px; !important;
 }
 
 .personIcon {

@@ -146,7 +146,7 @@ public class UserService {
         return postService.getPostListByUserId(pageable, userId, loginId);
     }
 
-    public SlicePostDTO getUserPostNext(Pageable pageable, long userId, long lastId) {
-        return postService.getPostNextListByUserId(pageable, userId, lastId);
+    public SlicePostDTO getUserPostNext(Pageable pageable, long userId, long lastId, long loginId) {
+        return postService.getPostNextListByUserId(pageable, userId, lastId, loginId);
     }
 }
