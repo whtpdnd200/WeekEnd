@@ -134,6 +134,88 @@ public class PostService {
         return slicePostDTO;
     }
 
+    public SlicePostDTO getPostListByUserId(Pageable pageable, long userId, long loginId) {
+
+        Slice<Post> slicePosts = postRepository.findAllPostByUserId(PageRequest.of(0, 2), userId);
+
+        List<Post> posts = slicePosts.getContent();
+        long id = 0;
+        if(posts.size() > 0) {
+            id = posts.get(posts.size() - 1).getId();
+        }
+        List<PostListDTO> postList = new ArrayList<>();
+
+
+        for(Post post : posts) {
+            PostListDTO postListDTO = new PostListDTO(post.getId()
+                    , post.getUser().getId()
+                    , post.getUser().getName()
+                    , post.getUser().getProfileImage()
+                    , post.getContents()
+                    , post.getImagePath()
+                    , commentService.getComment3(post.getId())
+                    , commentService.getCommentCount(post.getId())
+                    , likeService.getLikeCount(post.getId())
+                    , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
+                    , followService.isFollow(loginId, userId)
+                    , followService.isFollow(userId, loginId)
+                    , post.getCreatedAt()
+                    , post.getUpdatedAt());
+            postList.add(postListDTO);
+
+        }
+
+        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
+                .content(postList)
+                .hasNext(slicePosts.hasNext())
+                .size(slicePosts.getSize())
+                .lastId(id)
+                .build();
+
+        return slicePostDTO;
+    }
+
+    public SlicePostDTO getPostNextListByUserId(Pageable pageable, long userId, long lastId) {
+
+        Slice<Post> slicePosts = postRepository.findAllNextPostByUserId(PageRequest.of(0, 2), userId, lastId);
+
+        List<Post> posts = slicePosts.getContent();
+        long id = 0;
+        if(posts.size() > 0) {
+            id = posts.get(posts.size() - 1).getId();
+        }
+        List<PostListDTO> postList = new ArrayList<>();
+
+
+        for(Post post : posts) {
+            PostListDTO postListDTO = new PostListDTO(post.getId()
+                    , post.getUser().getId()
+                    , post.getUser().getName()
+                    , post.getUser().getProfileImage()
+                    , post.getContents()
+                    , post.getImagePath()
+                    , commentService.getComment3(post.getId())
+                    , commentService.getCommentCount(post.getId())
+                    , likeService.getLikeCount(post.getId())
+                    , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
+                    , followService.isFollow(userId, post.getUser().getId())
+                    , followService.isFollow(post.getUser().getId(), userId)
+                    , post.getCreatedAt()
+                    , post.getUpdatedAt());
+            postList.add(postListDTO);
+
+        }
+
+        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
+                .content(postList)
+                .hasNext(slicePosts.hasNext())
+                .size(slicePosts.getSize())
+                .lastId(id)
+                .build();
+
+        return slicePostDTO;
+    }
+
     public SlicePostDTO getPostListByFollow(Pageable pageable, long userId) {
         List<Long> followList = followService.getFollowList(userId);
         followList.add(userId);
@@ -231,7 +313,6 @@ public class PostService {
 
             if(imagePath != null && post.getImagePath() != null) {
                 FileManager.deleteFile(post.getImagePath());
-                
             }
 
             if(imagePath == null) {
@@ -256,6 +337,9 @@ public class PostService {
         Optional<Post> optionalPost = postRepository.findById(id);
         if(optionalPost.isPresent()) {
             Post post = optionalPost.get();
+
+            FileManager.deleteFile(post.getImagePath());
+
             postRepository.delete(post);
             return true;
         }

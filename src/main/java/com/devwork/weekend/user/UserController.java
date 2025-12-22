@@ -2,14 +2,18 @@ package com.devwork.weekend.user;
 
 import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
+import com.devwork.weekend.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 
+@RequiredArgsConstructor
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -17,9 +21,8 @@ public class UserController {
 
     private final PostService postService;
 
-    public UserController(PostService postService) {
-        this.postService = postService;
-    }
+    private final UserService userService;
+
 
     @GetMapping("/join")
     public String join() {
@@ -49,10 +52,12 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    public String userInfo(Model model, Pageable pageable, HttpSession session) {
+    public String userInfo(Model model, Pageable pageable, @RequestParam("id") long userId, HttpSession session) {
+
 
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
-        model.addAttribute("postList", postService.getPostList(pageable, loginUserDTO.getId()));
+        model.addAttribute("userInfo", userService.getUserInfo(userId, loginUserDTO.getId()));
+        model.addAttribute("postList", userService.getUserPost(pageable, userId, loginUserDTO.getId()));
         return "weekend/user/user-info";
     }
 

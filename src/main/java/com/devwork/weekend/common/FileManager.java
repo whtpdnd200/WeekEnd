@@ -11,8 +11,8 @@ import java.nio.file.Paths;
 public class FileManager {
     
 
-    // public final static String  FILE_UPLOAD_PATH = "D:\\joseung_Workspace\\springProject\\upload\\WeekEnd";
-    public final static String  FILE_UPLOAD_PATH = "/Users/jose-ung/Downloads/springProject/upload/WeekEnd";
+    public final static String  FILE_UPLOAD_PATH = "D:\\joseung_Workspace\\springProject\\upload\\WeekEnd";
+    // public final static String  FILE_UPLOAD_PATH = "/Users/jose-ung/Downloads/springProject/upload/WeekEnd";
     private final static String[] IMAGE_EXTENSION = {".jpg", ".jpeg", ".png", ".webp"};
 
     public static String savaFile(long userId, MultipartFile file) {
@@ -72,25 +72,24 @@ public class FileManager {
         return false;
     }
 
-    public static boolean deleteFile(String dirName) {
+    public static boolean deleteFile(String imagePath) {
 
-        dirName = dirName.replace("/images", "");
-        String imagePath = FILE_UPLOAD_PATH + dirName;
+        if(imagePath == null) {
+            return false;
+        }
 
-        File imageFile = new File(imagePath);
+        String fullFilePath = FILE_UPLOAD_PATH + imagePath.replace("images", "");
 
-        String dirPath = imagePath.replace(imagePath.substring(imagePath.lastIndexOf("/")), "");
+        Path path = Paths.get(fullFilePath);
+        Path directoryPath = path.getParent();
 
-        File directoryPath = new File(dirPath);
-
-
-        boolean fileDelete = imageFile.delete();
-
-        boolean dirDelete = directoryPath.delete();
-
-        return fileDelete && dirDelete;
+        try {
+            Files.delete(path);
+            Files.delete(directoryPath);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
 
     }
-
-
 }

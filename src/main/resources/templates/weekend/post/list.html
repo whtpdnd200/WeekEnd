@@ -10,12 +10,12 @@
             <div id="postFollow" class=""><a href="#" class="postSelect text-dark"><h4>팔로우 게시글</h4></a></div>
         </div>
         <div class="post-list my-1">
-            <div th:data-user-id="${session.userInfo.id}" th:data-last-id="${postList.lastId}" th:data-has-next="${postList.hasNext}" th:each="post : ${postList.getContent()}" class="post m-2">
+            <div th:each="post : ${postList.getContent()}" class="post m-2">
                 <div class="post-info">
                     <div class="d-flex pl-3 align-items-center">
                         <div th:if="${post.profileImage == '' || post.profileImage == null}"><i class="bi bi-person-circle"></i></div>
                         <div th:unless="${post.profileImage == '' || post.profileImage == null}"><img class="round-image" width="24px" height="24px" th:src="${post.profileImage}"></div>
-                        <div th:text="${post.name}" class="pl-1 my-1">회원 이름</div>
+                        <div class="pl-1 my-1"><a class="text-dark" th:href="@{/user/info(id=${post.userId})}"><span th:text="${post.name}">회원 이름</span></a></div>
                         <div th:if="${session.userInfo.id != post.userId}" class="ml-2">
                             <div th:if="${!post.follow}">
                                 <button th:data-id="${post.userId}" class="followBtn btn btn-primary" type="button">팔로우</button>
@@ -66,7 +66,7 @@
                             <img class="round-image" width="36px" height="36px" th:src="${comment.profileImage}">
                         </div>
                         <div>
-                            <div th:text="${comment.name}" class="mx-3 my-1">유저 이름</div>
+                            <div class="mx-3 my-1"><a class="text-dark" th:href="@{/user/info(id=${post.userId})}"><span th:text="${comment.name}">유저 이름</span></a></div>
                             <div th:text="${comment.comment}" class="mx-3 my-1">댓글 내용</div>
                         </div>
 

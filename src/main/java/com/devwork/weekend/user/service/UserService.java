@@ -1,27 +1,32 @@
 package com.devwork.weekend.user.service;
 
 import com.devwork.weekend.common.FileManager;
+import com.devwork.weekend.follow.service.FollowService;
+import com.devwork.weekend.post.postDTO.SlicePostDTO;
+import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
+import com.devwork.weekend.user.UserDTO.UserInfoDTO;
 import com.devwork.weekend.user.UserDTO.UserModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.common.SHA256HashingEncoder;
 import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-
+@RequiredArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FollowService followService;
+    private final PostService postService;
 
-    public UserService(UserRepository userRepository) {
-
-        this.userRepository = userRepository;
-    }
 
     public boolean createUser(UserJoinDTO userJoinDTO) {
 
@@ -113,5 +118,35 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public UserInfoDTO getUserInfo(long userId, long loginId) {
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+                    .id(user.getId())
+                    .name(user.getName())
+                    .profileImage(user.getProfileImage())
+                    .followCountDTO(followService.getCounts(userId))
+                    .isFollow(followService.isFollow(loginId, userId
+
+                    ))
+                    .isFollower(followService.isFollow(userId, loginId))
+                    .build();
+            return userInfoDTO;
+        }
+        return null;
+    }
+
+    public SlicePostDTO getUserPost(Pageable pageable, long userId, long loginId) {
+        return postService.getPostListByUserId(pageable, userId, loginId);
+    }
+
+    public SlicePostDTO getUserPostNext(Pageable pageable, long userId, long lastId) {
+        return postService.getPostNextListByUserId(pageable, userId, lastId);
     }
 }

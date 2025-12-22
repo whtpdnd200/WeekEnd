@@ -2,7 +2,7 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{weekend/layouts/default}">
+      layout:decorate="~{weekend/layouts/posts}">
 <head>
     <meta charset="UTF-8">
     <title>사용자 페이지</title>
@@ -13,19 +13,29 @@
 </head>
 
     <section layout:fragment="contents">
-        <div class="d-flex px-5 py-4 userInfo">
-            <div class="profileImage ml-3 d-flex align-items-center">
+        <div class="d-flex px-5 py-4 userInfo" id="userInfo" th:data-user-info-id="${userInfo.id}">
+            <div th:if="${userInfo.profileImage != null && userInfo.profileImage != ''}" class="profileImage ml-3 d-flex align-items-center">
+                <img class="round-image" width="150px" height="150px" th:src="${userInfo.profileImage}">
+            </div>
+            <div th:unless="${userInfo.profileImage != null && userInfo.profileImage != ''}" class="profileImage ml-3 d-flex align-items-center">
                 <i id="imageCircle" class="bi bi-person-circle personIcon"></i>
             </div>
             <div class="d-flex align-items-center ml-3">
                 <div>
                     <div class="d-flex">
-                        <div class="userName">사용자 이름</div>
-                        <div><button class="ml-3 followBtn btn btn-primary" type="button">팔로우</button></div>
+                        <div th:text="${userInfo.name}" class="userInfoName">사용자 이름</div>
+                        <div class="ml-2" th:if="${session.userInfo.id != userInfo.id}">
+                            <div th:if="${!userInfo.follow}">
+                                <button th:data-id="${userInfo.id}" class="followBtn btn btn-primary" type="button">팔로우</button>
+                                <span th:if="${userInfo.follower}" class="text-small text-secondary">회원님을 팔로우중 입니다</span>
+                            </div>
+                            <button th:if="${userInfo.follow && userInfo.follower}" th:data-id="${userInfo.id}" class="followRemoveBtn btn btn-success" type="button">맞 팔로우중</button>
+                            <button th:if="${userInfo.follow && !userInfo.follower}" th:data-id="${userInfo.id}" class="followRemoveBtn btn btn-info" type="button">팔로우중</button>
+                        </div>
                     </div>
                     <div class="d-flex followTag">
-                        <div class="">팔로잉 0</div>
-                        <div class="ml-3">팔로워 0</div>
+                        <div class="">팔로잉 <span th:text="${userInfo.followCountDTO.followingCount}">0</span></div>
+                        <div class="ml-3">팔로워 <span th:text="${userInfo.followCountDTO.followerCount}">0</span></div>
                     </div>
                 </div>
             </div>
@@ -104,20 +114,4 @@
             </div>
         </div>
     </section>
-    <footer layout:fragment="footer" class="d-flex align-items-center justify-content-center">
-        <div class="w-75 d-flex justify-content-between align-items-center">
-            <div>
-                <a href="/post/write"><i class="bi bi-clipboard-plus text-dark"></i></a>
-            </div>
-            <div>
-                <a href="#"><i class="bi bi-search text-dark"></i></a>
-            </div>
-            <div>
-                <a href="#"><i class="bi bi-heart-fill text-dark"></i></a>
-            </div>
-            <div>
-                <a href="#"><i class="bi bi-person text-dark"></i></a>
-            </div>
-        </div>
-    </footer>
 </html>

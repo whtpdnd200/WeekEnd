@@ -1,6 +1,8 @@
 package com.devwork.weekend.user;
 
+import com.devwork.weekend.post.postDTO.SlicePostDTO;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
+import com.devwork.weekend.user.UserDTO.UserInfoDTO;
 import com.devwork.weekend.user.UserDTO.UserModifyDTO;
 import com.devwork.weekend.user.UserDTO.UserJoinDTO;
 import com.devwork.weekend.user.domain.User;
@@ -8,7 +10,7 @@ import com.devwork.weekend.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.data.domain.Pageable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,5 +93,11 @@ public class UserRestController {
 
         resultMap.put("result", "fail");
         return resultMap;
+    }
+
+    @GetMapping("/info-next-process")
+    public SlicePostDTO getNextPost(Pageable pageable, @RequestParam long userInfoId, @RequestParam long lastId) {
+
+        return userService.getUserPostNext(pageable, userInfoId, lastId);
     }
 }

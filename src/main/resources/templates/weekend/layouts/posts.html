@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/css/post/list/style.css">
 </head>
 <body>
-    <div id="wrap" class="">
+    <div th:data-user-id="${session.userInfo.id}" th:data-last-id="${postList != null ? postList.lastId : 0}" th:data-has-next="${postList != null ? postList.hasNext : false}" id="wrap" class="">
         <header class="d-flex justify-content-center align-items-center border">
             <h1>WeekEnd</h1>
         </header>
@@ -66,15 +66,15 @@
 
             var myModal = new bootstrap.Modal($("#myModal"));
 
-            var userId = $(".post").data("user-id");
+            var userId = $("#wrap").data("user-id");
 
-            var lastId = $(".post").data("last-id");
+            var lastId = $("#wrap").data("last-id");
 
             var lastScroll = 0;
 
             var lastModalScroll = 0;
 
-            var hasNext = $(".post").data("has-next");
+            var hasNext = $("#wrap").data("has-next");
 
             var commentHasNext;
 
@@ -98,6 +98,8 @@
 
             var searchParam;
 
+            var userInfoId = $("#userInfo").data("user-info-id");
+
 
             switch (currentUrl) {
                 case "list":
@@ -115,7 +117,13 @@
                     urlModeNext = "/post/like-next-process";
                     searchParam = {"lastId":lastId};
                     break;
+                case "info":
+                    urlMode = "/user/info-process";
+                    urlModeNext = "/user/info-next-process"
+                    searchParam = {"lastId":lastId, "userInfoId":userInfoId};
             }
+
+            console.log(userId);
 
             $("#searchBtn").on("click", function() {
                 keyword = "";
@@ -705,6 +713,7 @@
             let commentBox = '';
             let followTag = '';
             let followingTag = '';
+
             if (userId != content.userId) {
 
                 if (content.follower) {
@@ -735,11 +744,11 @@
             if (content.profileImage == null || content.profileImage == '') {
                 profileImageTag = '<div class="d-flex pl-3 align-items-center">' +
                     '                        <div><i class="bi bi-person-circle"></i></div>' +
-                    '                        <div class="pl-1 my-1"> ' + content.name + '</div>';
+                    '                        <div class="pl-1 my-1"><a class="text-dark"  href="/user/info?id='+ content.userId +'">' + content.name + '</a></div>';
             } else {
                 profileImageTag = '<div class="d-flex pl-3 align-items-center">' +
                     '                        <div><img class="round-image" width="24px" height="24px" src="' + content.profileImage + '"></div>' +
-                    '                        <div class="pl-1 my-1"> ' + content.name + '</div>';
+                    '                        <div class="pl-1 my-1"><a class="text-dark" href="/user/info?id='+ content.userId +'">' + content.name + '</a></div>';
             }
 
             if (content.imagePath != null && content.imagePath != '') {
@@ -783,7 +792,7 @@
                     commentBox = '<div class="comment d-flex my-1 align-items-center">' +
                         commentProfileImage +
                         '                        <div>' +
-                        '                            <div class=" my-1">' + comment.name + '</div>' +
+                        '                            <div class=" my-1"><a class="text-dark" href="/user/info?id='+ comment.userId +'">' + comment.name + '</a></div>' +
                         '                            <div class="mx-3 my-1">' + comment.comment + '</div>' +
                         '                        </div>' +
                         '</div>';
@@ -860,7 +869,7 @@
                 '<div class="d-flex align-items-center">' +
                 profileTag +
                 '                            <div class="testDiv">' +
-                '                            <div class="mx-3 my-1 userName">' + comment.name + '</div>' +
+                '                            <div class="mx-3 my-1 userName"><a class="text-dark" href="/user/info?id='+ comment.userId +'">' + comment.name + '</a></div>' +
                 '                            <div id="userComment'+ comment.id +'" class="mx-3 my-1 userComment">' + comment.comment + '</div>' +
                 '                           </div>' +
                 '</div>' +
