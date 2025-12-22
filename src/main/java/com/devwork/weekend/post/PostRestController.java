@@ -1,25 +1,18 @@
 package com.devwork.weekend.post;
 
-import com.devwork.weekend.post.domain.Post;
-import com.devwork.weekend.post.postDTO.PostListDTO;
 import com.devwork.weekend.post.postDTO.PostModifyDTO;
 import com.devwork.weekend.post.postDTO.SlicePostDTO;
 import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("/post")
@@ -190,4 +183,6 @@ public class PostRestController {
 //        return resultMap;
 //
 //    }
+
+
 }

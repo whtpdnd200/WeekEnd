@@ -10,7 +10,7 @@
             <div id="postFollow" class=""><a href="#" class="postSelect text-dark"><h4>팔로우 게시글</h4></a></div>
         </div>
         <div class="post-list my-1">
-            <div th:each="post : ${postList.getContent()}" class="post m-2">
+            <div th:data-user-id="${session.userInfo.id}" th:data-last-id="${postList.lastId}" th:data-has-next="${postList.hasNext}" th:each="post : ${postList.getContent()}" class="post m-2">
                 <div class="post-info">
                     <div class="d-flex pl-3 align-items-center">
                         <div th:if="${post.profileImage == '' || post.profileImage == null}"><i class="bi bi-person-circle"></i></div>

@@ -1,6 +1,7 @@
 package com.devwork.weekend.follow.service;
 
 import com.devwork.weekend.follow.domain.Follow;
+import com.devwork.weekend.follow.followDTO.FollowCountDTO;
 import com.devwork.weekend.follow.repository.FollowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -61,5 +62,15 @@ public class FollowService {
     public boolean isFollow(long userId, long followId) {
 
         return followRepository.existsByUserIdAndFollowId(userId, followId);
+    }
+
+    public FollowCountDTO getCounts(long userId) {
+
+        FollowCountDTO followCountDTO = FollowCountDTO.builder()
+                .followerCount(followRepository.countByFollowId(userId))
+                .followingCount(followRepository.countByUserId(userId))
+                .build();
+
+        return followCountDTO;
     }
 }
