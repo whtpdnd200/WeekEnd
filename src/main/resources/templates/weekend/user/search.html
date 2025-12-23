@@ -21,8 +21,9 @@
                     <button id="userIdSearchBtn" class="btn btn-secondary ml-3" type="button">전송</button>
                 </div>
             </div>
+            <div id="searchId" class="d-none">
 
-
+            </div>
         </div>
     </div>
 
@@ -76,6 +77,8 @@
                 , success:function(response) {
                     if(response.result == 'success') {
                         console.log(response);
+
+                        $("#searchId").text("회원님의 아이디는 " + response.memberId + " 입니다.");
                     } else {
                         alert("이메일 전송 실패!");
                     }

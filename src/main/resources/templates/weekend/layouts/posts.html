@@ -232,8 +232,25 @@
                 $("#followerList").removeClass("followCategory");
                 $("#followingList").addClass("followCategory");
 
-                let userId = $("#userInfo").data("user-info-id");
-                alert(userId);
+                let userInfoId = $("#userInfo").data("user-info-id");
+
+                $("#follow-body").empty();
+
+                $.ajax({
+                    type:"get"
+                    , url:"/user/following-list"
+                    , data:{"userId":userInfoId}
+                    , success:function(response) {
+
+                        $.each(response, function(idx, content) {
+
+                            $("#follow-body").append(createFollowTag(content, userId));
+                        });
+                    }
+                    , error:function() {
+                        alert("목록 가져오기 에러!");
+                    }
+                });
             });
 
             $("#followerList").on("click", function() {
@@ -245,8 +262,25 @@
                 $("#followingList").removeClass("followCategory");
                 $("#followerList").addClass("followCategory");
 
-                let userId = $("#userInfo").data("user-info-id");
-                alert(userId);
+                let userInfoId = $("#userInfo").data("user-info-id");
+
+                $("#follow-body").empty();
+
+                $.ajax({
+                    type:"get"
+                    , url:"/user/follower-list"
+                    , data:{"userId":userInfoId}
+                    , success:function(response) {
+
+                        $.each(response, function(idx, content) {
+
+                            $("#follow-body").append(createFollowTag(content, userId));
+                        });
+                    }
+                    , error:function() {
+                        alert("목록 가져오기 에러!");
+                    }
+                });
             });
 
             $("#followCloseBtn").on("click", function() {
