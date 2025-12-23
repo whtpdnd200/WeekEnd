@@ -61,4 +61,10 @@ public class UserController {
         return "weekend/user/user-info";
     }
 
+    @GetMapping("/search")
+    public String search() {
+
+        return "weekend/user/search";
+    }
+
 }

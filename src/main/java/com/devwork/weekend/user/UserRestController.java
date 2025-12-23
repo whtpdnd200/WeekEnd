@@ -115,4 +115,21 @@ public class UserRestController {
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
         return userService.getFollowerList(userId, loginUserDTO.getId());
     }
+
+    @GetMapping("/search-process")
+    public Map<String, Object> search(@RequestParam String email) {
+
+        Map<String, Object> resultMap = new HashMap<>();
+
+        UserMemberIdDTO userMemberIdDTO = userService.getUserMemberIdByEmail(email);
+
+        if(userMemberIdDTO != null) {
+            resultMap.put("result", "success");
+            resultMap.put("id", userMemberIdDTO.getMemberId());
+            return resultMap;
+        }
+
+        resultMap.put("result", "fail");
+        return resultMap;
+    }
 }

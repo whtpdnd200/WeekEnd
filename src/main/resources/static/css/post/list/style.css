@@ -13,6 +13,10 @@ header {
     background-color: #F4F4F4;
 }
 
+#imageCircle {
+    font-size: 130px;
+}
+
 section {
 
 }
@@ -63,6 +67,11 @@ section > .post-list {
 
 }
 
+
+#follow-body {
+    height: 550px;
+}
+
 .modalComment {
     top: 100px;
 }
@@ -79,6 +88,7 @@ section > .post-list {
 .modal-comment-body {
     height: 550px;
 }
+
 
 .follow-list {
     width: 100%;

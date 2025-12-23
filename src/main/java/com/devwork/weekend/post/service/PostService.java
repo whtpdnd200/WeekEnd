@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.ArrayList;
@@ -326,25 +327,37 @@ public class PostService {
         }
         try{
             postRepository.save(post);
-            return true;
+
         } catch(DataAccessException e) {
             return false;
         }
+        return true;
     }
 
-    public boolean deletePost(long id) {
+    @Transactional
+    public boolean deletePost(long id, long loginId) {
 
         Optional<Post> optionalPost = postRepository.findById(id);
         if(optionalPost.isPresent()) {
             Post post = optionalPost.get();
 
-            FileManager.deleteFile(post.getImagePath());
+            if(post.getUser().getId() != loginId) {
+                return false;
+            }
 
-            postRepository.delete(post);
-            return true;
+            try {
+                likeService.deleteLikeByPostId(post.getId());
+                postRepository.delete(post);
+
+                FileManager.deleteFile(post.getImagePath());
+            } catch (DataAccessException e) {
+                return false;
+            }
+        } else {
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     public PostDTO getPost(long id) {

@@ -29,4 +29,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
            ORDER BY u.id DESC
            """)
     public List<User> findAllByFollowerList(List<Long> followerList);
+
+    public Optional<User> findByEmail(String email);
 }

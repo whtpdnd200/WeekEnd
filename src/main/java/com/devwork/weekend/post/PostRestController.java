@@ -6,6 +6,7 @@ import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.java.Log;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,10 +49,12 @@ public class PostRestController {
 
 
     @DeleteMapping("/remove-process")
-    public Map<String, String> removePost(@RequestParam long postId) {
+    public Map<String, String> removePost(@RequestParam long postId
+                                          , HttpSession session) {
         Map<String, String> resultMap = new HashMap<>();
 
-        if(postService.deletePost(postId)) {
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        if(postService.deletePost(postId, loginUserDTO.getId())) {
             resultMap.put("result", "success");
             return resultMap;
         }

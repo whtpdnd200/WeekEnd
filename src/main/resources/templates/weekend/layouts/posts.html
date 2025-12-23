@@ -48,7 +48,7 @@
         </div>
     </div>
     <div id="myModal" class="modal modalComment" tabindex="-1">
-        <div class="modal-dialog modal-comment-dialog modal-dialog-scrollable">
+        <div class="modal-dialog modal-comment-dialog modal-dialog-scrollable ">
             <div class="modal-content modal-comment-content">
                 <div class="modal-header">
                     <h5 class="modal-title">댓글</h5>
@@ -68,7 +68,7 @@
         </div>
     </div>
     <div class="modal fade" id="followModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable" style="width: 500px">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" style="width: 500px">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-center follow-list" id="exampleModalLabel">팔로우 목록</h5>
@@ -293,7 +293,7 @@
 
 
             $("#postFollow").on("click", function () {
-                if ($("#postFollow").hasClass("postCategory")) {
+                if($("#postFollow").hasClass("postCategory")) {
                     alert("이미 선택된 카테고리 입니다!");
                     return;
                 }
@@ -555,6 +555,7 @@
                     , url:"/post/like/like-process"
                     , data:{"postId":postId}
                     , success:function(response) {
+
                         if(response.result == "success") {
                             location.reload();
                         } else {
@@ -631,7 +632,8 @@
             });
 
 
-            $(document).on("click", ".postRemove", function() {
+            $(document).on("click", ".postRemove", function(e) {
+                e.preventDefault();
                 let id = $("#postIdHidden").val();
 
 
@@ -863,18 +865,18 @@
             }
 
             if(content.profilePath != null && content.profilePath != '') {
-                profileImage = '<img class="round-image" width="24px" height="24px" src="' + content.profilePath + '">';
+                profileImage = '<img class="round-image" width="36px" height="36px" src="' + content.profilePath + '">';
             } else {
                 profileImage = '<i class="bi bi-person-circle personIcon"></i>';
             }
 
-            let html = '<div class="d-flex justify-content-between px-3">' +
+            let html = '<div class="d-flex justify-content-between px-3 my-2">' +
                 '                        <div class="d-flex px-2">' +
                 '                            <div>' +
                 profileImage +
                 '                            </div>' +
                 '                            <div class="ml-2">' +
-                '                                <div>'+ content.name +'</div>' +
+                '                                <div><a class="text-dark" href="/user/info?id='+ content.id +'">'+ content.name +'</a></div>' +
                 '                                <div>'+ content.memberId +'</div>' +
                 '                            </div>' +
                 '                        </div>' +

@@ -119,6 +119,23 @@ public class UserService {
         return null;
     }
 
+    public UserMemberIdDTO getUserMemberIdByEmail(String email) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            UserMemberIdDTO userMemberIdDTO = UserMemberIdDTO.builder()
+                    .memberId(user.getMemberId())
+                    .build();
+
+            return userMemberIdDTO;
+        }
+
+        return null;
+    }
+
     public UserInfoDTO getUserInfo(long userId, long loginId) {
 
         Optional<User> optionalUser = userRepository.findById(userId);

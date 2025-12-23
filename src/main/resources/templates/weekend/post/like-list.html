@@ -48,7 +48,7 @@
                                     <a th:href="@{/post/modify(postId=${post.id})}" class="text-dark"><i class="bi bi-pencil fs-5 postModify"></i></a>
                                 </div>
                                 <div th:if="${post.userId == session.userInfo.getId()}">
-                                    <i th:data-id="${post.id}" class="bi bi-trash postRemove"></i>
+                                    <i th:data-id="${post.id}" class="bi bi-trash postRemoveModal" data-bs-toggle="modal" data-bs-target="#commentRemoveModal"></i>
                                 </div>
                             </div>
                         </div>
