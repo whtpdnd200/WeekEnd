@@ -1,10 +1,7 @@
 package com.devwork.weekend.user;
 
 import com.devwork.weekend.post.postDTO.SlicePostDTO;
-import com.devwork.weekend.user.UserDTO.LoginUserDTO;
-import com.devwork.weekend.user.UserDTO.UserInfoDTO;
-import com.devwork.weekend.user.UserDTO.UserModifyDTO;
-import com.devwork.weekend.user.UserDTO.UserJoinDTO;
+import com.devwork.weekend.user.UserDTO.*;
 import com.devwork.weekend.user.domain.User;
 import com.devwork.weekend.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -12,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -100,5 +98,21 @@ public class UserRestController {
 
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
         return userService.getUserPostNext(pageable, userInfoId, lastId, loginUserDTO.getId());
+    }
+
+    @GetMapping("/following-list")
+    public List<UserBasicDTO> getFollowingList(@RequestParam long userId
+                                               , HttpSession session) {
+
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        return userService.getFollowingList(userId, loginUserDTO.getId());
+    }
+
+    @GetMapping("/follower-list")
+    public List<UserBasicDTO> getFollowerList(@RequestParam long userId
+                                              , HttpSession session) {
+
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        return userService.getFollowerList(userId, loginUserDTO.getId());
     }
 }

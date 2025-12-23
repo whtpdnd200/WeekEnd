@@ -68,7 +68,7 @@
         </div>
     </div>
     <div class="modal fade" id="followModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="width: 500px">
+        <div class="modal-dialog modal-dialog-scrollable" style="width: 500px">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title text-center follow-list" id="exampleModalLabel">팔로우 목록</h5>
@@ -86,7 +86,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-body">
+                <div id="follow-body" class="modal-body">
                     <div class="d-flex justify-content-between px-3">
                         <div class="d-flex px-2">
                             <div>
@@ -174,6 +174,54 @@
                     searchParam = {"lastId":lastId, "userInfoId":userInfoId};
             }
 
+            $("#followingModal").on("click", function() {
+                $("#followerList").removeClass("followCategory");
+                $("#followingList").addClass("followCategory");
+                let userInfoId = $("#userInfo").data("user-info-id");
+
+                $("#follow-body").empty();
+
+                $.ajax({
+                    type:"get"
+                    , url:"/user/following-list"
+                    , data:{"userId":userInfoId}
+                    , success:function(response) {
+
+                        $.each(response, function(idx, content) {
+
+                            $("#follow-body").append(createFollowTag(content, userId));
+                        });
+                    }
+                    , error:function() {
+                        alert("목록 가져오기 에러!");
+                    }
+                });
+            });
+
+            $("#followerModal").on("click", function() {
+                $("#followingList").removeClass("followCategory");
+                $("#followerList").addClass("followCategory");
+                let userInfoId = $("#userInfo").data("user-info-id");
+
+                $("#follow-body").empty();
+
+                $.ajax({
+                    type:"get"
+                    , url:"/user/follower-list"
+                    , data:{"userId":userInfoId}
+                    , success:function(response) {
+
+                        $.each(response, function(idx, content) {
+
+                            $("#follow-body").append(createFollowTag(content, userId));
+                        });
+                    }
+                    , error:function() {
+                        alert("목록 가져오기 에러!");
+                    }
+                });
+            });
+
             $("#followingList").on("click", function() {
 
                 if($("#followingList").hasClass("followCategory")) {
@@ -183,6 +231,9 @@
 
                 $("#followerList").removeClass("followCategory");
                 $("#followingList").addClass("followCategory");
+
+                let userId = $("#userInfo").data("user-info-id");
+                alert(userId);
             });
 
             $("#followerList").on("click", function() {
@@ -193,6 +244,9 @@
 
                 $("#followingList").removeClass("followCategory");
                 $("#followerList").addClass("followCategory");
+
+                let userId = $("#userInfo").data("user-info-id");
+                alert(userId);
             });
 
             $("#followCloseBtn").on("click", function() {
@@ -781,6 +835,57 @@
                 });
             });
         });
+
+        function createFollowTag(content, userId) {
+            let profileImage = '';
+            let followTag = '';
+            let followingTag = '';
+
+            if (userId != content.id) {
+
+                if (content.follower) {
+                    followingTag = '<div class="ml-2 text-small text-secondary">회원님을 팔로우중 입니다</div>';
+                }
+                if (!content.follow) {
+                    followTag = '<div class="text-right">' +
+                        '   <button data-id="' + content.id + '" class="followBtn btn btn-primary" type="button">팔로우</button>' +
+                        followingTag +
+                        '</div>'
+                }
+
+                if (content.follow && content.follower) {
+                    followTag = '<button data-id="' + content.id + '" class="followRemoveBtn btn btn-success" type="button">맞 팔로우중</button>';
+                }
+
+                if (content.follow && !content.follower) {
+                    followTag = '<button data-id="' + content.id + '" class="followRemoveBtn btn btn-info" type="button">팔로우중</button>';
+                }
+            }
+
+            if(content.profilePath != null && content.profilePath != '') {
+                profileImage = '<img class="round-image" width="24px" height="24px" src="' + content.profilePath + '">';
+            } else {
+                profileImage = '<i class="bi bi-person-circle personIcon"></i>';
+            }
+
+            let html = '<div class="d-flex justify-content-between px-3">' +
+                '                        <div class="d-flex px-2">' +
+                '                            <div>' +
+                profileImage +
+                '                            </div>' +
+                '                            <div class="ml-2">' +
+                '                                <div>'+ content.name +'</div>' +
+                '                                <div>'+ content.memberId +'</div>' +
+                '                            </div>' +
+                '                        </div>' +
+                '                        <div class="d-flex align-items-center">' +
+                followTag +
+                '                        </div>' +
+                '                    </div>';
+
+            return html;
+
+        }
 
         function createDocumentTag(content, userId) {
 

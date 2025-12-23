@@ -4,10 +4,7 @@ import com.devwork.weekend.common.FileManager;
 import com.devwork.weekend.follow.service.FollowService;
 import com.devwork.weekend.post.postDTO.SlicePostDTO;
 import com.devwork.weekend.post.service.PostService;
-import com.devwork.weekend.user.UserDTO.LoginUserDTO;
-import com.devwork.weekend.user.UserDTO.UserInfoDTO;
-import com.devwork.weekend.user.UserDTO.UserModifyDTO;
-import com.devwork.weekend.user.UserDTO.UserJoinDTO;
+import com.devwork.weekend.user.UserDTO.*;
 import com.devwork.weekend.common.SHA256HashingEncoder;
 import com.devwork.weekend.user.repository.UserRepository;
 import com.devwork.weekend.user.domain.User;
@@ -17,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -148,5 +147,47 @@ public class UserService {
 
     public SlicePostDTO getUserPostNext(Pageable pageable, long userId, long lastId, long loginId) {
         return postService.getPostNextListByUserId(pageable, userId, lastId, loginId);
+    }
+
+    public List<UserBasicDTO> getFollowingList(long userId, long loginId) {
+
+        List<User> followings = userRepository.findAllByFollowingList(followService.getFollowingList(userId));
+
+        List<UserBasicDTO> followingList = new ArrayList<>();
+
+        for(User user : followings) {
+
+            UserBasicDTO userBasicDTO = UserBasicDTO.builder()
+                    .id(user.getId())
+                    .memberId(user.getMemberId())
+                    .name(user.getName())
+                    .profilePath(user.getProfileImage())
+                    .isFollow(followService.isFollow(loginId, user.getId()))
+                    .isFollower(followService.isFollow(user.getId(), loginId))
+                    .build();
+            followingList.add(userBasicDTO);
+        }
+        return followingList;
+    }
+
+    public List<UserBasicDTO> getFollowerList(long userId, long loginId) {
+
+        List<User> followers = userRepository.findAllByFollowerList(followService.getFollowerList(userId));
+
+        List<UserBasicDTO> followerList = new ArrayList<>();
+
+        for(User user : followers) {
+
+            UserBasicDTO userBasicDTO = UserBasicDTO.builder()
+                    .id(user.getId())
+                    .memberId(user.getMemberId())
+                    .name(user.getName())
+                    .profilePath(user.getProfileImage())
+                    .isFollow(followService.isFollow(loginId, user.getId()))
+                    .isFollower(followService.isFollow(user.getId(), loginId))
+                    .build();
+            followerList.add(userBasicDTO);
+        }
+        return followerList;
     }
 }
