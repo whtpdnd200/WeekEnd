@@ -1,3 +1,30 @@
+#wrap {
+    width: 600px;
+
+    margin: 0 auto;
+}
+
+header {
+    height: 100px;
+    background-color: #F4F4F4;
+}
+
+section {
+
+}
+
+.contents > .user-box {
+    width: 600px;
+}
+
 .bi {
     font-size: 24px;
+}
+
+.userName{
+    font-size: 24px;
+}
+
+.followTag {
+    font-size: 20px;
 }

@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.ArrayList;
@@ -134,8 +135,90 @@ public class PostService {
         return slicePostDTO;
     }
 
+    public SlicePostDTO getPostListByUserId(Pageable pageable, long userId, long loginId) {
+
+        Slice<Post> slicePosts = postRepository.findAllPostByUserId(PageRequest.of(0, 2), userId);
+
+        List<Post> posts = slicePosts.getContent();
+        long id = 0;
+        if(posts.size() > 0) {
+            id = posts.get(posts.size() - 1).getId();
+        }
+        List<PostListDTO> postList = new ArrayList<>();
+
+
+        for(Post post : posts) {
+            PostListDTO postListDTO = new PostListDTO(post.getId()
+                    , post.getUser().getId()
+                    , post.getUser().getName()
+                    , post.getUser().getProfileImage()
+                    , post.getContents()
+                    , post.getImagePath()
+                    , commentService.getComment3(post.getId())
+                    , commentService.getCommentCount(post.getId())
+                    , likeService.getLikeCount(post.getId())
+                    , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
+                    , followService.isFollow(loginId, userId)
+                    , followService.isFollow(userId, loginId)
+                    , post.getCreatedAt()
+                    , post.getUpdatedAt());
+            postList.add(postListDTO);
+
+        }
+
+        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
+                .content(postList)
+                .hasNext(slicePosts.hasNext())
+                .size(slicePosts.getSize())
+                .lastId(id)
+                .build();
+
+        return slicePostDTO;
+    }
+
+    public SlicePostDTO getPostNextListByUserId(Pageable pageable, long userId, long lastId, long loginId) {
+
+        Slice<Post> slicePosts = postRepository.findAllNextPostByUserId(PageRequest.of(0, 2), userId, lastId);
+
+        List<Post> posts = slicePosts.getContent();
+        long id = 0;
+        if(posts.size() > 0) {
+            id = posts.get(posts.size() - 1).getId();
+        }
+        List<PostListDTO> postList = new ArrayList<>();
+
+
+        for(Post post : posts) {
+            PostListDTO postListDTO = new PostListDTO(post.getId()
+                    , post.getUser().getId()
+                    , post.getUser().getName()
+                    , post.getUser().getProfileImage()
+                    , post.getContents()
+                    , post.getImagePath()
+                    , commentService.getComment3(post.getId())
+                    , commentService.getCommentCount(post.getId())
+                    , likeService.getLikeCount(post.getId())
+                    , likeService.isLikeByPostIdAndUserId(post.getId(), userId)
+                    , followService.isFollow(loginId, userId)
+                    , followService.isFollow(userId, loginId)
+                    , post.getCreatedAt()
+                    , post.getUpdatedAt());
+            postList.add(postListDTO);
+
+        }
+
+        SlicePostDTO slicePostDTO = SlicePostDTO.builder()
+                .content(postList)
+                .hasNext(slicePosts.hasNext())
+                .size(slicePosts.getSize())
+                .lastId(id)
+                .build();
+
+        return slicePostDTO;
+    }
+
     public SlicePostDTO getPostListByFollow(Pageable pageable, long userId) {
-        List<Long> followList = followService.getFollowList(userId);
+        List<Long> followList = followService.getFollowingList(userId);
         followList.add(userId);
         Slice<Post> slicePosts = postRepository.findAllPostByFollow(PageRequest.of(0, 3), followList);
 
@@ -177,7 +260,7 @@ public class PostService {
     }
 
     public SlicePostDTO getNextPostListByFollow(Pageable pageable, long lastId, long userId) {
-        List<Long> followList = followService.getFollowList(userId);
+        List<Long> followList = followService.getFollowingList(userId);
         followList.add(userId);
         Slice<Post> slicePosts = postRepository.findAllNextPostByFollow(PageRequest.of(0, 3), followList, lastId);
 
@@ -231,7 +314,6 @@ public class PostService {
 
             if(imagePath != null && post.getImagePath() != null) {
                 FileManager.deleteFile(post.getImagePath());
-                
             }
 
             if(imagePath == null) {
@@ -245,22 +327,37 @@ public class PostService {
         }
         try{
             postRepository.save(post);
-            return true;
+
         } catch(DataAccessException e) {
             return false;
         }
+        return true;
     }
 
-    public boolean deletePost(long id) {
+    @Transactional
+    public boolean deletePost(long id, long loginId) {
 
         Optional<Post> optionalPost = postRepository.findById(id);
         if(optionalPost.isPresent()) {
             Post post = optionalPost.get();
-            postRepository.delete(post);
-            return true;
+
+            if(post.getUser().getId() != loginId) {
+                return false;
+            }
+
+            try {
+                likeService.deleteLikeByPostId(post.getId());
+                postRepository.delete(post);
+
+                FileManager.deleteFile(post.getImagePath());
+            } catch (DataAccessException e) {
+                return false;
+            }
+        } else {
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     public PostDTO getPost(long id) {
@@ -441,4 +538,6 @@ public class PostService {
 
         return slicePostDTO;
     }
+
+    
 }

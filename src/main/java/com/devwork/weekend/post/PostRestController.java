@@ -1,25 +1,19 @@
 package com.devwork.weekend.post;
 
-import com.devwork.weekend.post.domain.Post;
-import com.devwork.weekend.post.postDTO.PostListDTO;
 import com.devwork.weekend.post.postDTO.PostModifyDTO;
 import com.devwork.weekend.post.postDTO.SlicePostDTO;
 import com.devwork.weekend.post.postDTO.WriteDTO;
 import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.data.domain.Page;
+import lombok.extern.java.Log;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @RestController
 @RequestMapping("/post")
@@ -55,10 +49,12 @@ public class PostRestController {
 
 
     @DeleteMapping("/remove-process")
-    public Map<String, String> removePost(@RequestParam long postId) {
+    public Map<String, String> removePost(@RequestParam long postId
+                                          , HttpSession session) {
         Map<String, String> resultMap = new HashMap<>();
 
-        if(postService.deletePost(postId)) {
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        if(postService.deletePost(postId, loginUserDTO.getId())) {
             resultMap.put("result", "success");
             return resultMap;
         }
@@ -120,6 +116,12 @@ public class PostRestController {
         return postService.getNextPostListByFollow(pageable, lastId, loginUserDTO.getId());
     }
 
+    @GetMapping("/like-process")
+    public SlicePostDTO getNextPostListByLike(Pageable pageable, HttpSession session) {
+        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+        return postService.getPostListByLike(pageable, loginUserDTO.getId());
+    }
+
     @GetMapping("/like-next-process")
     public SlicePostDTO getNextPostListByLike(Pageable pageable, @RequestParam long lastId, HttpSession session) {
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
@@ -148,25 +150,42 @@ public class PostRestController {
     }
 
     @GetMapping("/search-next-process")
-    public Map<String, Object> getNextSearchList(Pageable pageable
+    public SlicePostDTO getNextSearchList(Pageable pageable
                                                 , @RequestParam long lastId
                                                 , @RequestParam String keyword
                                                 , HttpSession session) {
 
         LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
 
-        Map<String, Object> resultMap = new HashMap<>();
 
-        SlicePostDTO slicePostDTO = postService.getNextPostListByKeyword(pageable, keyword, loginUserDTO.getId(), lastId);
 
-        if(slicePostDTO != null) {
-            resultMap.put("result", "success");
-            resultMap.put("postList", slicePostDTO);
-            return resultMap;
-        }
-
-        resultMap.put("result", "fail");
-        return resultMap;
+        return postService.getNextPostListByKeyword(pageable, keyword, loginUserDTO.getId(), lastId);
 
     }
+
+
+//    @GetMapping("/search-next-process")
+//    public Map<String, Object> getNextSearchList(Pageable pageable
+//            , @RequestParam long lastId
+//            , @RequestParam String keyword
+//            , HttpSession session) {
+//
+//        LoginUserDTO loginUserDTO = (LoginUserDTO)session.getAttribute("userInfo");
+//
+//        Map<String, Object> resultMap = new HashMap<>();
+//
+//        SlicePostDTO slicePostDTO = postService.getNextPostListByKeyword(pageable, keyword, loginUserDTO.getId(), lastId);
+//
+//        if(slicePostDTO != null) {
+//            resultMap.put("result", "success");
+//            resultMap.put("postList", slicePostDTO);
+//            return resultMap;
+//        }
+//
+//        resultMap.put("result", "fail");
+//        return resultMap;
+//
+//    }
+
+
 }

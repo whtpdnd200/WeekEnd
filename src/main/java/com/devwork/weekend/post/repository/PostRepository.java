@@ -21,6 +21,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """)
     public Slice<Post> findAllPost(Pageable pageable);
 
+
     @Query(""" 
             SELECT p FROM Post p
             JOIN FETCH p.user
@@ -28,6 +29,22 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             ORDER BY p.createdAt DESC
             """)
     public Slice<Post> findAllNextPost(Pageable pageable, @Param("lastId") long lastId);
+
+    @Query(""" 
+            SELECT p FROM Post p
+            JOIN FETCH p.user
+            WHERE p.user.id = :userId
+            ORDER BY p.createdAt DESC
+            """)
+    public Slice<Post> findAllPostByUserId(Pageable pageable, long userId);
+
+    @Query(""" 
+            SELECT p FROM Post p
+            JOIN FETCH p.user
+            WHERE p.id < :lastId AND p.user.id = :userId
+            ORDER BY p.createdAt DESC
+            """)
+    public Slice<Post> findAllNextPostByUserId(Pageable pageable, long userId, long lastId);
 
     @Query(""" 
             SELECT p FROM Post p

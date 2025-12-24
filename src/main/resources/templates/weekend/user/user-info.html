@@ -2,40 +2,111 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{weekend/layouts/default}">
-<head>
-    <meta charset="UTF-8">
-    <title>사용자 페이지</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/css/user/info/style.css">
-</head>
+      layout:decorate="~{weekend/layouts/posts}">
 
     <section layout:fragment="contents">
-        <div class="d-flex p-5">
-            <div class="profileImage ml-3">
+        <div class="text-right p-3" th:if="${userInfo.id == session.userInfo.id}">
+            <a class="text-dark" th:href="@{/user/modify}"><i class="bi bi-person-fill-gear"></i></a>
+        </div>
+        <div class="d-flex px-5 pb-4 userInfo" id="userInfo" th:data-user-info-id="${userInfo.id}">
+            <div th:if="${userInfo.profileImage != null && userInfo.profileImage != ''}" class="profileImage ml-3 d-flex align-items-center">
+                <img class="round-image" width="130px" height="130px" th:src="${userInfo.profileImage}">
+            </div>
+            <div th:unless="${userInfo.profileImage != null && userInfo.profileImage != ''}" class="profileImage ml-3 d-flex align-items-center">
                 <i id="imageCircle" class="bi bi-person-circle personIcon"></i>
             </div>
-            <div>
+            <div class="d-flex align-items-center ml-3">
+                <div>
+                    <div class="d-flex">
+                        <div th:text="${userInfo.name}" class="userInfoName">사용자 이름</div>
+                        <div class="ml-2" th:if="${session.userInfo.id != userInfo.id}">
+                            <div th:if="${!userInfo.follow}">
+                                <button th:data-id="${userInfo.id}" class="followBtn btn btn-primary" type="button">팔로우</button>
+                                <span th:if="${userInfo.follower}" class="text-small text-secondary">회원님을 팔로우중 입니다</span>
+                            </div>
+                            <button th:if="${userInfo.follow && userInfo.follower}" th:data-id="${userInfo.id}" class="followRemoveBtn btn btn-success" type="button">맞 팔로우중</button>
+                            <button th:if="${userInfo.follow && !userInfo.follower}" th:data-id="${userInfo.id}" class="followRemoveBtn btn btn-info" type="button">팔로우중</button>
+                        </div>
+                    </div>
+                    <div class="d-flex followTag">
+                        <div id="followingModal" data-bs-toggle="modal" data-bs-target="#followModal" class=""><a class="text-dark" href="#">팔로잉 <span th:text="${userInfo.followCountDTO.followingCount}">0</span></a></div>
+                        <div id="followerModal" data-bs-toggle="modal" data-bs-target="#followModal" class="ml-3"><a class="text-dark" href="#">팔로워 <span th:text="${userInfo.followCountDTO.followerCount}">0</span></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="post-list my-1">
+            <div th:data-user-id="${session.userInfo.id}" th:data-last-id="${postList.lastId}" th:data-has-next="${postList.hasNext}" th:each="post : ${postList.getContent()}" class="post m-2">
+                <div class="post-info">
+                    <div class="d-flex pl-3 align-items-center">
+                        <div th:if="${post.profileImage == '' || post.profileImage == null}"><i class="bi bi-person-circle"></i></div>
+                        <div th:unless="${post.profileImage == '' || post.profileImage == null}"><img class="round-image" width="24px" height="24px" th:src="${post.profileImage}"></div>
+                        <div th:text="${post.name}" class="pl-1 my-1">회원 이름</div>
+                        <div th:if="${session.userInfo.id != post.userId}" class="ml-2">
+                            <div th:if="${!post.follow}">
+                                <button th:data-id="${post.userId}" class="followBtn btn btn-primary" type="button">팔로우</button>
+                                <span th:if="${post.follower}" class="text-small text-secondary">회원님을 팔로우중 입니다</span>
+                            </div>
+                            <button th:if="${post.follow && post.follower}" th:data-id="${post.userId}" class="followRemoveBtn btn btn-success" type="button">맞 팔로우중</button>
+                            <button th:if="${post.follow && !post.follower}" th:data-id="${post.userId}" class="followRemoveBtn btn btn-info" type="button">팔로우중</button>
+                            <!--<button th:if="${post.follow}"  class="followRemoveBtn btn btn-danger" type="button">팔로우 취소</button>-->
+                        </div>
+                    </div>
+
+                    <div th:if="${post.imagePath != '' && post.imagePath != null}" class="d-flex justify-content-center my-1">
+                        <img class="postImage" width="450px" height="300px" th:src="${post.imagePath}">
+                    </div>
+                    <div class="my-3 pl-5">
+                        <div th:text="${post.contents}" class="postContents"></div>
+                    </div>
+                    <div class="d-flex justify-content-center my-3">
+                        <div class="w-75 d-flex justify-content-between">
+                            <div class="d-flex justify-content-between w-50 mr-5">
+                                <div class="d-flex align-items-center">
+                                    <i th:if="${post.like}" th:data-post-id="${post.id}" class="bi bi-heart-fill text-danger like-btn"></i>
+                                    <i th:unless="${post.like}" th:data-post-id="${post.id}" class="bi bi-heart text-danger unlike-btn"></i>
+                                    <div th:text="${post.likeCount}" class="ml-2">132</div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <a th:data-id="${post.id}" class="commentList" data-bs-toggle="modal" href="#myModal"><i class="bi bi-chat-right text-dark"></i></a>
+                                    <div th:text="${post.commentCount}" class="ml-2">32</div>
+                                </div>
+                            </div>
+                            <div th:if="${!session.isEmpty()}" class="d-flex justify-content-between w-50 ml-5">
+                                <div th:if="${post.userId == session.userInfo.getId()}">
+                                    <a th:href="@{/post/modify(postId=${post.id})}" class="text-dark"><i class="bi bi-pencil fs-5 postModify"></i></a>
+                                </div>
+                                <div th:if="${post.userId == session.userInfo.getId()}">
+                                    <i th:data-id="${post.id}" class="bi bi-trash postRemoveModal" data-bs-toggle="modal" data-bs-target="#commentRemoveModal"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="comments-top3 m-3 p-3">
+                    <div th:if="${!post.comments.isEmpty()}" th:each="comment : ${post.comments}" class="comment d-flex my-1 align-items-center">
+                        <div th:if="${comment.profileImage == '' || comment.profileImage == null}">
+                            <i class="bi bi-person-circle personIcon"></i>
+                        </div>
+                        <div th:unless="${comment.profileImage == '' || comment.profileImage == null}">
+                            <img class="round-image" width="36px" height="36px" th:src="${comment.profileImage}">
+                        </div>
+                        <div>
+                            <div class="mx-3 my-1"><a class="text-dark" th:href="@{/user/info(id=${comment.userId})}"><span th:text="${comment.name}" >유저 이름</span></a></div>
+                            <div th:text="${comment.comment}" class="mx-3 my-1">댓글 내용</div>
+                        </div>
+
+                    </div>
+                    <div th:unless="${!post.comments.isEmpty()}">
+                        <div class="font-weight-bold text-center">댓글이 없습니다</div>
+                    </div>
+                    <div class="d-flex p-3 align-items-end">
+                        <input name="documentCommentInput" type="text" class="form-control col-9 documentCommentInput" th:id="|commentInput${post.id}|">
+                        <button type="button" th:data-post-id="${post.id}" class="btn btn-info col-3 ml-2 documentCommentBtn">입력</button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
-    <footer layout:fragment="footer" class="d-flex align-items-center justify-content-center">
-        <div class="w-75 d-flex justify-content-between align-items-center">
-            <div>
-                <a href="/post/write"><i class="bi bi-clipboard-plus text-dark"></i></a>
-            </div>
-            <div>
-                <a href="#"><i class="bi bi-search text-dark"></i></a>
-            </div>
-            <div>
-                <a href="#"><i class="bi bi-heart-fill text-dark"></i></a>
-            </div>
-            <div>
-                <a href="#"><i class="bi bi-person text-dark"></i></a>
-            </div>
-        </div>
-    </footer>
 </html>

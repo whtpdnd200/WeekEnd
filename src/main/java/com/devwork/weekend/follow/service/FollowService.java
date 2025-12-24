@@ -1,9 +1,12 @@
 package com.devwork.weekend.follow.service;
 
 import com.devwork.weekend.follow.domain.Follow;
+import com.devwork.weekend.follow.followDTO.FollowCountDTO;
 import com.devwork.weekend.follow.repository.FollowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,8 +51,8 @@ public class FollowService {
         return true;
     }
 
-    public List<Long> getFollowList(long userId) {
-        List<Follow> follows = followRepository.findByUserId(userId);
+    public List<Long> getFollowingList(long userId) {
+        List<Follow> follows = followRepository.findByUserId(userId).getContent();
         List<Long> followUserList = new ArrayList<>();
 
         for(Follow follow : follows) {
@@ -58,8 +61,28 @@ public class FollowService {
         return followUserList;
     }
 
+    public List<Long> getFollowerList(long userId) {
+        List<Follow> follows = followRepository.findByFollowId(userId).getContent();
+        List<Long> followUserList = new ArrayList<>();
+
+        for(Follow follow : follows) {
+            followUserList.add(follow.getUserId());
+        }
+        return followUserList;
+    }
+
     public boolean isFollow(long userId, long followId) {
 
         return followRepository.existsByUserIdAndFollowId(userId, followId);
+    }
+
+    public FollowCountDTO getCounts(long userId) {
+
+        FollowCountDTO followCountDTO = FollowCountDTO.builder()
+                .followerCount(followRepository.countByFollowId(userId))
+                .followingCount(followRepository.countByUserId(userId))
+                .build();
+
+        return followCountDTO;
     }
 }
