@@ -17,16 +17,21 @@ public class MailSendServiceImpl implements MailSendService{
     }
 
     @Override
-    public void sendHtmlMessage(MailSendDTO mailSendDTO) throws MessagingException {
+    public boolean sendHtmlMessage(MailSendDTO mailSendDTO) {
 
         MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        helper.setFrom(mailSendDTO.getFrom());
-        helper.setTo(mailSendDTO.getEmailAddr());
-        helper.setSubject(mailSendDTO.getSubject());
-        helper.setText(mailSendDTO.getContent(), true); // true는 HTML 형식을 의미합니다
+            helper.setFrom(mailSendDTO.getFrom());
+            helper.setTo(mailSendDTO.getEmailAddr());
+            helper.setSubject(mailSendDTO.getSubject());
+            helper.setText(mailSendDTO.getContent(), true); // true는 HTML 형식을 의미합니다
+            mailSender.send(message);
+        } catch(MessagingException e) {
+            return false;
+        }
 
-        mailSender.send(message);
+        return true;
     }
 }
