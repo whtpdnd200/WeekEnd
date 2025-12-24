@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

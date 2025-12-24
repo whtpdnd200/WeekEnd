@@ -31,4 +31,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     public List<User> findAllByFollowerList(List<Long> followerList);
 
     public Optional<User> findByEmail(String email);
+
+    public boolean existsByMemberIdAndEmail(String memberId, String email);
 }

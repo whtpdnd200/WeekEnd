@@ -2,6 +2,7 @@ package com.devwork.weekend.user.service;
 
 import com.devwork.weekend.common.FileManager;
 import com.devwork.weekend.follow.service.FollowService;
+import com.devwork.weekend.passwordReset.service.PasswordResetService;
 import com.devwork.weekend.post.postDTO.SlicePostDTO;
 import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.*;
@@ -25,7 +26,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowService followService;
     private final PostService postService;
-
 
     public boolean createUser(UserJoinDTO userJoinDTO) {
 
@@ -134,6 +134,35 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public boolean existsByMemberIdAndEmail(String memberId, String email) {
+
+        return userRepository.existsByMemberIdAndEmail(memberId, email);
+    }
+
+    public boolean updatePassword(String email, String password) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if(optionalUser.isPresent()) {
+
+            User user = optionalUser.get();
+            String encodedPassword = SHA256HashingEncoder.encode(password);
+            user = user.toBuilder()
+                    .password(encodedPassword)
+                    .build();
+
+            try {
+                userRepository.save(user);
+            } catch(DataAccessException e) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public UserInfoDTO getUserInfo(long userId, long loginId) {

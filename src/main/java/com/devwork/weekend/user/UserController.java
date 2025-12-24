@@ -1,5 +1,7 @@
 package com.devwork.weekend.user;
 
+import com.devwork.weekend.passwordReset.PasswordResetDTO.PasswordResetBasicDTO;
+import com.devwork.weekend.passwordReset.service.PasswordResetService;
 import com.devwork.weekend.post.service.PostService;
 import com.devwork.weekend.user.UserDTO.LoginUserDTO;
 import com.devwork.weekend.user.service.UserService;
@@ -19,10 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
 
 
-    private final PostService postService;
 
     private final UserService userService;
-
+    private final PasswordResetService passwordResetService;
 
     @GetMapping("/join")
     public String join() {
@@ -65,6 +66,15 @@ public class UserController {
     public String search() {
 
         return "weekend/user/search";
+    }
+
+    @GetMapping("/password-change")
+    public String passwordChange(@RequestParam String code, Model model) {
+
+        PasswordResetBasicDTO passwordResetBasicDTO = passwordResetService.getCodeInfo(code);
+        model.addAttribute("email", passwordResetBasicDTO.getEmail());
+        model.addAttribute("isValidation", passwordResetService.isValidation(passwordResetBasicDTO));
+        return "weekend/user/password-change";
     }
 
 }
